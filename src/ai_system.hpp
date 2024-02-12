@@ -5,6 +5,7 @@
 #include "tiny_ecs_registry.hpp"
 #include "common.hpp"
 
+
 class AISystem
 {
 public:
