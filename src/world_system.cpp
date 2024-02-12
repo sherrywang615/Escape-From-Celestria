@@ -148,24 +148,24 @@ bool WorldSystem::step(float elapsed_ms_since_last_update) {
 		}
 	}
 
-	// Spawning new eagles
-	next_eagle_spawn -= elapsed_ms_since_last_update * current_speed;
-	if (registry.deadlys.components.size() <= MAX_EAGLES && next_eagle_spawn < 0.f) {
-		// Reset timer
-		next_eagle_spawn = (EAGLE_DELAY_MS / 2) + uniform_dist(rng) * (EAGLE_DELAY_MS / 2);
-		// Create eagle with random initial position
-        createEagle(renderer, vec2(50.f + uniform_dist(rng) * (window_width_px - 100.f), -100.f));
-	}
+	//// Spawning new eagles
+	//next_eagle_spawn -= elapsed_ms_since_last_update * current_speed;
+	//if (registry.deadlys.components.size() <= MAX_EAGLES && next_eagle_spawn < 0.f) {
+	//	// Reset timer
+	//	next_eagle_spawn = (EAGLE_DELAY_MS / 2) + uniform_dist(rng) * (EAGLE_DELAY_MS / 2);
+	//	// Create eagle with random initial position
+	//     createEagle(renderer, vec2(50.f + uniform_dist(rng) * (window_width_px - 100.f), -100.f));
+	//}
 
 	// Spawning new bug
-	next_bug_spawn -= elapsed_ms_since_last_update * current_speed;
-	if (registry.eatables.components.size() <= MAX_BUG && next_bug_spawn < 0.f) {
-		// !!!  TODO A1: Create new bug with createBug({0,0}), as for the Eagles above
-		// Reset timer
-		next_bug_spawn = (BUG_DELAY_MS / 2) + uniform_dist(rng) * (BUG_DELAY_MS / 2);
-		// Create bug with random initial position
-		createBug(renderer, vec2(50.f + uniform_dist(rng) * (window_width_px - 100.f), -100.f));
-	}
+	//next_bug_spawn -= elapsed_ms_since_last_update * current_speed;
+	//if (registry.eatables.components.size() <= MAX_BUG && next_bug_spawn < 0.f) {
+	//	// !!!  TODO A1: Create new bug with createBug({0,0}), as for the Eagles above
+	//	// Reset timer
+	//	next_bug_spawn = (BUG_DELAY_MS / 2) + uniform_dist(rng) * (BUG_DELAY_MS / 2);
+	//	// Create bug with random initial position
+	//	createBug(renderer, vec2(50.f + uniform_dist(rng) * (window_width_px - 100.f), -100.f));
+	//}
 
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	// TODO A2: HANDLE EGG SPAWN HERE

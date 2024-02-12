@@ -28,36 +28,36 @@ Entity createChicken(RenderSystem* renderer, vec2 pos)
 	return entity;
 }
 
-Entity createBug(RenderSystem* renderer, vec2 position)
-{
-	// Reserve en entity
-	auto entity = Entity();
+//Entity createBug(RenderSystem* renderer, vec2 position)
+//{
+//	// Reserve en entity
+//	auto entity = Entity();
+//
+//	// Store a reference to the potentially re-used mesh object
+//	Mesh& mesh = renderer->getMesh(GEOMETRY_BUFFER_ID::SPRITE);
+//	registry.meshPtrs.emplace(entity, &mesh);
+//
+//	// Initialize the position, scale, and physics components
+//	auto& motion = registry.motions.emplace(entity);
+//	motion.angle = 0.f;
+//	motion.velocity = { 0, 50 };
+//	motion.position = position;
+//
+//	// Setting initial values, scale is negative to make it face the opposite way
+//	motion.scale = vec2({ -BUG_BB_WIDTH, BUG_BB_HEIGHT });
+//
+//	// Create an (empty) Bug component to be able to refer to all bug
+//	registry.eatables.emplace(entity);
+//	registry.renderRequests.insert(
+//		entity,
+//		{ TEXTURE_ASSET_ID::BUG,
+//			EFFECT_ASSET_ID::TEXTURED,
+//			GEOMETRY_BUFFER_ID::SPRITE });
+//
+//	return entity;
+//}
 
-	// Store a reference to the potentially re-used mesh object
-	Mesh& mesh = renderer->getMesh(GEOMETRY_BUFFER_ID::SPRITE);
-	registry.meshPtrs.emplace(entity, &mesh);
-
-	// Initialize the position, scale, and physics components
-	auto& motion = registry.motions.emplace(entity);
-	motion.angle = 0.f;
-	motion.velocity = { 0, 50 };
-	motion.position = position;
-
-	// Setting initial values, scale is negative to make it face the opposite way
-	motion.scale = vec2({ -BUG_BB_WIDTH, BUG_BB_HEIGHT });
-
-	// Create an (empty) Bug component to be able to refer to all bug
-	registry.eatables.emplace(entity);
-	registry.renderRequests.insert(
-		entity,
-		{ TEXTURE_ASSET_ID::BUG,
-			EFFECT_ASSET_ID::TEXTURED,
-			GEOMETRY_BUFFER_ID::SPRITE });
-
-	return entity;
-}
-
-Entity createEagle(RenderSystem* renderer, vec2 position)
+Entity createZombie(RenderSystem* renderer, vec2 position)
 {
 	auto entity = Entity();
 
@@ -65,20 +65,20 @@ Entity createEagle(RenderSystem* renderer, vec2 position)
 	Mesh& mesh = renderer->getMesh(GEOMETRY_BUFFER_ID::SPRITE);
 	registry.meshPtrs.emplace(entity, &mesh);
 
-	// Initialize the motion
+	// Initialize the motion of zombie to rightwards
 	auto& motion = registry.motions.emplace(entity);
 	motion.angle = 0.f;
-	motion.velocity = { 0, 100.f };
+	motion.velocity = { 100.f, 0 };
 	motion.position = position;
 
 	// Setting initial values, scale is negative to make it face the opposite way
-	motion.scale = vec2({ -EAGLE_BB_WIDTH, EAGLE_BB_HEIGHT });
+	motion.scale = vec2({ -ZOMBIE_BB_WIDTH, ZOMBIE_BB_HEIGHT });
 
 	// Create and (empty) Eagle component to be able to refer to all eagles
 	registry.deadlys.emplace(entity);
 	registry.renderRequests.insert(
 		entity,
-		{ TEXTURE_ASSET_ID::EAGLE,
+		{ TEXTURE_ASSET_ID::ZOMBIE,
 		 EFFECT_ASSET_ID::TEXTURED,
 		 GEOMETRY_BUFFER_ID::SPRITE });
 
