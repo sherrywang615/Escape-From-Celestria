@@ -1,12 +1,12 @@
 #include "world_init.hpp"
 #include "tiny_ecs_registry.hpp"
 
-Entity createChicken(RenderSystem* renderer, vec2 pos)
+Entity createJosh(RenderSystem* renderer, vec2 pos)
 {
 	auto entity = Entity();
 
 	// Store a reference to the potentially re-used mesh object
-	Mesh& mesh = renderer->getMesh(GEOMETRY_BUFFER_ID::CHICKEN);
+	Mesh& mesh = renderer->getMesh(GEOMETRY_BUFFER_ID::JOSH);
 	registry.meshPtrs.emplace(entity, &mesh);
 
 	// Setting initial motion values
@@ -22,8 +22,8 @@ Entity createChicken(RenderSystem* renderer, vec2 pos)
 	registry.renderRequests.insert(
 		entity,
 		{ TEXTURE_ASSET_ID::TEXTURE_COUNT, // TEXTURE_COUNT indicates that no txture is needed
-			EFFECT_ASSET_ID::CHICKEN,
-			GEOMETRY_BUFFER_ID::CHICKEN });
+			EFFECT_ASSET_ID::JOSH,
+			GEOMETRY_BUFFER_ID::JOSH });
 
 	return entity;
 }

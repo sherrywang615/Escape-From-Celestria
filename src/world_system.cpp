@@ -25,12 +25,12 @@ WorldSystem::WorldSystem()
 WorldSystem::~WorldSystem()
 {
 	// Destroy music components
-	if (background_music != nullptr)
-		Mix_FreeMusic(background_music);
-	if (chicken_dead_sound != nullptr)
-		Mix_FreeChunk(chicken_dead_sound);
-	if (chicken_eat_sound != nullptr)
-		Mix_FreeChunk(chicken_eat_sound);
+	//if (background_music != nullptr)
+	//	Mix_FreeMusic(background_music);
+	//if (chicken_dead_sound != nullptr)
+	//	Mix_FreeChunk(chicken_dead_sound);
+	//if (chicken_eat_sound != nullptr)
+	//	Mix_FreeChunk(chicken_eat_sound);
 	Mix_CloseAudio();
 
 	// Destroy all created components
@@ -76,7 +76,7 @@ GLFWwindow *WorldSystem::create_window()
 	glfwWindowHint(GLFW_RESIZABLE, 0);
 
 	// Create the main window (for rendering, keyboard, and mouse input)
-	window = glfwCreateWindow(window_width_px, window_height_px, "Chicken Game Assignment", nullptr, nullptr);
+	window = glfwCreateWindow(window_width_px, window_height_px, "Escape from Celestria", nullptr, nullptr);
 	if (window == nullptr)
 	{
 		fprintf(stderr, "Failed to glfwCreateWindow");
@@ -96,29 +96,30 @@ GLFWwindow *WorldSystem::create_window()
 
 	//////////////////////////////////////
 	// Loading music and sounds with SDL
-	if (SDL_Init(SDL_INIT_AUDIO) < 0)
-	{
-		fprintf(stderr, "Failed to initialize SDL Audio");
-		return nullptr;
-	}
-	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) == -1)
-	{
-		fprintf(stderr, "Failed to open audio device");
-		return nullptr;
-	}
+	// !!! TODO: added music back in M4
+	//if (SDL_Init(SDL_INIT_AUDIO) < 0)
+	//{
+	//	fprintf(stderr, "Failed to initialize SDL Audio");
+	//	return nullptr;
+	//}
+	//if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) == -1)
+	//{
+	//	fprintf(stderr, "Failed to open audio device");
+	//	return nullptr;
+	//}
 
-	background_music = Mix_LoadMUS(audio_path("music.wav").c_str());
-	chicken_dead_sound = Mix_LoadWAV(audio_path("chicken_dead.wav").c_str());
-	chicken_eat_sound = Mix_LoadWAV(audio_path("chicken_eat.wav").c_str());
+	//background_music = Mix_LoadMUS(audio_path("music.wav").c_str());
+	//chicken_dead_sound = Mix_LoadWAV(audio_path("chicken_dead.wav").c_str());
+	//chicken_eat_sound = Mix_LoadWAV(audio_path("chicken_eat.wav").c_str());
 
-	if (background_music == nullptr || chicken_dead_sound == nullptr || chicken_eat_sound == nullptr)
-	{
-		fprintf(stderr, "Failed to load sounds\n %s\n %s\n %s\n make sure the data directory is present",
-				audio_path("music.wav").c_str(),
-				audio_path("chicken_dead.wav").c_str(),
-				audio_path("chicken_eat.wav").c_str());
-		return nullptr;
-	}
+	//if (background_music == nullptr || chicken_dead_sound == nullptr || chicken_eat_sound == nullptr)
+	//{
+	//	fprintf(stderr, "Failed to load sounds\n %s\n %s\n %s\n make sure the data directory is present",
+	//			audio_path("music.wav").c_str(),
+	//			audio_path("chicken_dead.wav").c_str(),
+	//			audio_path("chicken_eat.wav").c_str());
+	//	return nullptr;
+	//}
 
 	return window;
 }
@@ -127,8 +128,9 @@ void WorldSystem::init(RenderSystem *renderer_arg)
 {
 	this->renderer = renderer_arg;
 	// Playing background music indefinitely
-	Mix_PlayMusic(background_music, -1);
-	fprintf(stderr, "Loaded music\n");
+	// !!! TODO: Bring this back in M4
+	//Mix_PlayMusic(background_music, -1);
+	//fprintf(stderr, "Loaded music\n");
 
 	// Set all states to default
 	restart_game();
@@ -137,11 +139,6 @@ void WorldSystem::init(RenderSystem *renderer_arg)
 // Update our game world
 bool WorldSystem::step(float elapsed_ms_since_last_update)
 {
-	// Updating window title with points
-	std::stringstream title_ss;
-	title_ss << "Points: " << points;
-	glfwSetWindowTitle(window, title_ss.str().c_str());
-
 	// Remove debug info from the last step
 	while (registry.debugComponents.entities.size() > 0)
 		registry.remove_all_components_of(registry.debugComponents.entities.back());
@@ -163,30 +160,15 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 	}
 
 	// Spawning new eagles
-	next_eagle_spawn -= elapsed_ms_since_last_update * current_speed;
-	if (registry.deadlys.components.size() <= MAX_EAGLES && next_eagle_spawn < 0.f)
-	{
-		// Reset timer
-		next_eagle_spawn = (EAGLE_DELAY_MS / 2) + uniform_dist(rng) * (EAGLE_DELAY_MS / 2);
-		// Create eagle with random initial position
-		createEagle(renderer, vec2(50.f + uniform_dist(rng) * (window_width_px - 100.f), -100.f));
-	}
-
-	// Spawning new bug
-	next_bug_spawn -= elapsed_ms_since_last_update * current_speed;
-	if (registry.eatables.components.size() <= MAX_BUG && next_bug_spawn < 0.f)
-	{
-		// !!!  TODO A1: Create new bug with createBug({0,0}), as for the Eagles above
-		// Reset timer
-		next_bug_spawn = (BUG_DELAY_MS / 2) + uniform_dist(rng) * (BUG_DELAY_MS / 2);
-		// Create bug with random initial position
-		createBug(renderer, vec2(50.f + uniform_dist(rng) * (window_width_px - 100.f), -100.f));
-	}
-
-	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	// TODO A2: HANDLE EGG SPAWN HERE
-	// DON'T WORRY ABOUT THIS UNTIL ASSIGNMENT 2
-	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	// Do we need eagles???
+	//next_eagle_spawn -= elapsed_ms_since_last_update * current_speed;
+	//if (registry.deadlys.components.size() <= MAX_EAGLES && next_eagle_spawn < 0.f)
+	//{
+	//	// Reset timer
+	//	next_eagle_spawn = (EAGLE_DELAY_MS / 2) + uniform_dist(rng) * (EAGLE_DELAY_MS / 2);
+	//	// Create eagle with random initial position
+	//	createEagle(renderer, vec2(50.f + uniform_dist(rng) * (window_width_px - 100.f), -100.f));
+	//}
 
 	// Processing the chicken state
 	assert(registry.screenStates.components.size() <= 1);
@@ -215,22 +197,6 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 	// reduce window brightness if any of the present chickens is dying
 	screen.darken_screen_factor = 1 - min_counter_ms / 3000;
 
-	// !!! TODO A1: update LightUp timers and remove if time drops below zero, similar to the death counter
-	for (Entity entity : registry.lightUpTimers.entities)
-	{
-		LightUp &counter = registry.lightUpTimers.get(entity);
-		counter.counter_ms -= elapsed_ms_since_last_update;
-		if (counter.counter_ms < min_counter_ms)
-		{
-			min_counter_ms = counter.counter_ms;
-		}
-
-		if (counter.counter_ms < 0)
-		{
-			registry.lightUpTimers.remove(entity);
-		}
-	}
-
 	return true;
 }
 
@@ -252,23 +218,9 @@ void WorldSystem::restart_game()
 	// Debugging for memory/component leaks
 	registry.list_all_components();
 
-	// Create a new chicken
-	player_chicken = createChicken(renderer, {window_width_px / 2, window_height_px - 200});
-	registry.colors.insert(player_chicken, {1, 0.8f, 0.8f});
-
-	// !! TODO A2: Enable static eggs on the ground, for reference
-	// Create eggs on the floor, use this for reference
-	/*
-	for (uint i = 0; i < 20; i++) {
-		int w, h;
-		glfwGetWindowSize(window, &w, &h);
-		float radius = 30 * (uniform_dist(rng) + 0.3f); // range 0.3 .. 1.3
-		Entity egg = createEgg({ uniform_dist(rng) * w, h - uniform_dist(rng) * 20 },
-					 { radius, radius });
-		float brightness = uniform_dist(rng) * 0.5 + 0.5;
-		registry.colors.insert(egg, { brightness, brightness, brightness});
-	}
-	*/
+	// Create a new Josh
+	player_josh = createJosh(renderer, {window_width_px / 2, window_height_px - 200});
+	registry.colors.insert(player_josh, {1, 0.8f, 0.8f});
 }
 
 // Compute collisions between entities
@@ -319,12 +271,6 @@ void WorldSystem::handle_collisions()
 					registry.remove_all_components_of(entity_other);
 					Mix_PlayChannel(-1, chicken_eat_sound, 0);
 					++points;
-
-					// !!! TODO A1: create a new struct called LightUp in components.hpp and add an instance to the chicken entity by modifying the ECS registry
-					if (!registry.lightUpTimers.has(entity))
-					{
-						registry.lightUpTimers.emplace(entity);
-					}
 				}
 			}
 		}
@@ -356,11 +302,11 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 	}
 
 	// control chicken movement
-	if (!registry.deathTimers.has(player_chicken))
+	if (!registry.deathTimers.has(player_josh))
 	{
 		if ((action == GLFW_REPEAT || action == GLFW_PRESS) && key == GLFW_KEY_LEFT)
 		{
-			Motion &chicken_motion = registry.motions.get(player_chicken);
+			Motion &chicken_motion = registry.motions.get(player_josh);
 			chicken_motion.velocity.x = -200.f * cos(chicken_motion.angle);
 			chicken_motion.velocity.y = 200.f * sin(chicken_motion.angle);
 			if(chicken_motion.scale.x > 0){
@@ -369,13 +315,13 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 		}
 		if (action == GLFW_RELEASE && key == GLFW_KEY_LEFT)
 		{
-			Motion &chicken_motion = registry.motions.get(player_chicken);
+			Motion &chicken_motion = registry.motions.get(player_josh);
 			chicken_motion.velocity.y = 0.f;
 			chicken_motion.velocity.x = 0.f;
 		}
 		if ((action == GLFW_REPEAT || action == GLFW_PRESS) && key == GLFW_KEY_RIGHT)
 		{
-			Motion &chicken_motion = registry.motions.get(player_chicken);
+			Motion &chicken_motion = registry.motions.get(player_josh);
 			chicken_motion.velocity.x = -200.f * cos(chicken_motion.angle - M_PI);
 			chicken_motion.velocity.y = 00.f * sin(chicken_motion.angle - M_PI);
 			if(chicken_motion.scale.x < 0){
@@ -384,7 +330,7 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 		}
 		if (action == GLFW_RELEASE && key == GLFW_KEY_RIGHT)
 		{
-			Motion &chicken_motion = registry.motions.get(player_chicken);
+			Motion &chicken_motion = registry.motions.get(player_josh);
 			chicken_motion.velocity.y = 0.f;
 			chicken_motion.velocity.x = 0.f;
 		}

@@ -11,7 +11,7 @@ const float EAGLE_BB_WIDTH = 0.6f * 300.f;
 const float EAGLE_BB_HEIGHT = 0.6f * 202.f;
 
 // the player
-Entity createChicken(RenderSystem* renderer, vec2 pos);
+Entity createJosh(RenderSystem* renderer, vec2 pos);
 // the prey
 Entity createBug(RenderSystem* renderer, vec2 position);
 // the enemy
