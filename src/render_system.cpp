@@ -63,7 +63,7 @@ void RenderSystem::drawTexturedMesh(Entity entity,
 		assert(registry.renderRequests.has(entity));
 		GLuint texture_id =
 			texture_gl_handles[(GLuint)registry.renderRequests.get(entity).used_texture];
-
+		
 		glBindTexture(GL_TEXTURE_2D, texture_id);
 		gl_has_errors();
 	}

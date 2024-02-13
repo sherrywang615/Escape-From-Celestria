@@ -68,7 +68,7 @@ void RenderSystem::initializeGlTextures()
     glGenTextures((GLsizei)texture_gl_handles.size(), texture_gl_handles.data());
 
 	// !!! TODO: 
-    /*for(uint i = 0; i < texture_paths.size(); i++)
+    for(uint i = 0; i < texture_paths.size(); i++)
     {
 		const std::string& path = texture_paths[i];
 		ivec2& dimensions = texture_dimensions[i];
@@ -88,7 +88,7 @@ void RenderSystem::initializeGlTextures()
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		gl_has_errors();
 		stbi_image_free(data);
-    }*/
+    }
 	gl_has_errors();
 }
 

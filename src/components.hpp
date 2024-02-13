@@ -10,10 +10,19 @@ struct Player
 
 };
 
-// Eagles have a hard shell
+
 struct Deadly
 {
 
+};
+
+// normal zombies
+struct NormalZombie
+{
+	//zombie state 0 = unalerted, 1 = alerted
+	int state = 0;
+	// walking range of zombie based on initial position
+	std::vector<double> walking_range = { 0, 0 };
 };
 
 // Bug and Chicken have a soft shell
@@ -118,7 +127,8 @@ struct Sliding
  */
 
 enum class TEXTURE_ASSET_ID {
-	ZOMBIE = 0,
+	BUG = 0,
+	ZOMBIE = BUG + 1,
 	TEXTURE_COUNT = ZOMBIE + 1
 };
 const int texture_count = (int)TEXTURE_ASSET_ID::TEXTURE_COUNT;
