@@ -53,6 +53,20 @@ bool collides(const Motion& motion1, const Motion& motion2)
 
 void PhysicsSystem::step(float elapsed_ms)
 {
+	// Check gravity first so we can finalize yspeed
+	float gravity = 100;
+	ComponentContainer<Gravity>& gravity_container = registry.gravities;
+	for (uint i = 0; i < gravity_container.size(); i++)
+	{
+		Entity entity = gravity_container.entities[i];
+		if (registry.motions.has(entity)) {
+			Motion& motion = registry.motions.get(entity);
+			motion.velocity[1] -= gravity;
+		}
+
+	}
+
+
 	// Move bug based on how much time has passed, this is to (partially) avoid
 	// having entities move at different speed based on the machine.
 	auto& motion_registry = registry.motions;
@@ -94,6 +108,8 @@ void PhysicsSystem::step(float elapsed_ms)
 			}
 		}
 	}
+
+
 	
 
 	// Momentum Implementation
