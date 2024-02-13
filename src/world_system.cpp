@@ -363,7 +363,9 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 			Motion &chicken_motion = registry.motions.get(player_chicken);
 			chicken_motion.velocity.x = -200.f * cos(chicken_motion.angle);
 			chicken_motion.velocity.y = 200.f * sin(chicken_motion.angle);
-			chicken_motion.scale.x *= -1;
+			if(chicken_motion.scale.x > 0){
+				chicken_motion.scale.x *= -1;
+			}
 		}
 		if (action == GLFW_RELEASE && key == GLFW_KEY_LEFT)
 		{
@@ -376,6 +378,9 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 			Motion &chicken_motion = registry.motions.get(player_chicken);
 			chicken_motion.velocity.x = -200.f * cos(chicken_motion.angle - M_PI);
 			chicken_motion.velocity.y = 00.f * sin(chicken_motion.angle - M_PI);
+			if(chicken_motion.scale.x < 0){
+				chicken_motion.scale.x *= -1;
+			}
 		}
 		if (action == GLFW_RELEASE && key == GLFW_KEY_RIGHT)
 		{
