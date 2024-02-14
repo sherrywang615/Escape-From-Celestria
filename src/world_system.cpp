@@ -158,17 +158,7 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 				registry.remove_all_components_of(motions_registry.entities[i]);
 		}
 	}
-	auto& zombie_registry = registry.zombies;
-	for (int i = (int)zombie_registry.components.size() - 1; i >= 0; --i)
-	{
-		NormalZombie& zombie = zombie_registry.components[i];
-		double xPosition = registry.motions.get(zombie_registry.entities[i]).position.x;
-		// if zombie state == unalert (0), then check if it has reached the edge of its walking range and switch direction if so
-		if (zombie.state == 0 && (xPosition <= zombie.walking_range[0] || xPosition >= zombie.walking_range[1])) {
-			registry.motions.get(zombie_registry.entities[i]).velocity.x *= -1;
-			registry.motions.get(zombie_registry.entities[i]).scale[0] *= -1;
-		}
-	}
+	
 	
 	// Spawning new eagles
 	// Do we need eagles???

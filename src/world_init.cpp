@@ -19,6 +19,7 @@ Entity createJosh(RenderSystem* renderer, vec2 pos)
 
 	// Create and (empty) Chicken component to be able to refer to all eagles
 	registry.players.emplace(entity);
+	registry.gravities.emplace(entity);
 	registry.renderRequests.insert(
 		entity,
 		{ TEXTURE_ASSET_ID::TEXTURE_COUNT, // TEXTURE_COUNT indicates that no txture is needed
@@ -77,6 +78,7 @@ Entity createZombie(RenderSystem* renderer, vec2 position, int state, double ran
 	// Create and (empty) Eagle component to be able to refer to all eagles
 	registry.deadlys.emplace(entity);
 	registry.zombies.emplace(entity);
+	registry.gravities.emplace(entity);
 	registry.zombies.get(entity).walking_range[0] = position.x - range;
 	registry.zombies.get(entity).walking_range[1] = position.x + range;
 	registry.renderRequests.insert(
