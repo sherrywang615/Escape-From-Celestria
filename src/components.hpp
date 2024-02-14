@@ -39,6 +39,9 @@ struct Motion {
 	vec2 scale = { 10, 10 };
 };
 
+struct Gravity {
+};
+
 // Stucture to store collision information
 struct Collision
 {
