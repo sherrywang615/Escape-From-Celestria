@@ -28,6 +28,29 @@ Entity createChicken(RenderSystem* renderer, vec2 pos)
 	return entity;
 }
 
+Entity createJosh(RenderSystem* renderer, vec2 position)
+{
+    auto entity = Entity();
+
+    Mesh& mesh = renderer->getMesh(GEOMETRY_BUFFER_ID::SPRITE);
+    registry.meshPtrs.emplace(entity, &mesh);
+    auto& motion = registry.motions.emplace(entity);
+
+    motion.angle = 0.f;
+    motion.velocity = { 0, 50 };
+    motion.position = position;
+    motion.scale = vec2({ -JOSH_BB_WIDTH, JOSH_BB_HEIGHT });
+
+    registry.renderRequests.insert(
+        entity,
+        { TEXTURE_ASSET_ID::JOSH, 
+          EFFECT_ASSET_ID::TEXTURED,
+          GEOMETRY_BUFFER_ID::SPRITE });
+
+    return entity;
+}
+
+
 Entity createBug(RenderSystem* renderer, vec2 position)
 {
 	// Reserve en entity

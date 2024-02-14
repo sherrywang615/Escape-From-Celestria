@@ -173,15 +173,15 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 	}
 
 	// Spawning new bug
-	next_bug_spawn -= elapsed_ms_since_last_update * current_speed;
-	if (registry.eatables.components.size() <= MAX_BUG && next_bug_spawn < 0.f)
-	{
-		// !!!  TODO A1: Create new bug with createBug({0,0}), as for the Eagles above
-		// Reset timer
-		next_bug_spawn = (BUG_DELAY_MS / 2) + uniform_dist(rng) * (BUG_DELAY_MS / 2);
-		// Create bug with random initial position
-		createBug(renderer, vec2(50.f + uniform_dist(rng) * (window_width_px - 100.f), -100.f));
-	}
+	// next_bug_spawn -= elapsed_ms_since_last_update * current_speed;
+	// if (registry.eatables.components.size() <= MAX_BUG && next_bug_spawn < 0.f)
+	// {
+	// 	// !!!  TODO A1: Create new bug with createBug({0,0}), as for the Eagles above
+	// 	// Reset timer
+	// 	next_bug_spawn = (BUG_DELAY_MS / 2) + uniform_dist(rng) * (BUG_DELAY_MS / 2);
+	// 	// Create bug with random initial position
+	// 	createBug(renderer, vec2(50.f + uniform_dist(rng) * (window_width_px - 100.f), -100.f));
+	// }
 
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	// TODO A2: HANDLE EGG SPAWN HERE
@@ -253,8 +253,10 @@ void WorldSystem::restart_game()
 	registry.list_all_components();
 
 	// Create a new chicken
-	player_chicken = createChicken(renderer, {window_width_px / 2, window_height_px - 200});
+	player_chicken = createChicken(renderer, {200, 200});
 	registry.colors.insert(player_chicken, {1, 0.8f, 0.8f});
+
+	player_josh = createJosh(renderer, {window_width_px / 2, window_height_px - 200});
 
 	// !! TODO A2: Enable static eggs on the ground, for reference
 	// Create eggs on the floor, use this for reference
@@ -356,37 +358,37 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 	}
 
 	// control chicken movement
-	if (!registry.deathTimers.has(player_chicken))
+	if (!registry.deathTimers.has(player_josh))
 	{
 		if ((action == GLFW_REPEAT || action == GLFW_PRESS) && key == GLFW_KEY_LEFT)
 		{
-			Motion &chicken_motion = registry.motions.get(player_chicken);
-			chicken_motion.velocity.x = -200.f * cos(chicken_motion.angle);
-			chicken_motion.velocity.y = 200.f * sin(chicken_motion.angle);
-			if(chicken_motion.scale.x > 0){
-				chicken_motion.scale.x *= -1;
+			Motion &josh_motion = registry.motions.get(player_josh);
+			josh_motion.velocity.x = -200.f * cos(josh_motion.angle);
+			josh_motion.velocity.y = 200.f * sin(josh_motion.angle);
+			if(josh_motion.scale.x > 0){
+				josh_motion.scale.x *= -1;
 			}
 		}
 		if (action == GLFW_RELEASE && key == GLFW_KEY_LEFT)
 		{
-			Motion &chicken_motion = registry.motions.get(player_chicken);
-			chicken_motion.velocity.y = 0.f;
-			chicken_motion.velocity.x = 0.f;
+			Motion &josh_motion = registry.motions.get(player_josh);
+			josh_motion.velocity.y = 0.f;
+			josh_motion.velocity.x = 0.f;
 		}
 		if ((action == GLFW_REPEAT || action == GLFW_PRESS) && key == GLFW_KEY_RIGHT)
 		{
-			Motion &chicken_motion = registry.motions.get(player_chicken);
-			chicken_motion.velocity.x = -200.f * cos(chicken_motion.angle - M_PI);
-			chicken_motion.velocity.y = 00.f * sin(chicken_motion.angle - M_PI);
-			if(chicken_motion.scale.x < 0){
-				chicken_motion.scale.x *= -1;
+			Motion &josh_motion = registry.motions.get(player_josh);
+			josh_motion.velocity.x = -200.f * cos(josh_motion.angle - M_PI);
+			josh_motion.velocity.y = 00.f * sin(josh_motion.angle - M_PI);
+			if(josh_motion.scale.x < 0){
+				josh_motion.scale.x *= -1;
 			}
 		}
 		if (action == GLFW_RELEASE && key == GLFW_KEY_RIGHT)
 		{
-			Motion &chicken_motion = registry.motions.get(player_chicken);
-			chicken_motion.velocity.y = 0.f;
-			chicken_motion.velocity.x = 0.f;
+			Motion &josh_motion = registry.motions.get(player_josh);
+			josh_motion.velocity.y = 0.f;
+			josh_motion.velocity.x = 0.f;
 		}
 	}
 

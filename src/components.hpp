@@ -124,7 +124,8 @@ struct Sliding
 enum class TEXTURE_ASSET_ID {
 	BUG = 0,
 	EAGLE = BUG + 1,
-	TEXTURE_COUNT = EAGLE + 1
+	JOSH = EAGLE + 1,
+	TEXTURE_COUNT = JOSH + 1
 };
 const int texture_count = (int)TEXTURE_ASSET_ID::TEXTURE_COUNT;
 
