@@ -56,7 +56,7 @@ private:
 	float current_speed;
 	float next_eagle_spawn;
 	float next_bug_spawn;
-	Entity player_chicken;
+	Entity player_josh;
 
 	// music references
 	Mix_Music* background_music;

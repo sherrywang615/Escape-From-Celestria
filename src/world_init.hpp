@@ -4,18 +4,19 @@
 #include "tiny_ecs.hpp"
 #include "render_system.hpp"
 
-// These are ahrd coded to the dimensions of the entity texture
-const float BUG_BB_WIDTH = 0.6f * 165.f;
-const float BUG_BB_HEIGHT = 0.6f * 165.f;
-const float EAGLE_BB_WIDTH = 0.6f * 300.f;
-const float EAGLE_BB_HEIGHT = 0.6f * 202.f;
+// These are hard coded to the dimensions of the entity texture
+
+const float ZOMBIE_BB_WIDTH = 0.6f * 180.f;
+const float ZOMBIE_BB_HEIGHT = 0.6f * 180.f;
+const float PLATFORM_WIDTH = 24.2f;
+const float PLATFORM_HEIGHT = 24.2f;
 
 // the player
-Entity createChicken(RenderSystem* renderer, vec2 pos);
-// the prey
-Entity createBug(RenderSystem* renderer, vec2 position);
-// the enemy
-Entity createEagle(RenderSystem* renderer, vec2 position);
+Entity createJosh(RenderSystem* renderer, vec2 pos);
+// the zombie
+Entity createZombie(RenderSystem* renderer, vec2 position, int state = 0, double range = 200);
+
+Entity createPlatform(RenderSystem* renderer, vec2 pos);
 // a red line for debugging purposes
 Entity createLine(vec2 position, vec2 size);
 // a egg
