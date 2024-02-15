@@ -30,12 +30,32 @@ configure_file("${CMAKE_CURRENT_SOURCE_DIR}/ext/project_path.hpp.in" "${CMAKE_CU
 # You can switch to use the file GLOB for simplicity but at your own risk
 file(GLOB SOURCE_FILES src/*.cpp src/*.hpp)
 
+#set(SOURCE_FILES
+#	src/main.cpp
+#	src/common.cpp
+#	src/fish.cpp
+#	src/chicken.cpp
+#	src/turtle.cpp
+#	src/water.cpp
+#	src/world.cpp
+#	src/mini_ecs.cpp
+# 	src/pebbles.cpp
 
+#    ext/project_path.hpp
+#	src/common.hpp
+#	src/fish.hpp
+#	src/chicken.hpp
+#	src/turtle.hpp
+#	src/water.hpp
+#	src/world.hpp
+#	src/mini_ecs.hpp
+#	src/pebbles.hpp
+#	)
 
 # external libraries will be installed into /usr/local/include and /usr/local/lib but that folder is not automatically included in the search on MACs
 if (IS_OS_MAC)
-  include_directories(/usr/local/include)
-  link_directories(/usr/local/lib)
+  include_directories(/opt/homebrew/include)
+  link_directories(/opt/homebrew/lib)
 endif()
 
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
@@ -67,8 +87,8 @@ if (IS_OS_LINUX OR IS_OS_MAC)
 
     pkg_search_module(GLFW REQUIRED glfw3)
 
-    pkg_search_module(SDL2 REQUIRED sdl)
-    pkg_search_module(SDL2MIXER REQUIRED SDL_mixer)
+    pkg_search_module(SDL2 REQUIRED sdl2)
+    pkg_search_module(SDL2MIXER REQUIRED SDL2_mixer)
 
     # Link Frameworks on OSX
     if (IS_OS_MAC)
