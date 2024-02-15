@@ -2,7 +2,6 @@
 #include "tiny_ecs_registry.hpp"
 #include <iostream>
 
-
 Entity createJosh(RenderSystem* renderer, vec2 pos)
 {
 	auto entity = Entity();
@@ -21,6 +20,7 @@ Entity createJosh(RenderSystem* renderer, vec2 pos)
 
 	// Create and (empty) Chicken component to be able to refer to all eagles
 	registry.players.emplace(entity);
+	registry.gravities.emplace(entity);
 	registry.renderRequests.insert(
 		entity,
 		{ TEXTURE_ASSET_ID::TEXTURE_COUNT, // TEXTURE_COUNT indicates that no txture is needed

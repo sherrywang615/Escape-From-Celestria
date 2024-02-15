@@ -4,6 +4,7 @@
 #include "tiny_ecs.hpp"
 #include "render_system.hpp"
 
+
 // These are hard coded to the dimensions of the entity texture
 
 const float ZOMBIE_BB_WIDTH = 0.6f * 180.f;
@@ -15,6 +16,7 @@ const float PLATFORM_HEIGHT = 24.2f;
 Entity createJosh(RenderSystem* renderer, vec2 pos);
 // the zombie
 Entity createZombie(RenderSystem* renderer, vec2 position, int state = 0, double range = 200);
+
 
 Entity createPlatform(RenderSystem* renderer, vec2 pos);
 // a red line for debugging purposes

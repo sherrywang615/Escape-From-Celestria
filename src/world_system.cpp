@@ -172,7 +172,6 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 	}
 
 	
-
 	// Spawning new eagles
 	// Do we need eagles???
 	//next_eagle_spawn -= elapsed_ms_since_last_update * current_speed;
@@ -239,7 +238,6 @@ void WorldSystem::restart_game()
 	// TODO: Create a room setup function to call on restart
 	createZombie(renderer, vec2(400, 400));
 
-
 	// create one level of platform for now
 	// intialize x, the left grid
 	float x = PLATFORM_WIDTH/2; 
@@ -250,7 +248,6 @@ void WorldSystem::restart_game()
 		createPlatform(renderer, vec2(i, y));
 		i +=PLATFORM_WIDTH;
 	}
-	
 }
 // Compute collisions between entities
 void WorldSystem::handle_collisions()
