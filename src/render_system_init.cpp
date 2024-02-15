@@ -67,6 +67,7 @@ void RenderSystem::initializeGlTextures()
 {
     glGenTextures((GLsizei)texture_gl_handles.size(), texture_gl_handles.data());
 
+	// !!! TODO: 
     for(uint i = 0; i < texture_paths.size(); i++)
     {
 		const std::string& path = texture_paths[i];

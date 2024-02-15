@@ -24,7 +24,7 @@ class RenderSystem {
 	// Associated id with .obj path
 	const std::vector < std::pair<GEOMETRY_BUFFER_ID, std::string>> mesh_paths =
 	{
-		  std::pair<GEOMETRY_BUFFER_ID, std::string>(GEOMETRY_BUFFER_ID::CHICKEN, mesh_path("chicken.obj"))
+		  std::pair<GEOMETRY_BUFFER_ID, std::string>(GEOMETRY_BUFFER_ID::JOSH, mesh_path("Josh.obj"))
 		  // specify meshes of other assets here
 	};
 
@@ -33,6 +33,8 @@ class RenderSystem {
 			textures_path("bug.png"),
 			textures_path("eagle.png"),
 			textures_path("josh.png"),
+      textures_path("zombie1.png"), 
+		  textures_path("ground.png")
 			 };
 
 	std::array<GLuint, effect_count> effects;
@@ -40,9 +42,9 @@ class RenderSystem {
 	const std::array<std::string, effect_count> effect_paths = {
 		shader_path("coloured"),
 		shader_path("egg"),
-		shader_path("chicken"),
+		shader_path("Josh"),
 		shader_path("textured"),
-		shader_path("wind") };
+		shader_path("wind")};
 
 	std::array<GLuint, geometry_count> vertex_buffers;
 	std::array<GLuint, geometry_count> index_buffers;
