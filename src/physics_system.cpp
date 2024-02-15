@@ -54,7 +54,7 @@ bool collides(const Motion& motion1, const Motion& motion2)
 void PhysicsSystem::step(float elapsed_ms)
 {
 	// Check gravity first so we can finalize yspeed
-	float gravity = 100;
+	float gravity = 30;
 	
 	ComponentContainer<Gravity>& gravity_container = registry.gravities;
 	for (uint i = 0; i < gravity_container.size(); i++)
@@ -103,9 +103,28 @@ void PhysicsSystem::step(float elapsed_ms)
 		}
 	}
 
+	// Check boundaries
+	auto& motion_registry = registry.motions;
+	for (uint i = 0; i < motion_registry.size(); i++) {
+		Motion& motion = motion_registry.components[i];
+		float x_val = motion.position.x + motion.velocity.x;
+		printf("%f\n", motion.scale.x);
+		if ((motion.position.x + motion.scale.x/2) <= 0) {
+			motion.velocity.x = 0;
+		}
+		if ((motion.position.x + motion.scale.x / 2) >= window_width_px) {
+			motion.velocity.x = 0;
+		}
+		if ((motion.position.y + motion.scale.y / 2) <= 0) {
+			motion.velocity.y = 0;
+		}
+		if ((motion.position.y + motion.scale.y / 2) >= window_height_px) {
+			motion.velocity.y = 0;
+		}
+	}
+
 	// Move bug based on how much time has passed, this is to (partially) avoid
 	// having entities move at different speed based on the machine.
-	auto& motion_registry = registry.motions;
 	for(uint i = 0; i< motion_registry.size(); i++)
 	{
 		// !!! TODO A1: update motion.position based on step_seconds and motion.velocity
