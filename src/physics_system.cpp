@@ -92,7 +92,8 @@ void PhysicsSystem::step(float elapsed_ms)
 			if (collides(motion_i, motion_j))
 			{
 				Entity entity_j = motion_container.entities[j];
-				if (registry.players.has(entity_i) && registry.platforms.has(entity_j)) {
+				if ((registry.players.has(entity_i) && registry.platforms.has(entity_j))||
+					(registry.players.has(entity_j) && registry.platforms.has(entity_i))) {
 					motion_i.velocity[1] = 0;
 				}
 				// Create a collisions event
@@ -108,7 +109,6 @@ void PhysicsSystem::step(float elapsed_ms)
 	for (uint i = 0; i < motion_registry.size(); i++) {
 		Motion& motion = motion_registry.components[i];
 		float x_val = motion.position.x + motion.velocity.x;
-		printf("%f\n", motion.scale.x);
 		if ((motion.position.x + motion.scale.x/2) <= 0) {
 			motion.velocity.x = 0;
 		}
