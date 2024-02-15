@@ -159,6 +159,7 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 		}
 
 	}
+
 	auto& zombie_registry = registry.zombies;
 	for (int i = (int)zombie_registry.components.size() - 1; i >= 0; --i)
 	{
@@ -231,8 +232,13 @@ void WorldSystem::restart_game()
 	// Debugging for memory/component leaks
 	registry.list_all_components();
 
-	// Create a new Josh
+
+	// Create a new chicken
+	player_chicken = createChicken(renderer, {200, 200});
+	registry.colors.insert(player_chicken, {1, 0.8f, 0.8f});
+
 	player_josh = createJosh(renderer, {window_width_px / 2, window_height_px - 200});
+
 	registry.colors.insert(player_josh, {1, 0.8f, 0.8f});
 	//test zombie
 	// TODO: Create a room setup function to call on restart
@@ -331,33 +337,33 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 	{
 		if ((action == GLFW_REPEAT || action == GLFW_PRESS) && key == GLFW_KEY_LEFT)
 		{
-			Motion &chicken_motion = registry.motions.get(player_josh);
-			chicken_motion.velocity.x = -200.f * cos(chicken_motion.angle);
-			chicken_motion.velocity.y = 200.f * sin(chicken_motion.angle);
-			if(chicken_motion.scale.x > 0){
-				chicken_motion.scale.x *= -1;
+			Motion &josh_motion = registry.motions.get(player_josh);
+			josh_motion.velocity.x = -200.f * cos(josh_motion.angle);
+			josh_motion.velocity.y = 200.f * sin(josh_motion.angle);
+			if(josh_motion.scale.x > 0){
+				josh_motion.scale.x *= -1;
 			}
 		}
 		if (action == GLFW_RELEASE && key == GLFW_KEY_LEFT)
 		{
-			Motion &chicken_motion = registry.motions.get(player_josh);
-			chicken_motion.velocity.y = 0.f;
-			chicken_motion.velocity.x = 0.f;
+			Motion &josh_motion = registry.motions.get(player_josh);
+			josh_motion.velocity.y = 0.f;
+			josh_motion.velocity.x = 0.f;
 		}
 		if ((action == GLFW_REPEAT || action == GLFW_PRESS) && key == GLFW_KEY_RIGHT)
 		{
-			Motion &chicken_motion = registry.motions.get(player_josh);
-			chicken_motion.velocity.x = -200.f * cos(chicken_motion.angle - M_PI);
-			chicken_motion.velocity.y = 00.f * sin(chicken_motion.angle - M_PI);
-			if(chicken_motion.scale.x < 0){
-				chicken_motion.scale.x *= -1;
+			Motion &josh_motion = registry.motions.get(player_josh);
+			josh_motion.velocity.x = -200.f * cos(josh_motion.angle - M_PI);
+			josh_motion.velocity.y = 00.f * sin(josh_motion.angle - M_PI);
+			if(josh_motion.scale.x < 0){
+				josh_motion.scale.x *= -1;
 			}
 		}
 		if (action == GLFW_RELEASE && key == GLFW_KEY_RIGHT)
 		{
-			Motion &chicken_motion = registry.motions.get(player_josh);
-			chicken_motion.velocity.y = 0.f;
-			chicken_motion.velocity.x = 0.f;
+			Motion &josh_motion = registry.motions.get(player_josh);
+			josh_motion.velocity.y = 0.f;
+			josh_motion.velocity.x = 0.f;
 		}
 	}
 

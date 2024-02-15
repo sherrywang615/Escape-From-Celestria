@@ -137,7 +137,9 @@ struct Sliding
 
 enum class TEXTURE_ASSET_ID {
 	BUG = 0,
-	ZOMBIE = BUG + 1,
+	EAGLE = BUG + 1,
+	JOSH = EAGLE + 1,
+	ZOMBIE = JOSH + 1,
 	PLATFORM = ZOMBIE + 1,
 	TEXTURE_COUNT = PLATFORM + 1
 };
