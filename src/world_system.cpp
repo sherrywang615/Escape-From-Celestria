@@ -234,10 +234,10 @@ void WorldSystem::restart_game()
 
 
 	// Create a new chicken
-	player_chicken = createChicken(renderer, {200, 200});
+	
 	registry.colors.insert(player_chicken, {1, 0.8f, 0.8f});
 
-	player_josh = createJosh(renderer, {window_width_px / 2, window_height_px - 200});
+	player_josh = createJosh(renderer, {window_width_px / 2, window_height_px-400});
 
 	registry.colors.insert(player_josh, {1, 0.8f, 0.8f});
 	//test zombie
@@ -303,6 +303,24 @@ void WorldSystem::handle_collisions()
 					registry.remove_all_components_of(entity_other);
 					Mix_PlayChannel(-1, chicken_eat_sound, 0);
 					++points;
+				}
+			}
+			//player platform collision
+			else if (registry.platforms.has(entity_other)) 
+			{
+				Motion& motion = registry.motions.get(entity);
+				motion.velocity.y = 0;
+				Gravity& gravity = registry.gravities.get(entity);
+				gravity.standing = true;
+			}
+		}
+		else {	
+			if (registry.zombies.has(entity)) {
+				if (registry.platforms.has(entity_other)) {
+					Motion& motion = registry.motions.get(entity);
+					motion.velocity.y = 0;
+					Gravity& gravity = registry.gravities.get(entity);
+					gravity.standing = true;
 				}
 			}
 		}

@@ -31,7 +31,7 @@ Entity createJosh(RenderSystem* renderer, vec2 pos)
 }
 
 
-Entity createJosh(RenderSystem* renderer, vec2 position)
+/*Entity createJosh(RenderSystem* renderer, vec2 position)
 {
     auto entity = Entity();
 
@@ -51,7 +51,7 @@ Entity createJosh(RenderSystem* renderer, vec2 position)
           GEOMETRY_BUFFER_ID::SPRITE });
 
     return entity;
-}
+}*/
 
 //Entity createBug(RenderSystem* renderer, vec2 position)
 //{
@@ -102,6 +102,7 @@ Entity createZombie(RenderSystem* renderer, vec2 position, int state, double ran
 	// Create and (empty) Eagle component to be able to refer to all eagles
 	registry.deadlys.emplace(entity);
 	registry.zombies.emplace(entity);
+	registry.gravities.emplace(entity);
 	registry.zombies.get(entity).walking_range[0] = position.x - range;
 	registry.zombies.get(entity).walking_range[1] = position.x + range;
 	registry.renderRequests.insert(

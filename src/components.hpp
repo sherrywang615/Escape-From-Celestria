@@ -46,6 +46,7 @@ struct Motion {
 };
 
 struct Gravity {
+	bool standing = false;
 };
 
 // Stucture to store collision information
@@ -137,8 +138,7 @@ struct Sliding
 
 enum class TEXTURE_ASSET_ID {
 	BUG = 0,
-	EAGLE = BUG + 1,
-	JOSH = EAGLE + 1,
+	JOSH = BUG + 1,
 	ZOMBIE = JOSH + 1,
 	PLATFORM = ZOMBIE + 1,
 	TEXTURE_COUNT = PLATFORM + 1
