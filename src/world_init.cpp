@@ -2,36 +2,9 @@
 #include "tiny_ecs_registry.hpp"
 #include <iostream>
 
-Entity createJosh(RenderSystem* renderer, vec2 pos)
-{
-	auto entity = Entity();
-
-	// Store a reference to the potentially re-used mesh object
-	Mesh& mesh = renderer->getMesh(GEOMETRY_BUFFER_ID::JOSH);
-	registry.meshPtrs.emplace(entity, &mesh);
-
-	// Setting initial motion values
-	Motion& motion = registry.motions.emplace(entity);
-	motion.position = pos;
-	motion.angle = 0.f;
-	motion.velocity = { 0.f, 0.f };
-	motion.scale = mesh.original_size * 250.f;
-	motion.scale.y *= -1; // point front to the right
-
-	// Create and (empty) Chicken component to be able to refer to all eagles
-	registry.players.emplace(entity);
-	registry.gravities.emplace(entity);
-	registry.renderRequests.insert(
-		entity,
-		{ TEXTURE_ASSET_ID::TEXTURE_COUNT, // TEXTURE_COUNT indicates that no txture is needed
-			EFFECT_ASSET_ID::JOSH,
-			GEOMETRY_BUFFER_ID::JOSH });
-
-	return entity;
-}
 
 
-/*Entity createJosh(RenderSystem* renderer, vec2 position)
+Entity createJosh(RenderSystem* renderer, vec2 position)
 {
     auto entity = Entity();
 
@@ -40,10 +13,11 @@ Entity createJosh(RenderSystem* renderer, vec2 pos)
     auto& motion = registry.motions.emplace(entity);
 
     motion.angle = 0.f;
-    motion.velocity = { 0, 50 };
+    motion.velocity = { 0, 0 };
     motion.position = position;
     motion.scale = vec2({ -JOSH_BB_WIDTH, JOSH_BB_HEIGHT });
-
+	registry.players.emplace(entity);
+	registry.gravities.emplace(entity);
     registry.renderRequests.insert(
         entity,
         { TEXTURE_ASSET_ID::JOSH, 
@@ -51,36 +25,8 @@ Entity createJosh(RenderSystem* renderer, vec2 pos)
           GEOMETRY_BUFFER_ID::SPRITE });
 
     return entity;
-}*/
+}
 
-//Entity createBug(RenderSystem* renderer, vec2 position)
-//{
-//	// Reserve en entity
-//	auto entity = Entity();
-//
-//	// Store a reference to the potentially re-used mesh object
-//	Mesh& mesh = renderer->getMesh(GEOMETRY_BUFFER_ID::SPRITE);
-//	registry.meshPtrs.emplace(entity, &mesh);
-//
-//	// Initialize the position, scale, and physics components
-//	auto& motion = registry.motions.emplace(entity);
-//	motion.angle = 0.f;
-//	motion.velocity = { 0, 50 };
-//	motion.position = position;
-//
-//	// Setting initial values, scale is negative to make it face the opposite way
-//	motion.scale = vec2({ -BUG_BB_WIDTH, BUG_BB_HEIGHT });
-//
-//	// Create an (empty) Bug component to be able to refer to all bug
-//	registry.eatables.emplace(entity);
-//	registry.renderRequests.insert(
-//		entity,
-//		{ TEXTURE_ASSET_ID::BUG,
-//			EFFECT_ASSET_ID::TEXTURED,
-//			GEOMETRY_BUFFER_ID::SPRITE });
-//
-//	return entity;
-//}
 
 Entity createZombie(RenderSystem* renderer, vec2 position, int state, double range)
 {

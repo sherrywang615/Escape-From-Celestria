@@ -242,7 +242,7 @@ void WorldSystem::restart_game()
 	registry.colors.insert(player_josh, {1, 0.8f, 0.8f});
 	//test zombie
 	// TODO: Create a room setup function to call on restart
-	createZombie(renderer, vec2(400, 400));
+	//createZombie(renderer, vec2(400, 400));
 
 	// create one level of platform for now
 	// intialize x, the left grid
@@ -250,7 +250,7 @@ void WorldSystem::restart_game()
 	// fixed y for now, only bottom level of platform
 	float y = window_height_px - PLATFORM_HEIGHT/2;
 	float i = x;
-	while(i-PLATFORM_WIDTH<window_width_px){
+	while(i-PLATFORM_WIDTH<window_width_px - 200){
 		createPlatform(renderer, vec2(i, y));
 		i +=PLATFORM_WIDTH;
 	}
@@ -306,13 +306,13 @@ void WorldSystem::handle_collisions()
 				}
 			}
 			//player platform collision
-			else if (registry.platforms.has(entity_other)) 
-			{
-				Motion& motion = registry.motions.get(entity);
-				motion.velocity.y = 0;
-				Gravity& gravity = registry.gravities.get(entity);
-				gravity.standing = true;
-			}
+			//else if (registry.platforms.has(entity_other)) 
+			//{
+			//	Motion& motion = registry.motions.get(entity);
+			//	motion.velocity.y = 0;
+			//	Gravity& gravity = registry.gravities.get(entity);
+			//	gravity.standing = true;
+			//}
 		}
 		else {	
 			if (registry.zombies.has(entity)) {

@@ -80,6 +80,31 @@ void PhysicsSystem::step(float elapsed_ms)
 		}
 	}
 
+	// Check for collisions between all moving entities
+	ComponentContainer<Motion>& motion_container = registry.motions;
+	for (uint i = 0; i < motion_container.components.size(); i++)
+	{
+		Motion& motion_i = motion_container.components[i];
+		Entity entity_i = motion_container.entities[i];
+
+		// note starting j at i+1 to compare all (i,j) pairs only once (and to not compare with itself)
+		for (uint j = i + 1; j < motion_container.components.size(); j++)
+		{
+			Motion& motion_j = motion_container.components[j];
+			if (collides(motion_i, motion_j))
+			{
+				Entity entity_j = motion_container.entities[j];
+				if (registry.players.has(entity_i) && registry.platforms.has(entity_j)) {
+					motion_i.velocity[1] = 0;
+				}
+				// Create a collisions event
+				// We are abusing the ECS system a bit in that we potentially insert muliple collisions for the same entity
+				registry.collisions.emplace_with_duplicates(entity_i, entity_j);
+				registry.collisions.emplace_with_duplicates(entity_j, entity_i);
+			}
+		}
+	}
+
 	// Move bug based on how much time has passed, this is to (partially) avoid
 	// having entities move at different speed based on the machine.
 	auto& motion_registry = registry.motions;
@@ -95,63 +120,9 @@ void PhysicsSystem::step(float elapsed_ms)
 
 	}
 
-	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	// TODO A2: HANDLE EGG UPDATES HERE
-	// DON'T WORRY ABOUT THIS UNTIL ASSIGNMENT 2
-	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-	// Check for collisions between all moving entities
-    ComponentContainer<Motion> &motion_container = registry.motions;
-	for(uint i = 0; i<motion_container.components.size(); i++)
-	{
-		Motion& motion_i = motion_container.components[i];
-		Entity entity_i = motion_container.entities[i];
-		
-		// note starting j at i+1 to compare all (i,j) pairs only once (and to not compare with itself)
-		for(uint j = i+1; j<motion_container.components.size(); j++)
-		{
-			Motion& motion_j = motion_container.components[j];
-			if (collides(motion_i, motion_j))
-			{
-				Entity entity_j = motion_container.entities[j];
-				// Create a collisions event
-				// We are abusing the ECS system a bit in that we potentially insert muliple collisions for the same entity
-				registry.collisions.emplace_with_duplicates(entity_i, entity_j);
-				registry.collisions.emplace_with_duplicates(entity_j, entity_i);
-			}
-		}
-	}
 
 
-	
 
-	// Momentum Implementation
-	int friction = 100;   // The higher this value is, the longer the chicken can slide.
-	ComponentContainer<Sliding>& sliding_container = registry.slidings;
-	for (uint i = 0; i < sliding_container.size(); i++)
-	{
-		Entity entity = sliding_container.entities[i];
-		Sliding sliding = sliding_container.components[i];
-		if (!registry.deathTimers.has(entity)) {
-			Motion& motion = registry.motions.get(entity);
-			if (motion.velocity[0] < -10 || motion.velocity[0] > 10) {
-				motion.velocity[0] -= sliding.velocity[0] / friction;
-			}
-			else {
-				motion.velocity[0] = 0;
-			}
-			if (motion.velocity[1] < -10 || motion.velocity[1] > 10) {
-				motion.velocity[1] -= sliding.velocity[1] / friction;
-			}
-			else {
-				motion.velocity[1] = 0;
-			}
 
-		}
-	}
 
-	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	// TODO A2: HANDLE EGG collisions HERE
-	// DON'T WORRY ABOUT THIS UNTIL ASSIGNMENT 2
-	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 }
