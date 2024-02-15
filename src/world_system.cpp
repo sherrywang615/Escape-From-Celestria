@@ -353,7 +353,7 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 	// control chicken movement
 	if (!registry.deathTimers.has(player_josh))
 	{
-		if ((action == GLFW_REPEAT || action == GLFW_PRESS) && key == GLFW_KEY_LEFT)
+		if ((action == GLFW_REPEAT || action == GLFW_PRESS) && (key == GLFW_KEY_LEFT || key == GLFW_KEY_A))
 		{
 			Motion &josh_motion = registry.motions.get(player_josh);
 			josh_motion.velocity.x = -200.f * cos(josh_motion.angle);
@@ -362,13 +362,13 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 				josh_motion.scale.x *= -1;
 			}
 		}
-		if (action == GLFW_RELEASE && key == GLFW_KEY_LEFT)
+		if (action == GLFW_RELEASE && (key == GLFW_KEY_LEFT || key == GLFW_KEY_A))
 		{
 			Motion &josh_motion = registry.motions.get(player_josh);
 			josh_motion.velocity.y = 0.f;
 			josh_motion.velocity.x = 0.f;
 		}
-		if ((action == GLFW_REPEAT || action == GLFW_PRESS) && key == GLFW_KEY_RIGHT)
+		if ((action == GLFW_REPEAT || action == GLFW_PRESS) && (key == GLFW_KEY_RIGHT || key == GLFW_KEY_D))
 		{
 			Motion &josh_motion = registry.motions.get(player_josh);
 			josh_motion.velocity.x = -200.f * cos(josh_motion.angle - M_PI);
@@ -377,7 +377,7 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 				josh_motion.scale.x *= -1;
 			}
 		}
-		if (action == GLFW_RELEASE && key == GLFW_KEY_RIGHT)
+		if (action == GLFW_RELEASE && (key == GLFW_KEY_RIGHT || key == GLFW_KEY_D))
 		{
 			Motion &josh_motion = registry.motions.get(player_josh);
 			josh_motion.velocity.y = 0.f;
