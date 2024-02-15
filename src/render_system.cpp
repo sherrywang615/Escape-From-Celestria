@@ -3,6 +3,7 @@
 #include <SDL.h>
 
 #include "tiny_ecs_registry.hpp"
+#include <iostream>
 
 void RenderSystem::drawTexturedMesh(Entity entity,
 									const mat3 &projection)
@@ -180,7 +181,6 @@ void RenderSystem::draw()
 	// Getting size of window
 	int w, h;
 	glfwGetFramebufferSize(window, &w, &h); // Note, this will be 2x the resolution given to glfwCreateWindow on retina displays
-
 	// First render to the custom framebuffer
 	glBindFramebuffer(GL_FRAMEBUFFER, frame_buffer);
 	gl_has_errors();

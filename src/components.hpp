@@ -25,6 +25,12 @@ struct NormalZombie
 	std::vector<double> walking_range = { 0, 0 };
 };
 
+struct Platform
+{
+	//height and width
+	//vec2 size = {300,300};
+};
+
 // Bug and Chicken have a soft shell
 struct Eatable
 {
@@ -132,7 +138,8 @@ struct Sliding
 enum class TEXTURE_ASSET_ID {
 	BUG = 0,
 	ZOMBIE = BUG + 1,
-	TEXTURE_COUNT = ZOMBIE + 1
+	PLATFORM = ZOMBIE + 1,
+	TEXTURE_COUNT = PLATFORM + 1
 };
 const int texture_count = (int)TEXTURE_ASSET_ID::TEXTURE_COUNT;
 
@@ -153,6 +160,7 @@ enum class GEOMETRY_BUFFER_ID {
 	DEBUG_LINE = EGG + 1,
 	SCREEN_TRIANGLE = DEBUG_LINE + 1,
 	GEOMETRY_COUNT = SCREEN_TRIANGLE + 1
+	
 };
 const int geometry_count = (int)GEOMETRY_BUFFER_ID::GEOMETRY_COUNT;
 

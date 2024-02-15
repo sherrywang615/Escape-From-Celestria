@@ -1,5 +1,6 @@
 #include "world_init.hpp"
 #include "tiny_ecs_registry.hpp"
+#include <iostream>
 
 Entity createJosh(RenderSystem* renderer, vec2 pos)
 {
@@ -78,7 +79,6 @@ Entity createZombie(RenderSystem* renderer, vec2 position, int state, double ran
 	// Create and (empty) Eagle component to be able to refer to all eagles
 	registry.deadlys.emplace(entity);
 	registry.zombies.emplace(entity);
-	registry.gravities.emplace(entity);
 	registry.zombies.get(entity).walking_range[0] = position.x - range;
 	registry.zombies.get(entity).walking_range[1] = position.x + range;
 	registry.renderRequests.insert(
@@ -89,6 +89,33 @@ Entity createZombie(RenderSystem* renderer, vec2 position, int state, double ran
 
 	return entity;
 }
+
+
+Entity createPlatform(RenderSystem* renderer, vec2 pos)
+{
+	auto entity = Entity();
+
+	Mesh& mesh = renderer->getMesh(GEOMETRY_BUFFER_ID::SPRITE);
+	registry.meshPtrs.emplace(entity, &mesh);
+
+	// Initialize the motion of zombie to rightwards
+	auto& motion = registry.motions.emplace(entity);
+	motion.angle = 0.f;
+	motion.velocity = {0.0f, 0.0f};
+	motion.position = pos;
+	motion.scale = {PLATFORM_WIDTH,PLATFORM_HEIGHT};
+
+	
+	registry.platforms.emplace(entity);
+	registry.renderRequests.insert(
+		entity,
+		{ TEXTURE_ASSET_ID::PLATFORM,
+		 EFFECT_ASSET_ID::TEXTURED,
+		 GEOMETRY_BUFFER_ID::SPRITE });
+
+	return entity;
+}
+
 
 Entity createLine(vec2 position, vec2 scale)
 {

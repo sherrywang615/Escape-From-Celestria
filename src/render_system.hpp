@@ -31,7 +31,8 @@ class RenderSystem {
 	// Make sure these paths remain in sync with the associated enumerators.
 	const std::array<std::string, texture_count> texture_paths = {
 		textures_path("bug.png"),
-		textures_path("zombie1.png") };
+		textures_path("zombie1.png"), 
+		textures_path("ground.png")};
 
 	std::array<GLuint, effect_count> effects;
 	// Make sure these paths remain in sync with the associated enumerators.
@@ -40,7 +41,7 @@ class RenderSystem {
 		shader_path("egg"),
 		shader_path("Josh"),
 		shader_path("textured"),
-		shader_path("wind") };
+		shader_path("wind")};
 
 	std::array<GLuint, geometry_count> vertex_buffers;
 	std::array<GLuint, geometry_count> index_buffers;

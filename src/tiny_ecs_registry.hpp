@@ -22,6 +22,7 @@ public:
 	ComponentContainer<Eatable> eatables;
 	ComponentContainer<Deadly> deadlys;
 	ComponentContainer<NormalZombie> zombies;
+	ComponentContainer<Platform> platforms;
 	ComponentContainer<DebugComponent> debugComponents;
 	ComponentContainer<vec3> colors;
 	ComponentContainer<Sliding> slidings;
@@ -42,6 +43,7 @@ public:
 		registry_list.push_back(&eatables);
 		registry_list.push_back(&deadlys);
 		registry_list.push_back(&zombies);
+		registry_list.push_back(&platforms);
 		registry_list.push_back(&debugComponents);
 		registry_list.push_back(&colors);
 		registry_list.push_back(&slidings);

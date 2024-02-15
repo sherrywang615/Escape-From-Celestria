@@ -5,7 +5,7 @@
 // stlib
 #include <cassert>
 #include <sstream>
-
+#include <iostream>
 #include "physics_system.hpp"
 
 // Game configuration
@@ -157,8 +157,20 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 			if (!registry.players.has(motions_registry.entities[i])) // don't remove the player
 				registry.remove_all_components_of(motions_registry.entities[i]);
 		}
+
 	}
-	
+	auto& zombie_registry = registry.zombies;
+	for (int i = (int)zombie_registry.components.size() - 1; i >= 0; --i)
+	{
+		NormalZombie& zombie = zombie_registry.components[i];
+		double xPosition = registry.motions.get(zombie_registry.entities[i]).position.x;
+		// if zombie state == unalert (0), then check if it has reached the edge of its walking range and switch direction if so
+		if (zombie.state == 0 && (xPosition <= zombie.walking_range[0] || xPosition >= zombie.walking_range[1])) {
+			registry.motions.get(zombie_registry.entities[i]).velocity.x *= -1;
+			registry.motions.get(zombie_registry.entities[i]).scale[0] *= -1;
+		}
+	}
+
 	
 	// Spawning new eagles
 	// Do we need eagles???
@@ -225,8 +237,18 @@ void WorldSystem::restart_game()
 	//test zombie
 	// TODO: Create a room setup function to call on restart
 	createZombie(renderer, vec2(400, 400));
-}
 
+	// create one level of platform for now
+	// intialize x, the left grid
+	float x = PLATFORM_WIDTH/2; 
+	// fixed y for now, only bottom level of platform
+	float y = window_height_px - PLATFORM_HEIGHT/2;
+	float i = x;
+	while(i-PLATFORM_WIDTH<window_width_px){
+		createPlatform(renderer, vec2(i, y));
+		i +=PLATFORM_WIDTH;
+	}
+}
 // Compute collisions between entities
 void WorldSystem::handle_collisions()
 {
@@ -279,7 +301,6 @@ void WorldSystem::handle_collisions()
 			}
 		}
 	}
-
 	// Remove all collisions from this simulation step
 	registry.collisions.clear();
 }
