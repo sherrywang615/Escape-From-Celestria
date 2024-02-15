@@ -46,7 +46,6 @@ struct Motion {
 };
 
 struct Gravity {
-	bool standing = false;
 };
 
 // Stucture to store collision information

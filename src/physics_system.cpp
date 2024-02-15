@@ -59,12 +59,10 @@ void PhysicsSystem::step(float elapsed_ms)
 	ComponentContainer<Gravity>& gravity_container = registry.gravities;
 	for (uint i = 0; i < gravity_container.size(); i++)
 	{
-		if (gravity_container.components[i].standing == false) {
-			Entity entity = gravity_container.entities[i];
-			if (registry.motions.has(entity)) {
-				Motion& motion = registry.motions.get(entity);
+		Entity entity = gravity_container.entities[i];
+		if (registry.motions.has(entity)) {
+			Motion& motion = registry.motions.get(entity);
 				motion.velocity[1] += gravity;
-			}
 		}
 	}
 	// zombie unalerted turning 
