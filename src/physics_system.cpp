@@ -55,15 +55,17 @@ void PhysicsSystem::step(float elapsed_ms)
 {
 	// Check gravity first so we can finalize yspeed
 	float gravity = 100;
+	
 	ComponentContainer<Gravity>& gravity_container = registry.gravities;
 	for (uint i = 0; i < gravity_container.size(); i++)
 	{
-		Entity entity = gravity_container.entities[i];
-		if (registry.motions.has(entity)) {
-			Motion& motion = registry.motions.get(entity);
-			motion.velocity[1] += gravity;
+		if (gravity_container.components[i].standing == false) {
+			Entity entity = gravity_container.entities[i];
+			if (registry.motions.has(entity)) {
+				Motion& motion = registry.motions.get(entity);
+				motion.velocity[1] += gravity;
+			}
 		}
-
 	}
 	// zombie unalerted turning 
 	auto& zombie_registry = registry.zombies;
