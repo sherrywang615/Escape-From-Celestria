@@ -136,6 +136,11 @@ void WorldSystem::init(RenderSystem *renderer_arg)
 	restart_game();
 }
 
+// Linear interpolation
+vec3 lerp(vec3 start, vec3 end, float t) {
+    return start * (1 - t) + end * t;
+}
+
 // Update our game world
 bool WorldSystem::step(float elapsed_ms_since_last_update)
 {
@@ -170,6 +175,25 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 			registry.motions.get(zombie_registry.entities[i]).velocity.x *= -1;
 			registry.motions.get(zombie_registry.entities[i]).scale[0] *= -1;
 		}
+	}
+
+	// change josh's color gradually 
+	auto& color_change_registry = registry.colorChanges;
+	for (int i = (int)color_change_registry.components.size() - 1; i >= 0; --i)
+	{
+		Entity entity = color_change_registry.entities[i];
+		ColorChange &color_change = color_change_registry.components[i];
+		color_change.color_time_elapsed += elapsed_ms_since_last_update / 1000.0f;
+		float t = color_change.color_time_elapsed / color_change.color_duration;
+
+		if(t < 1.0f){
+			vec3 color_new = lerp(color_change.color_start, color_change.color_end, t);
+			registry.colors.emplace(entity, color_new);
+		} else {
+			registry.colors.emplace(entity, color_change.color_end);
+			registry.colorChanges.remove(entity);
+		}
+
 	}
 
 	
@@ -242,7 +266,7 @@ void WorldSystem::restart_game()
 	registry.colors.insert(player_josh, {1, 0.8f, 0.8f});
 	//test zombie
 	// TODO: Create a room setup function to call on restart
-	//createZombie(renderer, vec2(400, 400));
+	createZombie(renderer, vec2(400, 400));
 
 	// create one level of platform for now
 	// intialize x, the left grid
@@ -289,15 +313,19 @@ void WorldSystem::handle_collisions()
 
 					// !!! TODO A1: change the chicken orientation and color on death
 					Motion &motion = registry.motions.get(entity);
-					// Make chicken upside down (degree = 270)
-					motion.angle = 4.71238898f;
+					// // Make chicken upside down (degree = 270)
+					// motion.angle = 4.71238898f;
 					motion.velocity[0] = 0;
 					motion.velocity[1] = 200;
-					// Change color to red (255, 0, 0)
+					// // Change color to red (255, 0, 0)
+					// change color to red on death
 					vec3 death_color = {255.0f, 0.0f, 0.0f};
 					vec3 color = registry.colors.get(entity);
+					float duration = 1.0f;
 					registry.colors.remove(entity);
-					registry.colors.emplace(entity, death_color);
+					//registry.colors.emplace(entity, death_color);
+					ColorChange colorChange = {color, death_color, duration, 0.0f};
+					registry.colorChanges.emplace(entity, colorChange);
 				}
 			}
 			// Checking Player - Eatable collisions

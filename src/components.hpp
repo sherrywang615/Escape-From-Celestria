@@ -113,6 +113,14 @@ struct Sliding
 	vec2 velocity = { 0, 0 };
 };
 
+//change josh's color on death
+struct ColorChange {
+	vec3 color_start;
+	vec3 color_end;
+	float color_duration;
+	float color_time_elapsed;
+};
+
 /**
  * The following enumerators represent global identifiers refering to graphic
  * assets. For example TEXTURE_ASSET_ID are the identifiers of each texture

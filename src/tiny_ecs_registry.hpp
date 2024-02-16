@@ -27,6 +27,7 @@ public:
 	ComponentContainer<vec3> colors;
 	ComponentContainer<Sliding> slidings;
 	ComponentContainer<Gravity> gravities;
+	ComponentContainer<ColorChange> colorChanges;
 
 	// constructor that adds all containers for looping over them
 	// IMPORTANT: Don't forget to add any newly added containers!
