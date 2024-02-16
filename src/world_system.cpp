@@ -237,7 +237,7 @@ void WorldSystem::restart_game()
 	
 	registry.colors.insert(player_chicken, {1, 0.8f, 0.8f});
 
-	player_josh = createJosh(renderer, {window_width_px / 2, window_height_px-400});
+	player_josh = createJosh(renderer, {window_width_px / 2, window_height_px-600});
 
 	registry.colors.insert(player_josh, {1, 0.8f, 0.8f});
 	//test zombie
@@ -249,6 +249,12 @@ void WorldSystem::restart_game()
 	float x = PLATFORM_WIDTH/2; 
 	// fixed y for now, only bottom level of platform
 	float y = window_height_px - PLATFORM_HEIGHT/2;
+	float a = window_width_px/2;
+	float b = 300;
+	while (b < a + 200) {
+		createPlatform(renderer, vec2(b, window_height_px - 400));
+		b += PLATFORM_WIDTH;
+	}
 	float i = x;
 	while(i-PLATFORM_WIDTH<window_width_px - 200){
 		createPlatform(renderer, vec2(i, y));
@@ -305,14 +311,6 @@ void WorldSystem::handle_collisions()
 					++points;
 				}
 			}
-			//player platform collision
-			//else if (registry.platforms.has(entity_other)) 
-			//{
-			//	Motion& motion = registry.motions.get(entity);
-			//	motion.velocity.y = 0;
-			//	Gravity& gravity = registry.gravities.get(entity);
-			//	gravity.standing = true;
-			//}
 		}
 		else {	
 			if (registry.zombies.has(entity)) {

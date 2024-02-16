@@ -68,7 +68,11 @@ Entity createPlatform(RenderSystem* renderer, vec2 pos)
 	Mesh& mesh = renderer->getMesh(GEOMETRY_BUFFER_ID::SPRITE);
 	registry.meshPtrs.emplace(entity, &mesh);
 
-	// Initialize the motion of zombie to rightwards
+
+	auto& platform = registry.platforms.emplace(entity);
+	platform.position = pos;
+	platform.scale = { PLATFORM_WIDTH,PLATFORM_HEIGHT };
+
 	auto& motion = registry.motions.emplace(entity);
 	motion.angle = 0.f;
 	motion.velocity = {0.0f, 0.0f};
@@ -76,7 +80,7 @@ Entity createPlatform(RenderSystem* renderer, vec2 pos)
 	motion.scale = {PLATFORM_WIDTH,PLATFORM_HEIGHT};
 
 	
-	registry.platforms.emplace(entity);
+	//registry.platforms.emplace(entity);
 	registry.renderRequests.insert(
 		entity,
 		{ TEXTURE_ASSET_ID::PLATFORM,

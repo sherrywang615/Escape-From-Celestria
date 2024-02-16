@@ -29,6 +29,8 @@ struct Platform
 {
 	//height and width
 	//vec2 size = {300,300};
+	vec2 position = { 0, 0 };
+	vec2 scale = { 10, 10 };
 };
 
 // Bug and Chicken have a soft shell
@@ -164,6 +166,14 @@ enum class GEOMETRY_BUFFER_ID {
 	
 };
 const int geometry_count = (int)GEOMETRY_BUFFER_ID::GEOMETRY_COUNT;
+
+enum class DIRECTION {
+	RIGHT = 0,
+	TOP = RIGHT + 1,
+	LEFT = TOP + 1,
+	BOT = LEFT + 1,
+	ALL = BOT + 1         // ALL is used to check if one object is colliding at all
+};
 
 struct RenderRequest {
 	TEXTURE_ASSET_ID used_texture = TEXTURE_ASSET_ID::TEXTURE_COUNT;
