@@ -280,7 +280,7 @@ void WorldSystem::restart_game()
 		b += PLATFORM_WIDTH;
 	}
 	float i = x;
-	while(i-PLATFORM_WIDTH<window_width_px - 200){
+	while(i-PLATFORM_WIDTH<window_width_px){
 		createPlatform(renderer, vec2(i, y));
 		i +=PLATFORM_WIDTH;
 	}

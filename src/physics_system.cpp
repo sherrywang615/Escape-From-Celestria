@@ -128,14 +128,14 @@ void PhysicsSystem::step(float elapsed_ms)
 			if (collides(motion, motion_2, step_seconds, DIRECTION::TOP)) {
 				motion.velocity.y = 0;
 			}
-			else if (collides(motion, motion_2, step_seconds, DIRECTION::BOT)) {
+			if (collides(motion, motion_2, step_seconds, DIRECTION::BOT)) {
 				motion.velocity.y = 0;
 			}
-			else if (collides(motion, motion_2, step_seconds, DIRECTION::LEFT)) {
+			if (collides(motion, motion_2, step_seconds, DIRECTION::LEFT)) {
 				printf("colliding with left\n");
 				motion.velocity.x = 0;
 			}
-			else if (collides(motion, motion_2, step_seconds, DIRECTION::RIGHT)) {
+			if (collides(motion, motion_2, step_seconds, DIRECTION::RIGHT)) {
 				motion.velocity.x = 0;
 			}
 
@@ -171,17 +171,26 @@ void PhysicsSystem::step(float elapsed_ms)
 	auto& motion_registry = registry.motions;
 	for (uint i = 0; i < motion_registry.size(); i++) {
 		Motion& motion = motion_registry.components[i];
-		if ((motion.position.x + motion.scale.x/2) <= 0) {
+		if ((motion.position.x - abs(motion.scale.x) / 2) < 0) {
+			//printf("Colliding with left boundary\n");
 			motion.velocity.x = 0;
+			motion.position.x = abs(motion.scale.x) / 2;
 		}
-		if ((motion.position.x + motion.scale.x / 2) >= window_width_px) {
+		if ((motion.position.x + abs(motion.scale.x) / 2) > window_width_px) {
 			motion.velocity.x = 0;
+			motion.position.x = window_width_px - abs(motion.scale.x) / 2;
+			//printf("Colliding with right boundary\n");
 		}
-		if ((motion.position.y + motion.scale.y / 2) <= 0) {
+		if ((motion.position.y - abs(motion.scale.y) / 2) < 0) {
 			motion.velocity.y = 0;
+			motion.position.y = abs(motion.scale.y) / 2;
+			//printf("Colliding with top boundary\n");
 		}
-		if ((motion.position.y + motion.scale.y / 2) >= window_height_px) {
+		if ((motion.position.y + abs(motion.scale.y) / 2) > window_height_px) {
 			motion.velocity.y = 0;
+			motion.position.y = window_height_px - abs(motion.scale.y) / 2;
+			//printf("%f\n", motion.position.y + abs(motion.scale.y) / 2);
+			//printf("Colliding with bot boundary\n");
 		}
 	}
 
