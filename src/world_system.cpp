@@ -245,7 +245,7 @@ void WorldSystem::restart_game()
 	registry.list_all_components();
 
 	
-	player_josh = createJosh(renderer, {window_width_px / 2, window_height_px-400});
+	player_josh = createJosh(renderer, {window_width_px / 2, window_height_px-500});
 
 	registry.colors.insert(player_josh, {1, 0.8f, 0.8f});
 	//test zombie
