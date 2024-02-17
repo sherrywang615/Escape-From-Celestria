@@ -8,6 +8,8 @@
 #include <iostream>
 #include "physics_system.hpp"
 
+#include <fstream>
+
 // Game configuration
 const size_t MAX_EAGLES = 15;
 const size_t MAX_BUG = 5;
@@ -165,18 +167,6 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 
 	}
 
-	// auto& zombie_registry = registry.zombies;
-	// for (int i = (int)zombie_registry.components.size() - 1; i >= 0; --i)
-	// {
-	// 	NormalZombie& zombie = zombie_registry.components[i];
-	// 	double xPosition = registry.motions.get(zombie_registry.entities[i]).position.x;
-	// 	// if zombie state == unalert (0), then check if it has reached the edge of its walking range and switch direction if so
-	// 	if (zombie.state == 0 && (xPosition <= zombie.walking_range[0] || xPosition >= zombie.walking_range[1])) {
-	// 		registry.motions.get(zombie_registry.entities[i]).velocity.x *= -1;
-	// 		registry.motions.get(zombie_registry.entities[i]).scale[0] *= -1;
-	// 	}
-	// }
-
 	// change josh's color gradually 
 	auto& color_change_registry = registry.colorChanges;
 	for (int i = (int)color_change_registry.components.size() - 1; i >= 0; --i)
@@ -185,13 +175,25 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 		ColorChange &color_change = color_change_registry.components[i];
 		color_change.color_time_elapsed += elapsed_ms_since_last_update / 1000.0f;
 		float t = color_change.color_time_elapsed / color_change.color_duration;
-
-		if(t < 1.0f){
+		if (t < 1.0f) {
 			vec3 color_new = lerp(color_change.color_start, color_change.color_end, t);
-			registry.colors.emplace(entity, color_new);
+			if (registry.colors.has(entity)) {
+				registry.colors.remove(entity);
+				registry.colors.emplace(entity, color_new);
+			}
+			else 
+			{
+				registry.colors.emplace(entity, color_new);
+			}
 		} else {
-			registry.colors.emplace(entity, color_change.color_end);
-			registry.colorChanges.remove(entity);
+			if (!registry.colors.has(entity)) 
+			{
+				registry.colors.emplace(entity, color_change.color_end);
+			}
+			else
+			{
+				registry.colorChanges.remove(entity);
+			}
 		}
 
 	}
@@ -227,13 +229,14 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 		if (counter.counter_ms < 0)
 		{
 			registry.deathTimers.remove(entity);
+			
 			screen.darken_screen_factor = 0;
 			restart_game();
 			return true;
 		}
 	}
 	// reduce window brightness if any of the present chickens is dying
-	screen.darken_screen_factor = 1 - min_counter_ms / 3000;
+	//screen.darken_screen_factor = 1 - min_counter_ms / 3000;
 
 	for (Entity entity : registry.lightUps.entities)
 	{
@@ -261,7 +264,6 @@ void WorldSystem::restart_game()
 {
 	// Debugging for memory/component leaks
 	registry.list_all_components();
-	printf("Restarting\n");
 
 	// Reset the game speed
 	current_speed = 1.f;
@@ -274,19 +276,15 @@ void WorldSystem::restart_game()
 	// Debugging for memory/component leaks
 	registry.list_all_components();
 
-
-	// Create a new chicken
 	
-	registry.colors.insert(player_chicken, {1, 0.8f, 0.8f});
-
-	player_josh = createJosh(renderer, {window_width_px / 2, window_height_px-600});
+	player_josh = createJosh(renderer, {window_width_px / 2, window_height_px-500});
 
 	registry.colors.insert(player_josh, {1, 0.8f, 0.8f});
 	//test zombie
 	// TODO: Create a room setup function to call on restart
-	createZombie(renderer, vec2(400, 400));
-	
+
 	createBug(renderer, vec2(300, window_height_px-600));
+	createZombie(renderer, vec2(400, 400), 0, 50);
 
 	// create one level of platform for now
 	// intialize x, the left grid
@@ -329,22 +327,21 @@ void WorldSystem::handle_collisions()
 				{
 					// Scream, reset timer, and make the chicken sink
 					registry.deathTimers.emplace(entity);
-					Mix_PlayChannel(-1, chicken_dead_sound, 0);
-
-					// !!! TODO A1: change the chicken orientation and color on death
-					Motion &motion = registry.motions.get(entity);
-					// // Make chicken upside down (degree = 270)
-					// motion.angle = 4.71238898f;
+					//Mix_PlayChannel(-1, chicken_dead_sound, 0);
+	
+					Motion& motion = registry.motions.get(entity);
 					motion.velocity[0] = 0;
-					motion.velocity[1] = 200;
-					// // Change color to red (255, 0, 0)
+					motion.velocity[1] = 0;
+
 					// change color to red on death
 					vec3 death_color = {255.0f, 0.0f, 0.0f};
 					vec3 color = registry.colors.get(entity);
 					float duration = 1.0f;
 					registry.colors.remove(entity);
+
+		
 					//registry.colors.emplace(entity, death_color);
-					ColorChange colorChange = {color, death_color, duration, 0.0f};
+					ColorChange colorChange = { color, death_color, duration, 0.0f };
 					registry.colorChanges.emplace(entity, colorChange);
 				}
 			}
@@ -447,6 +444,74 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 			debugging.in_debug_mode = false;
 		else
 			debugging.in_debug_mode = true;
+	}
+
+	if (action == GLFW_PRESS && key == GLFW_KEY_B)
+	{
+		std::fstream file;
+		file.open("..\\..\\..\\data\\saving\\save.txt");
+		
+		if (file.is_open()) {
+			for (Entity player : registry.players.entities) {
+				Motion motion = registry.motions.get(player);
+				file << "Josh ";
+				file << std::to_string(motion.position.x) << " ";
+				file << std::to_string(motion.position.y) << "\n";
+			}
+			for (Entity zombie : registry.zombies.entities) {
+				Motion motion = registry.motions.get(zombie);
+				file << "Zombie ";
+				file << std::to_string(motion.position.x) << " ";
+				file << std::to_string(motion.position.y) << "\n";
+			}
+			
+		}
+		else {
+			printf("Cannot save because cannot open saving file\n");
+		}
+		file.close();
+	}
+
+	if (action == GLFW_PRESS && key == GLFW_KEY_N)
+	{
+		std::fstream file;
+		file.open("..\\..\\..\\data\\saving\\save.txt");
+		bool readingJosh = false;
+		bool readingZombie = false;
+
+		if (file.is_open()) {
+			std::string line;
+			while (getline(file, line)) {
+				std::vector<std::string> toks;
+				std::string delimiter = " ";
+				while (line.find(delimiter) != std::string::npos) {
+					int delim_loc = line.find(delimiter);
+					std::string token = line.substr(0, delim_loc);
+					toks.push_back(token);
+					line = line.substr(delim_loc + 1, line.size());
+				}
+				toks.push_back(line);
+
+				if (toks[0] == "Josh") {
+					for (Entity player : registry.players.entities) {
+						Motion& motion = registry.motions.get(player);
+						motion.position.x = std::stof(toks[1]);
+						motion.position.y = std::stof(toks[2]);
+					}
+				}
+				else if (toks[0] == "Zombie")
+					for (Entity zombie : registry.zombies.entities) {
+						Motion& motion = registry.motions.get(zombie);
+						motion.position.x = std::stof(toks[1]);
+						motion.position.y = std::stof(toks[2]);
+					}
+			}
+
+		}
+		else {
+			printf("Cannot save because cannot open saving file\n");
+		}
+		file.close();
 	}
 
 	// Control the current speed with `<` `>`

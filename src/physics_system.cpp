@@ -127,16 +127,20 @@ void PhysicsSystem::step(float elapsed_ms)
 
 			if (collides(motion, motion_2, step_seconds, DIRECTION::TOP)) {
 				motion.velocity.y = 0;
+				motion.position.y = motion_2.position.y + abs(motion_2.scale.y) / 2 + abs(motion.scale.y) / 2;
 			}
 			if (collides(motion, motion_2, step_seconds, DIRECTION::BOT)) {
 				motion.velocity.y = 0;
+				motion.position.y = motion_2.position.y - abs(motion_2.scale.y) / 2 - abs(motion.scale.y) / 2;
 			}
 			if (collides(motion, motion_2, step_seconds, DIRECTION::LEFT)) {
 				printf("colliding with left\n");
 				motion.velocity.x = 0;
+				motion.position.x = motion_2.position.x + abs(motion_2.scale.x) / 2 + abs(motion.scale.x) / 2;
 			}
 			if (collides(motion, motion_2, step_seconds, DIRECTION::RIGHT)) {
 				motion.velocity.x = 0;
+				motion.position.x = motion_2.position.x - abs(motion_2.scale.x) / 2 - abs(motion.scale.x) / 2;
 			}
 
 		}
