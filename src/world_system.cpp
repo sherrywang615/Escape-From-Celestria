@@ -352,8 +352,6 @@ void WorldSystem::handle_collisions()
 				{
 					// chew, count points, and set the LightUp timer
 					registry.remove_all_components_of(entity_other);
-					// Mix_PlayChannel(-1, chicken_eat_sound, 0);
-					// ++points;
 					registry.lightUps.emplace(entity);
 				}
 			}
