@@ -8,6 +8,8 @@
 #include <iostream>
 #include "physics_system.hpp"
 
+#include <fstream>
+
 // Game configuration
 const size_t MAX_EAGLES = 15;
 const size_t MAX_BUG = 5;
@@ -422,6 +424,74 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 			debugging.in_debug_mode = false;
 		else
 			debugging.in_debug_mode = true;
+	}
+
+	if (action == GLFW_PRESS && key == GLFW_KEY_B)
+	{
+		std::fstream file;
+		file.open("..\\..\\..\\data\\saving\\save.txt");
+		
+		if (file.is_open()) {
+			for (Entity player : registry.players.entities) {
+				Motion motion = registry.motions.get(player);
+				file << "Josh ";
+				file << std::to_string(motion.position.x) << " ";
+				file << std::to_string(motion.position.y) << "\n";
+			}
+			for (Entity zombie : registry.zombies.entities) {
+				Motion motion = registry.motions.get(zombie);
+				file << "Zombie ";
+				file << std::to_string(motion.position.x) << " ";
+				file << std::to_string(motion.position.y) << "\n";
+			}
+			
+		}
+		else {
+			printf("Cannot save because cannot open saving file\n");
+		}
+		file.close();
+	}
+
+	if (action == GLFW_PRESS && key == GLFW_KEY_N)
+	{
+		std::fstream file;
+		file.open("..\\..\\..\\data\\saving\\save.txt");
+		bool readingJosh = false;
+		bool readingZombie = false;
+
+		if (file.is_open()) {
+			std::string line;
+			while (getline(file, line)) {
+				std::vector<std::string> toks;
+				std::string delimiter = " ";
+				while (line.find(delimiter) != std::string::npos) {
+					int delim_loc = line.find(delimiter);
+					std::string token = line.substr(0, delim_loc);
+					toks.push_back(token);
+					line = line.substr(delim_loc + 1, line.size());
+				}
+				toks.push_back(line);
+
+				if (toks[0] == "Josh") {
+					for (Entity player : registry.players.entities) {
+						Motion& motion = registry.motions.get(player);
+						motion.position.x = std::stof(toks[1]);
+						motion.position.y = std::stof(toks[2]);
+					}
+				}
+				else if (toks[0] == "Zombie")
+					for (Entity zombie : registry.zombies.entities) {
+						Motion& motion = registry.motions.get(zombie);
+						motion.position.x = std::stof(toks[1]);
+						motion.position.y = std::stof(toks[2]);
+					}
+			}
+
+		}
+		else {
+			printf("Cannot save because cannot open saving file\n");
+		}
+		file.close();
 	}
 
 	// Control the current speed with `<` `>`
