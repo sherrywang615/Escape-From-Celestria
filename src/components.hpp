@@ -121,6 +121,11 @@ struct ColorChange {
 	float color_time_elapsed;
 };
 
+struct LightUp
+{
+	float counter_ms = 900;
+};
+
 /**
  * The following enumerators represent global identifiers refering to graphic
  * assets. For example TEXTURE_ASSET_ID are the identifiers of each texture

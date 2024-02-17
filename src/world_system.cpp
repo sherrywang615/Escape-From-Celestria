@@ -165,17 +165,17 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 
 	}
 
-	auto& zombie_registry = registry.zombies;
-	for (int i = (int)zombie_registry.components.size() - 1; i >= 0; --i)
-	{
-		NormalZombie& zombie = zombie_registry.components[i];
-		double xPosition = registry.motions.get(zombie_registry.entities[i]).position.x;
-		// if zombie state == unalert (0), then check if it has reached the edge of its walking range and switch direction if so
-		if (zombie.state == 0 && (xPosition <= zombie.walking_range[0] || xPosition >= zombie.walking_range[1])) {
-			registry.motions.get(zombie_registry.entities[i]).velocity.x *= -1;
-			registry.motions.get(zombie_registry.entities[i]).scale[0] *= -1;
-		}
-	}
+	// auto& zombie_registry = registry.zombies;
+	// for (int i = (int)zombie_registry.components.size() - 1; i >= 0; --i)
+	// {
+	// 	NormalZombie& zombie = zombie_registry.components[i];
+	// 	double xPosition = registry.motions.get(zombie_registry.entities[i]).position.x;
+	// 	// if zombie state == unalert (0), then check if it has reached the edge of its walking range and switch direction if so
+	// 	if (zombie.state == 0 && (xPosition <= zombie.walking_range[0] || xPosition >= zombie.walking_range[1])) {
+	// 		registry.motions.get(zombie_registry.entities[i]).velocity.x *= -1;
+	// 		registry.motions.get(zombie_registry.entities[i]).scale[0] *= -1;
+	// 	}
+	// }
 
 	// change josh's color gradually 
 	auto& color_change_registry = registry.colorChanges;
@@ -235,6 +235,24 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 	// reduce window brightness if any of the present chickens is dying
 	screen.darken_screen_factor = 1 - min_counter_ms / 3000;
 
+	for (Entity entity : registry.lightUps.entities)
+	{
+		// Progress timer
+		LightUp &counter = registry.lightUps.get(entity);
+		counter.counter_ms -= elapsed_ms_since_last_update;
+
+		if (counter.counter_ms < min_counter_ms)
+		{
+			min_counter_ms = counter.counter_ms;
+		}
+
+		if (counter.counter_ms < 0)
+		{
+			registry.lightUps.remove(entity);
+			return true;
+		}
+	}
+
 	return true;
 }
 
@@ -267,6 +285,8 @@ void WorldSystem::restart_game()
 	//test zombie
 	// TODO: Create a room setup function to call on restart
 	createZombie(renderer, vec2(400, 400));
+	
+	createBug(renderer, vec2(300, window_height_px-600));
 
 	// create one level of platform for now
 	// intialize x, the left grid
@@ -335,8 +355,9 @@ void WorldSystem::handle_collisions()
 				{
 					// chew, count points, and set the LightUp timer
 					registry.remove_all_components_of(entity_other);
-					Mix_PlayChannel(-1, chicken_eat_sound, 0);
-					++points;
+					// Mix_PlayChannel(-1, chicken_eat_sound, 0);
+					// ++points;
+					registry.lightUps.emplace(entity);
 				}
 			}
 		}
