@@ -165,17 +165,6 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 
 	}
 
-	auto& zombie_registry = registry.zombies;
-	for (int i = (int)zombie_registry.components.size() - 1; i >= 0; --i)
-	{
-		NormalZombie& zombie = zombie_registry.components[i];
-		double xPosition = registry.motions.get(zombie_registry.entities[i]).position.x;
-		// if zombie state == unalert (0), then check if it has reached the edge of its walking range and switch direction if so
-		if (zombie.state == 0 && (xPosition <= zombie.walking_range[0] || xPosition >= zombie.walking_range[1])) {
-			registry.motions.get(zombie_registry.entities[i]).velocity.x *= -1;
-			registry.motions.get(zombie_registry.entities[i]).scale[0] *= -1;
-		}
-	}
 
 	// change josh's color gradually 
 	auto& color_change_registry = registry.colorChanges;
@@ -243,7 +232,6 @@ void WorldSystem::restart_game()
 {
 	// Debugging for memory/component leaks
 	registry.list_all_components();
-	printf("Restarting\n");
 
 	// Reset the game speed
 	current_speed = 1.f;
@@ -256,12 +244,8 @@ void WorldSystem::restart_game()
 	// Debugging for memory/component leaks
 	registry.list_all_components();
 
-
-	// Create a new chicken
 	
-	registry.colors.insert(player_chicken, {1, 0.8f, 0.8f});
-
-	player_josh = createJosh(renderer, {window_width_px / 2, window_height_px-600});
+	player_josh = createJosh(renderer, {window_width_px / 2, window_height_px-500});
 
 	registry.colors.insert(player_josh, {1, 0.8f, 0.8f});
 	//test zombie
@@ -309,8 +293,8 @@ void WorldSystem::handle_collisions()
 				{
 					// Scream, reset timer, and make the chicken sink
 					registry.deathTimers.emplace(entity);
-					Mix_PlayChannel(-1, chicken_dead_sound, 0);
-
+					/*Mix_PlayChannel(-1, chicken_dead_sound, 0);
+	
 					// !!! TODO A1: change the chicken orientation and color on death
 					Motion &motion = registry.motions.get(entity);
 					// // Make chicken upside down (degree = 270)
@@ -323,9 +307,7 @@ void WorldSystem::handle_collisions()
 					vec3 color = registry.colors.get(entity);
 					float duration = 1.0f;
 					registry.colors.remove(entity);
-					//registry.colors.emplace(entity, death_color);
-					ColorChange colorChange = {color, death_color, duration, 0.0f};
-					registry.colorChanges.emplace(entity, colorChange);
+					registry.colors.emplace(entity, death_color);*/
 				}
 			}
 			// Checking Player - Eatable collisions
