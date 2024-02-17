@@ -283,7 +283,7 @@ void WorldSystem::restart_game()
 	//test zombie
 	// TODO: Create a room setup function to call on restart
 
-	createBug(renderer, vec2(300, window_height_px-600));
+	createBug(renderer, vec2(300, window_height_px-450));
 	createZombie(renderer, vec2(400, 400), 0, 50);
 
 	// create one level of platform for now
