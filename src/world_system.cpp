@@ -174,13 +174,25 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 		ColorChange &color_change = color_change_registry.components[i];
 		color_change.color_time_elapsed += elapsed_ms_since_last_update / 1000.0f;
 		float t = color_change.color_time_elapsed / color_change.color_duration;
-
-		if(t < 1.0f){
+		if (t < 1.0f) {
 			vec3 color_new = lerp(color_change.color_start, color_change.color_end, t);
-			registry.colors.emplace(entity, color_new);
+			if (registry.colors.has(entity)) {
+				registry.colors.remove(entity);
+				registry.colors.emplace(entity, color_new);
+			}
+			else 
+			{
+				registry.colors.emplace(entity, color_new);
+			}
 		} else {
-			registry.colors.emplace(entity, color_change.color_end);
-			registry.colorChanges.remove(entity);
+			if (!registry.colors.has(entity)) 
+			{
+				registry.colors.emplace(entity, color_change.color_end);
+			}
+			else
+			{
+				registry.colorChanges.remove(entity);
+			}
 		}
 
 	}
@@ -216,13 +228,14 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 		if (counter.counter_ms < 0)
 		{
 			registry.deathTimers.remove(entity);
+			
 			screen.darken_screen_factor = 0;
 			restart_game();
 			return true;
 		}
 	}
 	// reduce window brightness if any of the present chickens is dying
-	screen.darken_screen_factor = 1 - min_counter_ms / 3000;
+	//screen.darken_screen_factor = 1 - min_counter_ms / 3000;
 
 	return true;
 }
@@ -250,7 +263,7 @@ void WorldSystem::restart_game()
 	registry.colors.insert(player_josh, {1, 0.8f, 0.8f});
 	//test zombie
 	// TODO: Create a room setup function to call on restart
-	createZombie(renderer, vec2(400, 400));
+	createZombie(renderer, vec2(400, 400), 0, 50);
 
 	// create one level of platform for now
 	// intialize x, the left grid
@@ -293,21 +306,22 @@ void WorldSystem::handle_collisions()
 				{
 					// Scream, reset timer, and make the chicken sink
 					registry.deathTimers.emplace(entity);
-					/*Mix_PlayChannel(-1, chicken_dead_sound, 0);
+					//Mix_PlayChannel(-1, chicken_dead_sound, 0);
 	
-					// !!! TODO A1: change the chicken orientation and color on death
-					Motion &motion = registry.motions.get(entity);
-					// // Make chicken upside down (degree = 270)
-					// motion.angle = 4.71238898f;
+					Motion& motion = registry.motions.get(entity);
 					motion.velocity[0] = 0;
-					motion.velocity[1] = 200;
-					// // Change color to red (255, 0, 0)
+					motion.velocity[1] = 0;
+
 					// change color to red on death
 					vec3 death_color = {255.0f, 0.0f, 0.0f};
 					vec3 color = registry.colors.get(entity);
 					float duration = 1.0f;
 					registry.colors.remove(entity);
-					registry.colors.emplace(entity, death_color);*/
+
+		
+					//registry.colors.emplace(entity, death_color);
+					ColorChange colorChange = { color, death_color, duration, 0.0f };
+					registry.colorChanges.emplace(entity, colorChange);
 				}
 			}
 			// Checking Player - Eatable collisions

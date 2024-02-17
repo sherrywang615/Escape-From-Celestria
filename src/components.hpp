@@ -80,7 +80,7 @@ struct DebugComponent
 // A timer that will be associated to dying chicken
 struct DeathTimer
 {
-	float counter_ms = 300;
+	float counter_ms = 800;
 };
 
 
