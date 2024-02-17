@@ -29,6 +29,8 @@ struct Platform
 {
 	//height and width
 	//vec2 size = {300,300};
+	vec2 position = { 0, 0 };
+	vec2 scale = { 10, 10 };
 };
 
 // Bug and Chicken have a soft shell
@@ -46,7 +48,6 @@ struct Motion {
 };
 
 struct Gravity {
-	bool standing = false;
 };
 
 // Stucture to store collision information
@@ -112,6 +113,14 @@ struct Sliding
 	vec2 velocity = { 0, 0 };
 };
 
+//change josh's color on death
+struct ColorChange {
+	vec3 color_start;
+	vec3 color_end;
+	float color_duration;
+	float color_time_elapsed;
+};
+
 /**
  * The following enumerators represent global identifiers refering to graphic
  * assets. For example TEXTURE_ASSET_ID are the identifiers of each texture
@@ -165,6 +174,14 @@ enum class GEOMETRY_BUFFER_ID {
 	
 };
 const int geometry_count = (int)GEOMETRY_BUFFER_ID::GEOMETRY_COUNT;
+
+enum class DIRECTION {
+	RIGHT = 0,
+	TOP = RIGHT + 1,
+	LEFT = TOP + 1,
+	BOT = LEFT + 1,
+	ALL = BOT + 1         // ALL is used to check if one object is colliding at all
+};
 
 struct RenderRequest {
 	TEXTURE_ASSET_ID used_texture = TEXTURE_ASSET_ID::TEXTURE_COUNT;

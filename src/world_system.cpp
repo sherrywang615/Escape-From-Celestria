@@ -136,6 +136,11 @@ void WorldSystem::init(RenderSystem *renderer_arg)
 	restart_game();
 }
 
+// Linear interpolation
+vec3 lerp(vec3 start, vec3 end, float t) {
+    return start * (1 - t) + end * t;
+}
+
 // Update our game world
 bool WorldSystem::step(float elapsed_ms_since_last_update)
 {
@@ -160,6 +165,25 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 
 	}
 
+
+	// change josh's color gradually 
+	auto& color_change_registry = registry.colorChanges;
+	for (int i = (int)color_change_registry.components.size() - 1; i >= 0; --i)
+	{
+		Entity entity = color_change_registry.entities[i];
+		ColorChange &color_change = color_change_registry.components[i];
+		color_change.color_time_elapsed += elapsed_ms_since_last_update / 1000.0f;
+		float t = color_change.color_time_elapsed / color_change.color_duration;
+
+		if(t < 1.0f){
+			vec3 color_new = lerp(color_change.color_start, color_change.color_end, t);
+			registry.colors.emplace(entity, color_new);
+		} else {
+			registry.colors.emplace(entity, color_change.color_end);
+			registry.colorChanges.remove(entity);
+		}
+
+	}
 
 	
 	// Spawning new eagles
@@ -233,6 +257,12 @@ void WorldSystem::restart_game()
 	float x = PLATFORM_WIDTH/2; 
 	// fixed y for now, only bottom level of platform
 	float y = window_height_px - PLATFORM_HEIGHT/2;
+	float a = window_width_px/2;
+	float b = 300;
+	while (b < a + 200) {
+		createPlatform(renderer, vec2(b, window_height_px - 400));
+		b += PLATFORM_WIDTH;
+	}
 	float i = x;
 	while(i-PLATFORM_WIDTH<window_width_px){
 		createPlatform(renderer, vec2(i, y));
@@ -267,13 +297,15 @@ void WorldSystem::handle_collisions()
 	
 					// !!! TODO A1: change the chicken orientation and color on death
 					Motion &motion = registry.motions.get(entity);
-					// Make chicken upside down (degree = 270)
-					motion.angle = 4.71238898f;
+					// // Make chicken upside down (degree = 270)
+					// motion.angle = 4.71238898f;
 					motion.velocity[0] = 0;
 					motion.velocity[1] = 200;
-					// Change color to red (255, 0, 0)
+					// // Change color to red (255, 0, 0)
+					// change color to red on death
 					vec3 death_color = {255.0f, 0.0f, 0.0f};
 					vec3 color = registry.colors.get(entity);
+					float duration = 1.0f;
 					registry.colors.remove(entity);
 					registry.colors.emplace(entity, death_color);*/
 				}
@@ -289,14 +321,6 @@ void WorldSystem::handle_collisions()
 					++points;
 				}
 			}
-			//player platform collision
-			else if (registry.platforms.has(entity_other)) 
-			{
-				Motion& motion = registry.motions.get(entity);
-				motion.velocity.y = 0;
-				Gravity& gravity = registry.gravities.get(entity);
-				gravity.standing = true;
-			}
 		}
 		else {	
 			if (registry.zombies.has(entity)) {
@@ -304,7 +328,6 @@ void WorldSystem::handle_collisions()
 					Motion& motion = registry.motions.get(entity);
 					motion.velocity.y = 0;
 					Gravity& gravity = registry.gravities.get(entity);
-					gravity.standing = true;
 				}
 			}
 		}
@@ -337,7 +360,7 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 	// control chicken movement
 	if (!registry.deathTimers.has(player_josh))
 	{
-		if ((action == GLFW_REPEAT || action == GLFW_PRESS) && key == GLFW_KEY_LEFT)
+		if ((action == GLFW_REPEAT || action == GLFW_PRESS) && (key == GLFW_KEY_LEFT || key == GLFW_KEY_A))
 		{
 			Motion &josh_motion = registry.motions.get(player_josh);
 			josh_motion.velocity.x = -200.f * cos(josh_motion.angle);
@@ -346,13 +369,13 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 				josh_motion.scale.x *= -1;
 			}
 		}
-		if (action == GLFW_RELEASE && key == GLFW_KEY_LEFT)
+		if (action == GLFW_RELEASE && (key == GLFW_KEY_LEFT || key == GLFW_KEY_A))
 		{
 			Motion &josh_motion = registry.motions.get(player_josh);
 			josh_motion.velocity.y = 0.f;
 			josh_motion.velocity.x = 0.f;
 		}
-		if ((action == GLFW_REPEAT || action == GLFW_PRESS) && key == GLFW_KEY_RIGHT)
+		if ((action == GLFW_REPEAT || action == GLFW_PRESS) && (key == GLFW_KEY_RIGHT || key == GLFW_KEY_D))
 		{
 			Motion &josh_motion = registry.motions.get(player_josh);
 			josh_motion.velocity.x = -200.f * cos(josh_motion.angle - M_PI);
@@ -361,7 +384,7 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 				josh_motion.scale.x *= -1;
 			}
 		}
-		if (action == GLFW_RELEASE && key == GLFW_KEY_RIGHT)
+		if (action == GLFW_RELEASE && (key == GLFW_KEY_RIGHT || key == GLFW_KEY_D))
 		{
 			Motion &josh_motion = registry.motions.get(player_josh);
 			josh_motion.velocity.y = 0.f;
