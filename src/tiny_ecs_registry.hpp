@@ -28,6 +28,7 @@ public:
 	ComponentContainer<Sliding> slidings;
 	ComponentContainer<Gravity> gravities;
 	ComponentContainer<ColorChange> colorChanges;
+	ComponentContainer<LightUp> lightUps;
 
 	// constructor that adds all containers for looping over them
 	// IMPORTANT: Don't forget to add any newly added containers!
@@ -49,6 +50,8 @@ public:
 		registry_list.push_back(&colors);
 		registry_list.push_back(&slidings);
 		registry_list.push_back(&gravities);
+		registry_list.push_back(&colorChanges);
+		registry_list.push_back(&lightUps);
 	}
 
 	void clear_all_components() {
