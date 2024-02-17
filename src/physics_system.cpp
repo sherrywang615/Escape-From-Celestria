@@ -58,6 +58,11 @@ bool collides(const Motion& motion1, const Motion& motion2, float step_secs, DIR
 	vec2 x_boundary = { left_b2, right_b2 };
 	vec2 y_boundary = { top_b2, bot_b2 };
 
+	vec2 left = { left_b1, (top_b1 + bot_b1) / 2 };
+	vec2 right = { right_b1, (top_b1 + bot_b1) / 2 };
+	vec2 top = {(left_b1 + right_b1)/2, top_b1};
+	vec2 bot = {(left_b1 + right_b1)/2, bot_b1};
+
 	if (dire == DIRECTION::RIGHT) {
 		return	check_point_within_boundary(top_right, x_boundary, y_boundary) ||
 				check_point_within_boundary(bot_right, x_boundary, y_boundary);
@@ -75,10 +80,10 @@ bool collides(const Motion& motion1, const Motion& motion2, float step_secs, DIR
 				check_point_within_boundary(bot_right, x_boundary, y_boundary);
 	}
 	else {
-		return	check_point_within_boundary(top_left, x_boundary, y_boundary) ||
-				check_point_within_boundary(top_right, x_boundary, y_boundary) ||
-				check_point_within_boundary(bot_left, x_boundary, y_boundary) ||
-				check_point_within_boundary(bot_right, x_boundary, y_boundary);
+		return	check_point_within_boundary(left, x_boundary, y_boundary) ||
+				check_point_within_boundary(top, x_boundary, y_boundary) ||
+				check_point_within_boundary(right, x_boundary, y_boundary) ||
+				check_point_within_boundary(bot, x_boundary, y_boundary);
 	}
 
 }
