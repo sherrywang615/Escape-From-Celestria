@@ -52,3 +52,11 @@ struct Transform {
 };
 
 bool gl_has_errors();
+
+enum class DIRECTION {
+	RIGHT = 0,
+	TOP = RIGHT + 1,
+	LEFT = TOP + 1,
+	BOT = LEFT + 1,
+	ALL = BOT + 1         // ALL is used to check if one object is colliding at all
+};

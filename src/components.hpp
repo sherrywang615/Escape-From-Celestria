@@ -20,9 +20,13 @@ struct Deadly
 struct NormalZombie
 {
 	//zombie state 0 = unalerted, 1 = alerted
-	int state = 0;
+	int is_alerted = 0;
 	// walking range of zombie based on initial position
 	std::vector<double> walking_range = { 0, 0 };
+	float sensing_range = 200;
+	DIRECTION face = DIRECTION::RIGHT;
+	// memory decides how long does it takes for an alerted zombie turn back into unalerted after losing the player in sight
+	float memory = 3000;
 };
 
 struct Platform
@@ -180,13 +184,7 @@ enum class GEOMETRY_BUFFER_ID {
 };
 const int geometry_count = (int)GEOMETRY_BUFFER_ID::GEOMETRY_COUNT;
 
-enum class DIRECTION {
-	RIGHT = 0,
-	TOP = RIGHT + 1,
-	LEFT = TOP + 1,
-	BOT = LEFT + 1,
-	ALL = BOT + 1         // ALL is used to check if one object is colliding at all
-};
+
 
 struct RenderRequest {
 	TEXTURE_ASSET_ID used_texture = TEXTURE_ASSET_ID::TEXTURE_COUNT;
