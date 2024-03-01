@@ -33,7 +33,9 @@ class RenderSystem {
 		textures_path("bug.png"),
 		textures_path("josh.png"),
 		textures_path("zombie1.png"), 
-		textures_path("ground.png")
+		textures_path("ground.png"),
+		textures_path("help_info.png"),
+		textures_path("help_sign.png")
 			 };
 
 	std::array<GLuint, effect_count> effects;
