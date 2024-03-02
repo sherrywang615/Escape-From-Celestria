@@ -20,6 +20,11 @@ class WorldSystem
 public:
 	WorldSystem();
 
+	//for fps counter
+	float fps;
+    float fpsCount;
+    float fpsTimer;
+
 	// Creates a window
 	GLFWwindow* create_window();
 

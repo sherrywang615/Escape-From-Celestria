@@ -19,7 +19,7 @@ bool renderInfo = false;
 
 // Create the bug world
 WorldSystem::WorldSystem()
-	: points(0), next_eagle_spawn(0.f), next_bug_spawn(0.f)
+	: points(0), next_eagle_spawn(0.f), next_bug_spawn(0.f), fps(0.f), fpsCount(0.f), fpsTimer(0.f)
 {
 	// Seeding rng with random device
 	rng = std::default_random_engine(std::random_device()());
@@ -83,6 +83,7 @@ GLFWwindow *WorldSystem::create_window()
 	if (window == nullptr)
 	{
 		fprintf(stderr, "Failed to glfwCreateWindow");
+		//     glfwTerminate();
 		return nullptr;
 	}
 
@@ -148,6 +149,18 @@ vec3 lerp(vec3 start, vec3 end, float t)
 // Update our game world
 bool WorldSystem::step(float elapsed_ms_since_last_update)
 {
+	//for fps counter
+    fpsTimer += elapsed_ms_since_last_update;
+	fpsCount++;
+    if (fpsTimer >= 1000.0f) { 
+		fpsTimer -= 1000.0f;
+        fps = fpsCount;
+        fpsCount = 0;
+        std::stringstream windowCaption;
+        windowCaption << "Escape from Celestria - FPS Counter: " << fps;
+        glfwSetWindowTitle(window, windowCaption.str().c_str());
+    }
+
 	// Remove debug info from the last step
 	while (registry.debugComponents.entities.size() > 0)
 		registry.remove_all_components_of(registry.debugComponents.entities.back());
