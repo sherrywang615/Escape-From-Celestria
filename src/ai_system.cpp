@@ -11,6 +11,10 @@ float findDistanceBetween(Motion motion_1, Motion motion_2) {
 	return dist;
 }
 
+void findPath(Motion motion_1, Motion motion_2) {
+
+}
+
 void updateZombiePath(float elapsed_ms) 
 {
 	float memory = 3000.f;

@@ -163,3 +163,33 @@ Entity createEgg(vec2 pos, vec2 size)
 
 	return entity;
 }
+
+
+
+
+std::vector<std::vector<char>> loadMap(std::string path) {
+	std::fstream file;
+	file.open(path);
+	std::vector<std::vector<char>> map;
+
+	if (file.is_open()) {
+		std::string line;
+		int i = 0;
+		while (getline(file, line)) {
+			if (line[0] == '1') {
+				continue;
+			}
+			map.push_back(std::vector<char>());
+			for (int j = 0; j < line.length(); j++) {
+				map[i].push_back(line[j]);
+			}
+			i++;
+		}
+	}
+	else {
+		printf("Cannot load map. Check file path!\n");
+	}
+	file.close();
+
+	return map;
+}
