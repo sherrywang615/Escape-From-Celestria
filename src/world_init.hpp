@@ -39,4 +39,4 @@ Entity createLine(vec2 position, vec2 size);
 // a egg
 Entity createEgg(vec2 pos, vec2 size);
 
-
+std::vector<std::vector<char>> loadMap(std::string path);

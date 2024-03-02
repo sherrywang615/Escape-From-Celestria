@@ -199,17 +199,6 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 	}
 
 	
-	// Spawning new eagles
-	// Do we need eagles???
-	//next_eagle_spawn -= elapsed_ms_since_last_update * current_speed;
-	//if (registry.deadlys.components.size() <= MAX_EAGLES && next_eagle_spawn < 0.f)
-	//{
-	//	// Reset timer
-	//	next_eagle_spawn = (EAGLE_DELAY_MS / 2) + uniform_dist(rng) * (EAGLE_DELAY_MS / 2);
-	//	// Create eagle with random initial position
-	//	createEagle(renderer, vec2(50.f + uniform_dist(rng) * (window_width_px - 100.f), -100.f));
-	//}
-	
 	// Processing the chicken state
 	assert(registry.screenStates.components.size() <= 1);
 	ScreenState &screen = registry.screenStates.components[0];
@@ -259,6 +248,37 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 	return true;
 }
 
+bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map) {
+	for (int i = 0; i < map.size(); i++) {
+		for (int j = 0; j < map[i].size(); j++) {
+			float x = j * 10;
+			float y = i * 10;
+			char tok = map[i][j];
+			if (tok == ' ') {
+				continue;
+			}
+			else if (tok == 'J') {
+				player_josh = createJosh(renderer, { x, y });
+				registry.colors.insert(player_josh, { 1, 0.8f, 0.8f });
+			}
+			else if (tok == 'P') {
+				createPlatform(renderer, {x, y});
+			}
+			else if (tok == 'Z') {
+				createZombie(renderer, { x, y }, 0, 50);
+			}
+			else if (tok == 'F') {
+				createBug(renderer, { x, y });
+			}
+			else {
+				printf("Map contains invalid character '%c' at [%d, %d].", tok, i, j);
+				return false;
+			}
+		}
+	}
+	return true;
+}
+
 // Reset the world state to its initial state
 void WorldSystem::restart_game()
 {
@@ -276,32 +296,35 @@ void WorldSystem::restart_game()
 	// Debugging for memory/component leaks
 	registry.list_all_components();
 
-	
-	player_josh = createJosh(renderer, {window_width_px / 2, window_height_px-500});
+	//std::string map_path = "..//..//..//data//maps//";
+	auto map = loadMap(MAP_PATH + "level1.txt");
+	createEntityBaseOnMap(map);
+	//player_josh = createJosh(renderer, {window_width_px / 2, window_height_px-500});
 
-	registry.colors.insert(player_josh, {1, 0.8f, 0.8f});
+	//registry.colors.insert(player_josh, {1, 0.8f, 0.8f});
 	//test zombie
 	// TODO: Create a room setup function to call on restart
 
-	createBug(renderer, vec2(300, window_height_px-450));
-	createZombie(renderer, vec2(400, 400), 0, 50);
+	//createBug(renderer, vec2(300, window_height_px-450));
+	//createZombie(renderer, vec2(400, 400), 0, 50);
+	//createPlatform(renderer, { 0,0 });
 
 	// create one level of platform for now
 	// intialize x, the left grid
-	float x = PLATFORM_WIDTH/2; 
-	// fixed y for now, only bottom level of platform
-	float y = window_height_px - PLATFORM_HEIGHT/2;
-	float a = window_width_px/2;
-	float b = 300;
-	while (b < a + 200) {
-		createPlatform(renderer, vec2(b, window_height_px - 400));
-		b += PLATFORM_WIDTH;
-	}
-	float i = x;
-	while(i-PLATFORM_WIDTH<window_width_px){
-		createPlatform(renderer, vec2(i, y));
-		i +=PLATFORM_WIDTH;
-	}
+	//float x = PLATFORM_WIDTH/2; 
+	//// fixed y for now, only bottom level of platform
+	//float y = window_height_px - PLATFORM_HEIGHT/2;
+	//float a = window_width_px/2;
+	//float b = 300;
+	//while (b < a + 200) {
+	//	createPlatform(renderer, vec2(b, window_height_px - 400));
+	//	b += PLATFORM_WIDTH;
+	//}
+	//float i = x;
+	//while(i-PLATFORM_WIDTH<window_width_px){
+	//	createPlatform(renderer, vec2(i, y));
+	//	i +=PLATFORM_WIDTH;
+	//}
 }
 // Compute collisions between entities
 void WorldSystem::handle_collisions()
@@ -528,19 +551,4 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 
 void WorldSystem::on_mouse_move(vec2 mouse_position)
 {
-	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	// TODO A1: HANDLE CHICKEN ROTATION HERE
-	// xpos and ypos are relative to the top-left of the window, the chicken's
-	// default facing direction is (1, 0)
-	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	// for (Entity entity : registry.players.entities) {
-	// 	if (registry.deathTimers.has(entity)) {
-	// 		return;
-	// 	}
-	// 	Motion& motion = registry.motions.get(entity);
-	// 	vec2 chicken_pos = motion.position;
-	// 	float x = chicken_pos[0] - mouse_position[0];
-	// 	float y = chicken_pos[1] - mouse_position[1];
-	// 	motion.angle = atan2(y, x);
-	// }
 }
