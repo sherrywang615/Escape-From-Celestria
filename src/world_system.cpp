@@ -15,13 +15,13 @@ const size_t MAX_EAGLES = 15;
 const size_t MAX_BUG = 5;
 const size_t EAGLE_DELAY_MS = 2000 * 3;
 const size_t BUG_DELAY_MS = 5000 * 3;
-bool renderInfo = false;
 
 // Create the bug world
 WorldSystem::WorldSystem()
 	: points(0), next_eagle_spawn(0.f), next_bug_spawn(0.f), fps(0.f), fpsCount(0.f), fpsTimer(0.f)
 {
 	// Seeding rng with random device
+	renderInfo = false;
 	rng = std::default_random_engine(std::random_device()());
 }
 
@@ -165,6 +165,10 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 	while (registry.debugComponents.entities.size() > 0)
 		registry.remove_all_components_of(registry.debugComponents.entities.back());
 
+	if(renderInfo){
+		createHelpInfo(renderer, vec2(window_width_px - 150, window_height_px - 400));
+	}
+	
 	// Removing out of screen entities
 	auto &motions_registry = registry.motions;
 
@@ -301,9 +305,6 @@ void WorldSystem::restart_game()
 	createBug(renderer, vec2(300, window_height_px - 450));
 	createZombie(renderer, vec2(400, 400), 0, 50);
 	createHelpSign(renderer, vec2(window_width_px - 70, window_height_px - 700));
-	if(!renderInfo){
-		createHelpInfo(renderer, vec2(window_width_px - 150, window_height_px - 400));
-	}
 	// create one level of platform for now
 	// intialize x, the left grid
 	float x = PLATFORM_WIDTH / 2;
@@ -449,10 +450,11 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 			josh_motion.velocity.y = 0.f;
 			josh_motion.velocity.x = 0.f;
 		}
-		if (action == GLFW_PRESS && key == GLFW_KEY_I)
-		{
-			renderInfo = !renderInfo;
-		}
+	}
+
+	if (action == GLFW_PRESS && key == GLFW_KEY_I)
+	{
+		renderInfo = !renderInfo;
 	}
 
 	// Resetting game

@@ -167,6 +167,7 @@ Entity createHelpInfo(RenderSystem* renderer, vec2 position)
 			EFFECT_ASSET_ID::TEXTURED,
 			GEOMETRY_BUFFER_ID::SPRITE });
 
+	registry.debugComponents.emplace(entity);
 	return entity;
 }
 
