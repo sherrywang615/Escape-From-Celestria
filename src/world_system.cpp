@@ -204,7 +204,6 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 		}
 	}
 
-
 	// Processing the chicken state
 	assert(registry.screenStates.components.size() <= 1);
 	ScreenState &screen = registry.screenStates.components[0];
@@ -254,29 +253,50 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 	return true;
 }
 
-bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map) {
-	for (int i = 0; i < map.size(); i++) {
-		for (int j = 0; j < map[i].size(); j++) {
+bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map)
+{
+	for (int i = 0; i < map.size(); i++)
+	{
+		for (int j = 0; j < map[i].size(); j++)
+		{
 			float x = j * 10;
 			float y = i * 10;
 			char tok = map[i][j];
-			if (tok == ' ') {
+			if (tok == ' ')
+			{
 				continue;
 			}
-			else if (tok == 'J') {
-				player_josh = createJosh(renderer, { x, y });
-				registry.colors.insert(player_josh, { 1, 0.8f, 0.8f });
+			else if (tok == 'J')
+			{
+				player_josh = createJosh(renderer, {x, y});
+				registry.colors.insert(player_josh, {1, 0.8f, 0.8f});
 			}
-			else if (tok == 'P') {
+			else if (tok == 'P')
+			{
 				createPlatform(renderer, {x, y});
 			}
-			else if (tok == 'Z') {
-				createZombie(renderer, { x, y }, 0, 50);
+			else if (tok == 'Z')
+			{
+				createZombie(renderer, {x, y}, 0, 50);
 			}
-			else if (tok == 'F') {
-				createBug(renderer, { x, y });
+			else if (tok == 'F')
+			{
+				createFood(renderer, {x, y});
 			}
-			else {
+			else if (tok == 'B')
+			{
+				createBullet(renderer, {x, y});
+			}
+			else if (tok == 'D')
+			{
+				createDoor(renderer, {x, y});
+			}
+			else if (tok == 'K')
+			{
+				createKey(renderer, {x, y});
+			}
+			else
+			{
 				printf("Map contains invalid character '%c' at [%d, %d].", tok, i, j);
 				return false;
 			}
@@ -303,18 +323,20 @@ void WorldSystem::restart_game()
 	// Debugging for memory/component leaks
 	registry.list_all_components();
 
+	auto map = loadMap(MAP_PATH + "level1.txt");
+	createEntityBaseOnMap(map);
 
-	player_josh = createJosh(renderer, {window_width_px / 2, window_height_px - 500});
+	// player_josh = createJosh(renderer, {window_width_px / 2, window_height_px - 500});
 
-	registry.colors.insert(player_josh, {1, 0.8f, 0.8f});
-	// test zombie
-	//  TODO: Create a room setup function to call on restart
+	// registry.colors.insert(player_josh, {1, 0.8f, 0.8f});
+	// // test zombie
+	// //  TODO: Create a room setup function to call on restart
 
-	createFood(renderer, vec2(300, window_height_px - 450));
-	createZombie(renderer, vec2(400, 400), 0, 50);
-	createDoor(renderer, vec2(900, window_height_px - 80));
-	createBullet(renderer, vec2(600, window_height_px - 450));
-	createKey(renderer, vec2(400, window_height_px - 450));
+	// createFood(renderer, vec2(300, window_height_px - 450));
+	// createZombie(renderer, vec2(400, 400), 0, 50);
+	// createDoor(renderer, vec2(900, window_height_px - 80));
+	// createBullet(renderer, vec2(600, window_height_px - 450));
+	// createKey(renderer, vec2(400, window_height_px - 450));
 
 	for (int i = 0; i < hp_count; i++)
 	{
@@ -323,23 +345,22 @@ void WorldSystem::restart_game()
 
 	// create one level of platform for now
 	// intialize x, the left grid
-	float x = PLATFORM_WIDTH / 2;
-	// fixed y for now, only bottom level of platform
-	float y = window_height_px - PLATFORM_HEIGHT / 2;
-	float a = window_width_px / 2;
-	float b = 300;
-	while (b < a + 200)
-	{
-		createPlatform(renderer, vec2(b, window_height_px - 400));
-		b += PLATFORM_WIDTH;
-	}
-	float i = x;
-	while (i - PLATFORM_WIDTH < window_width_px)
-	{
-		createPlatform(renderer, vec2(i, y));
-		i += PLATFORM_WIDTH;
-	}
-
+	// float x = PLATFORM_WIDTH / 2;
+	// // fixed y for now, only bottom level of platform
+	// float y = window_height_px - PLATFORM_HEIGHT / 2;
+	// float a = window_width_px / 2;
+	// float b = 300;
+	// while (b < a + 200)
+	// {
+	// 	createPlatform(renderer, vec2(b, window_height_px - 400));
+	// 	b += PLATFORM_WIDTH;
+	// }
+	// float i = x;
+	// while (i - PLATFORM_WIDTH < window_width_px)
+	// {
+	// 	createPlatform(renderer, vec2(i, y));
+	// 	i += PLATFORM_WIDTH;
+	// }
 }
 // Compute collisions between entities
 void WorldSystem::handle_collisions()
@@ -361,6 +382,7 @@ void WorldSystem::handle_collisions()
 			{
 				if (hp_count == 1)
 				{
+					// Game over and update the hearts
 					uint i = 0;
 					while (i < registry.hearts.components.size())
 					{
@@ -369,7 +391,7 @@ void WorldSystem::handle_collisions()
 						registry.hearts.remove(entity);
 						registry.renderRequests.remove(entity);
 					}
-					for (int i = 0; i < hp_count-1; i++)
+					for (int i = 0; i < hp_count - 1; i++)
 					{
 						createHeart(renderer, vec2(20 + i * 40, 20));
 					}
@@ -401,10 +423,10 @@ void WorldSystem::handle_collisions()
 					registry.deductHpTimers.emplace(entity);
 					std::cout << "hp count: " << hp_count << std::endl;
 
+					// update hearts
 					uint i = 0;
 					while (i < registry.hearts.components.size())
 					{
-						std::cout << "Size of registry.hearts.components: " << registry.hearts.components.size() << std::endl;
 						Entity entity = registry.hearts.entities[i];
 						registry.meshPtrs.remove(entity);
 						registry.hearts.remove(entity);
@@ -530,8 +552,9 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 			josh_motion.velocity.x = 0.f;
 		}
 
+		
 		// josh jump
-		if (action == GLFW_PRESS && key == GLFW_KEY_SPACE && !jumped)
+		if (action == GLFW_PRESS && key == GLFW_KEY_SPACE && !jumped && registry.motions.get(player_josh).velocity.y == 0.f)
 		{
 			Motion &josh_motion = registry.motions.get(player_josh);
 			josh_motion.velocity.y = -700.f;
