@@ -27,8 +27,6 @@ Entity createJosh(RenderSystem* renderer, vec2 pos);
 Entity createZombie(RenderSystem* renderer, vec2 position, int state = 0, double range = 200);
 // the prey
 Entity createBug(RenderSystem* renderer, vec2 position);
-// the enemy
-Entity createEagle(RenderSystem* renderer, vec2 position);
 // Josh
 Entity createJosh(RenderSystem* renderer, vec2 position);
 // Platform

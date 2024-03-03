@@ -299,32 +299,7 @@ void WorldSystem::restart_game()
 	//std::string map_path = "..//..//..//data//maps//";
 	auto map = loadMap(MAP_PATH + "level1.txt");
 	createEntityBaseOnMap(map);
-	//player_josh = createJosh(renderer, {window_width_px / 2, window_height_px-500});
 
-	//registry.colors.insert(player_josh, {1, 0.8f, 0.8f});
-	//test zombie
-	// TODO: Create a room setup function to call on restart
-
-	//createBug(renderer, vec2(300, window_height_px-450));
-	//createZombie(renderer, vec2(400, 400), 0, 50);
-	//createPlatform(renderer, { 0,0 });
-
-	// create one level of platform for now
-	// intialize x, the left grid
-	//float x = PLATFORM_WIDTH/2; 
-	//// fixed y for now, only bottom level of platform
-	//float y = window_height_px - PLATFORM_HEIGHT/2;
-	//float a = window_width_px/2;
-	//float b = 300;
-	//while (b < a + 200) {
-	//	createPlatform(renderer, vec2(b, window_height_px - 400));
-	//	b += PLATFORM_WIDTH;
-	//}
-	//float i = x;
-	//while(i-PLATFORM_WIDTH<window_width_px){
-	//	createPlatform(renderer, vec2(i, y));
-	//	i +=PLATFORM_WIDTH;
-	//}
 }
 // Compute collisions between entities
 void WorldSystem::handle_collisions()

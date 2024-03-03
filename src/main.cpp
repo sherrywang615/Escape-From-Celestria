@@ -35,6 +35,31 @@ int main()
 	renderer.init(window);
 	world.init(&renderer);
 
+
+	int id = 1;
+	Vertex* latest;
+	for (int i = 200; i < 301; i += 50) {
+		Vertex* v = new Vertex(id, i, 420);
+		graph.addVertex(v);
+		if (i != 200) {
+			graph.addEdge(v, latest, ACTION::WALK);
+		}
+		latest = v;
+		id++;
+	}
+	Vertex* v3 = new Vertex(id, 480, 420);
+	graph.addVertex(v3);
+	graph.addEdge(latest, v3, ACTION::JUMP);
+	id++;
+	latest = v3;
+	for (int i = 500; i < 801; i += 50) {
+		Vertex* v = new Vertex(id, i, 420);
+		graph.addVertex(v);
+		graph.addEdge(v, latest, ACTION::WALK);
+		latest = v;
+		id++;
+	}
+
 	// variable timestep loop
 	auto t = Clock::now();
 	while (!world.is_over()) {
