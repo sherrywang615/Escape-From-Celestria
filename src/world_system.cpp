@@ -149,6 +149,7 @@ vec3 lerp(vec3 start, vec3 end, float t)
 // Update our game world
 bool WorldSystem::step(float elapsed_ms_since_last_update)
 {
+
 	// Remove debug info from the last step
 	while (registry.debugComponents.entities.size() > 0)
 		registry.remove_all_components_of(registry.debugComponents.entities.back());
@@ -293,6 +294,11 @@ void WorldSystem::restart_game()
 	createBullet(renderer, vec2(600, window_height_px - 450));
 	createKey(renderer, vec2(400, window_height_px - 450));
 
+	for (int i = 0; i < hp_count; i++)
+	{
+		createHeart(renderer, vec2(20 + i * 40, 20));
+	}
+
 	// create one level of platform for now
 	// intialize x, the left grid
 	float x = PLATFORM_WIDTH / 2;
@@ -327,12 +333,23 @@ void WorldSystem::handle_collisions()
 		if (registry.players.has(entity))
 		{
 			// Player& player = registry.players.get(entity);
-
 			// Checking Player - Deadly collisions
 			if (registry.deadlys.has(entity_other) && !registry.deductHpTimers.has(entity))
 			{
-				if (hp_count == 0)
+				if (hp_count == 1)
 				{
+					uint i = 0;
+					while (i < registry.hearts.components.size())
+					{
+						Entity entity = registry.hearts.entities[i];
+						registry.meshPtrs.remove(entity);
+						registry.hearts.remove(entity);
+						registry.renderRequests.remove(entity);
+					}
+					for (int i = 0; i < hp_count-1; i++)
+					{
+						createHeart(renderer, vec2(20 + i * 40, 20));
+					}
 					// initiate death unless already dying
 					if (!registry.deathTimers.has(entity))
 					{
@@ -360,6 +377,20 @@ void WorldSystem::handle_collisions()
 					hp_count = fmax(0, hp_count - 1);
 					registry.deductHpTimers.emplace(entity);
 					std::cout << "hp count: " << hp_count << std::endl;
+
+					uint i = 0;
+					while (i < registry.hearts.components.size())
+					{
+						std::cout << "Size of registry.hearts.components: " << registry.hearts.components.size() << std::endl;
+						Entity entity = registry.hearts.entities[i];
+						registry.meshPtrs.remove(entity);
+						registry.hearts.remove(entity);
+						registry.renderRequests.remove(entity);
+					}
+					for (int i = 0; i < hp_count; i++)
+					{
+						createHeart(renderer, vec2(20 + i * 40, 20));
+					}
 				}
 			}
 			// Checking Player - Eatable collisions
@@ -371,6 +402,20 @@ void WorldSystem::handle_collisions()
 					registry.remove_all_components_of(entity_other);
 					++hp_count;
 					std::cout << "hp count: " << hp_count << std::endl;
+
+					uint i = 0;
+					while (i < registry.hearts.components.size())
+					{
+						std::cout << "Size of registry.hearts.components: " << registry.hearts.components.size() << std::endl;
+						Entity entity = registry.hearts.entities[i];
+						registry.meshPtrs.remove(entity);
+						registry.hearts.remove(entity);
+						registry.renderRequests.remove(entity);
+					}
+					for (int i = 0; i < hp_count; i++)
+					{
+						createHeart(renderer, vec2(20 + i * 40, 20));
+					}
 				}
 				else if (registry.bullets.has(entity_other))
 				{

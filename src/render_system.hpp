@@ -37,7 +37,8 @@ class RenderSystem {
 		textures_path("ground.png"),
 		textures_path("bullet.png"),
 		textures_path("door.png"),
-		textures_path("key.png")
+		textures_path("key.png"),
+		textures_path("heart.png"),
 			 };
 
 	std::array<GLuint, effect_count> effects;

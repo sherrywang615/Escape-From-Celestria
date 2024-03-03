@@ -34,6 +34,7 @@ public:
 	ComponentContainer<Bullet> bullets;
 	ComponentContainer<Food> foods;
 	ComponentContainer<Character> characters;
+	ComponentContainer<Heart> hearts;
 
 	// constructor that adds all containers for looping over them
 	// IMPORTANT: Don't forget to add any newly added containers!
@@ -62,6 +63,7 @@ public:
 		registry_list.push_back(&bullets);
 		registry_list.push_back(&foods);
 		registry_list.push_back(&characters);
+		registry_list.push_back(&hearts);
 	}
 
 	void clear_all_components()

@@ -150,6 +150,10 @@ struct Character
 	char character;
 };
 
+struct Heart {
+
+};
+
 /**
  * The following enumerators represent global identifiers refering to graphic
  * assets. For example TEXTURE_ASSET_ID are the identifiers of each texture
@@ -183,7 +187,8 @@ enum class TEXTURE_ASSET_ID
 	BULLET = PLATFORM + 1,
 	DOOR = BULLET + 1,
 	KEY = DOOR + 1,
-	TEXTURE_COUNT = KEY + 1
+	HEART = KEY + 1,
+	TEXTURE_COUNT = HEART + 1
 };
 const int texture_count = (int)TEXTURE_ASSET_ID::TEXTURE_COUNT;
 
