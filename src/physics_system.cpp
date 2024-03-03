@@ -111,7 +111,7 @@ void PhysicsSystem::step(float elapsed_ms)
 		NormalZombie& zombie = zombie_registry.components[i];
 		double xPosition = registry.motions.get(zombie_registry.entities[i]).position.x;
 		// if zombie state == unalert (0), then check if it has reached the edge of its walking range and switch direction if so
-		if (zombie.state == 0 && (xPosition <= zombie.walking_range[0] || xPosition >= zombie.walking_range[1])) {
+		if (zombie.state == 0 && (xPosition - 1 <= zombie.walking_range[0] || xPosition + 1 >= zombie.walking_range[1])) {
 			registry.motions.get(zombie_registry.entities[i]).velocity.x *= -1;
 			registry.motions.get(zombie_registry.entities[i]).scale[0] *= -1;
 		}
