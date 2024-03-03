@@ -5,6 +5,7 @@
 #include <string>
 #include <tuple>
 #include <vector>
+#include <map>
 
 // glfw (OpenGL)
 #define NOMINMAX
@@ -40,7 +41,8 @@ const int window_height_px = 700;
 const int width = window_width_px / 10;
 const int height = window_height_px / 10;
 
-const std::string MAP_PATH = "..//..//..//data//maps//";
+// const std::string MAP_PATH = "..//..//..//data//maps//";
+const std::string MAP_PATH = "../data/maps/";
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846f
@@ -65,3 +67,62 @@ enum class DIRECTION {
 	BOT = LEFT + 1,
 	ALL = BOT + 1         // ALL is used to check if one object is colliding at all
 };
+
+enum class ACTION {
+	WALK = 0,
+	JUMP = WALK + 1
+};
+
+float findDistanceBetween(vec2 pos1, vec2 pos2);
+
+struct Vertex {
+	unsigned int id;
+public:
+	float x;
+	float y;
+	std::unordered_map<Vertex*, ACTION> adjs;
+	Vertex(unsigned int _id, float _x, float _y)
+	{
+		id = _id;
+		x = _x;
+		y = _y;
+	}
+};
+
+
+struct Graph {
+
+private:
+	std::vector<Vertex*> vertices;
+
+public:
+	void addVertex(Vertex* v);
+	void addEdge(Vertex* v1, Vertex* v2, ACTION action);
+	std::vector<Vertex*> getVertices();
+};
+
+extern Graph graph;
+
+
+//Graph& createGraph() {
+//	Graph graph;
+//	Vertex v1 = Vertex(1, 220, 420);
+//	Vertex v2 = Vertex(2, 370, 300);
+//	Vertex v3 = Vertex(3, 500, 420);
+//	Vertex v4 = Vertex(4, 620, 420);
+//	Vertex v5 = Vertex(5, 780, 300);
+//
+//	graph.addVertex(v1);
+//	graph.addVertex(v2);
+//	graph.addVertex(v3);
+//	graph.addVertex(v4);
+//	graph.addVertex(v5);
+//
+//	graph.addEdge(v1, v2);
+//	graph.addEdge(v2, v3);
+//	graph.addEdge(v3, v4);
+//	graph.addEdge(v4, v5);
+//	return graph;
+//}
+
+
