@@ -8,7 +8,7 @@ Entity createJosh(RenderSystem* renderer, vec2 position)
 {
     auto entity = Entity();
 
-    Mesh& mesh = renderer->getMesh(GEOMETRY_BUFFER_ID::SPRITE);
+    Mesh& mesh = renderer->getMesh(GEOMETRY_BUFFER_ID::JOSH);
     registry.meshPtrs.emplace(entity, &mesh);
     auto& motion = registry.motions.emplace(entity);
 
