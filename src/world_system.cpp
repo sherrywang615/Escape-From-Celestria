@@ -143,6 +143,7 @@ vec3 lerp(vec3 start, vec3 end, float t) {
     return start * (1 - t) + end * t;
 }
 
+
 // Update our game world
 bool WorldSystem::step(float elapsed_ms_since_last_update)
 {
@@ -399,6 +400,8 @@ bool WorldSystem::is_over() const
 	return bool(glfwWindowShouldClose(window));
 }
 
+
+int josh_step_counter = 0;
 // On key callback
 void WorldSystem::on_key(int key, int, int action, int mod)
 {
@@ -417,8 +420,28 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 	// control chicken movement
 	if (!registry.deathTimers.has(player_josh))
 	{
+		if((action == GLFW_REPEAT || action == GLFW_PRESS) && (key == GLFW_KEY_B)){
+			//JOSH holding gun
+			// registry.renderRequests.get(player_josh) = { TEXTURE_ASSET_ID::JOSHGUN, 
+			// 												EFFECT_ASSET_ID::TEXTURED,
+			// 												GEOMETRY_BUFFER_ID::SPRITE };
+															
+			registry.renderRequests.get(player_josh) = { TEXTURE_ASSET_ID::JOSHGUN1, 
+														EFFECT_ASSET_ID::TEXTURED,
+														GEOMETRY_BUFFER_ID::SPRITE };
+		}
 		if ((action == GLFW_REPEAT || action == GLFW_PRESS) && (key == GLFW_KEY_LEFT || key == GLFW_KEY_A))
 		{
+			josh_step_counter++;
+			if(josh_step_counter % 2 == 0){
+				registry.renderRequests.get(player_josh) = { TEXTURE_ASSET_ID::JOSH1, 
+															EFFECT_ASSET_ID::TEXTURED,
+															GEOMETRY_BUFFER_ID::SPRITE };
+			}else{
+				registry.renderRequests.get(player_josh) = { TEXTURE_ASSET_ID::JOSH, 
+															EFFECT_ASSET_ID::TEXTURED,
+															GEOMETRY_BUFFER_ID::SPRITE };
+			}
 			Motion &josh_motion = registry.motions.get(player_josh);
 			josh_motion.velocity.x = -200.f * cos(josh_motion.angle);
 			josh_motion.velocity.y = 200.f * sin(josh_motion.angle);
@@ -434,6 +457,16 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 		}
 		if ((action == GLFW_REPEAT || action == GLFW_PRESS) && (key == GLFW_KEY_RIGHT || key == GLFW_KEY_D))
 		{
+			josh_step_counter++;
+			if(josh_step_counter % 2 == 0){
+				registry.renderRequests.get(player_josh) = { TEXTURE_ASSET_ID::JOSH1, 
+															EFFECT_ASSET_ID::TEXTURED,
+															GEOMETRY_BUFFER_ID::SPRITE };
+			}else{
+				registry.renderRequests.get(player_josh) = { TEXTURE_ASSET_ID::JOSH, 
+															EFFECT_ASSET_ID::TEXTURED,
+															GEOMETRY_BUFFER_ID::SPRITE };
+			}
 			Motion &josh_motion = registry.motions.get(player_josh);
 			josh_motion.velocity.x = -200.f * cos(josh_motion.angle - M_PI);
 			josh_motion.velocity.y = 00.f * sin(josh_motion.angle - M_PI);
