@@ -472,7 +472,7 @@ void WorldSystem::handle_collisions()
 					registry.remove_all_components_of(entity_other);
 					have_key = true;
 					std::cout << "have key: " << have_key << std::endl;
-
+					showKeyOnScreen(renderer, have_key);
 					// registry.doors.get(registry.doors.entities[0]).is_open = true;
 				}
 			}
@@ -492,6 +492,26 @@ void WorldSystem::handle_collisions()
 	}
 	// Remove all collisions from this simulation step
 	registry.collisions.clear();
+}
+
+// Show the key on top left of the screen
+void WorldSystem::showKeyOnScreen(RenderSystem *renderer, bool have_key)
+{
+	if (have_key)
+	{
+		// show key on screen
+		createKey(renderer, vec2(30, HEART_BB_HEIGHT + 40));
+	} else {
+		// remove key from screen
+		uint i = 0;
+		while (i < registry.keys.components.size())
+		{
+			Entity entity = registry.keys.entities[i];
+			registry.meshPtrs.remove(entity);
+			registry.keys.remove(entity);
+			registry.renderRequests.remove(entity);
+		}
+	}
 }
 
 // Should the game be over ?
