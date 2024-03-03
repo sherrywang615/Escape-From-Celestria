@@ -44,6 +44,8 @@ private:
 
 	// read map
 	bool createEntityBaseOnMap(std::vector<std::vector<char>> map);
+	
+	void showKeyOnScreen(RenderSystem *renderer, bool have_key);
 
 	// restart level
 	void restart_game();

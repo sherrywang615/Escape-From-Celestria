@@ -13,6 +13,8 @@ const float JOSH_BB_WIDTH = 0.6f * 165.f;
 const float JOSH_BB_HEIGHT = 0.6f * 165.f;
 const float DOOR_BB_WIDTH = 0.7f * 165.f;
 const float DOOR_BB_HEIGHT = 0.7f * 165.f;
+const float HEART_BB_WIDTH = 0.35f * 165.f;
+const float HEART_BB_HEIGHT = 0.35f * 165.f;
 
 // Zombie
 const float ZOMBIE_BB_WIDTH = 0.6f * 108.f;
