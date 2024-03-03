@@ -67,7 +67,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES ENABLE_EXPORTS 0)
 # External header-only libraries in the ext/
 target_include_directories(${PROJECT_NAME} PUBLIC ext/stb_image/)
 target_include_directories(${PROJECT_NAME} PUBLIC ext/gl3w)
-target_include_directories(${PROJECT_NAME} PUBLIC ext/freetype/include)
+# target_include_directories(${PROJECT_NAME} PUBLIC ext/freetype/include)
 
 # Find OpenGL
 find_package(OpenGL REQUIRED)
@@ -87,7 +87,7 @@ if (IS_OS_LINUX OR IS_OS_MAC)
     find_package(PkgConfig REQUIRED)
 
     pkg_search_module(GLFW REQUIRED glfw3)
-    pkg_search_module(FREETYPE REQUIRED freetype2)
+    # pkg_search_module(FREETYPE REQUIRED freetype2)
     pkg_search_module(SDL2 REQUIRED sdl2)
     pkg_search_module(SDL2MIXER REQUIRED SDL2_mixer)
 
@@ -95,8 +95,8 @@ if (IS_OS_LINUX OR IS_OS_MAC)
     if (IS_OS_MAC)
        find_library(COCOA_LIBRARY Cocoa)
        find_library(CF_LIBRARY CoreFoundation)
-       find_library(FREETYPE_LIBRARY freetype2)
-       target_link_libraries(${PROJECT_NAME} PUBLIC ${COCOA_LIBRARY} ${CF_LIBRARY} ${FREETYPE_LIBRARY})
+      #  find_library(FREETYPE_LIBRARY freetype2)
+       target_link_libraries(${PROJECT_NAME} PUBLIC ${COCOA_LIBRARY} ${CF_LIBRARY})
     endif()
 
     # Increase warning level
@@ -174,7 +174,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC ${GLFW_INCLUDE_DIRS})
 target_include_directories(${PROJECT_NAME} PUBLIC ${SDL2_INCLUDE_DIRS})
 
 
-target_link_libraries(${PROJECT_NAME} PUBLIC ${GLFW_LIBRARIES} ${SDL2_LIBRARIES} ${SDL2MIXER_LIBRARIES} ${FREETYPE_LIBRARY} glm::glm)
+target_link_libraries(${PROJECT_NAME} PUBLIC ${GLFW_LIBRARIES} ${SDL2_LIBRARIES} ${SDL2MIXER_LIBRARIES} glm::glm)
 
 # Needed to add this
 if(IS_OS_LINUX)

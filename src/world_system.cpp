@@ -9,8 +9,8 @@
 #include "physics_system.hpp"
 
 #include <fstream>
-#include <ft2build.h>
-#include FT_FREETYPE_H
+// #include <ft2build.h>
+// #include FT_FREETYPE_H
 
 // Game configuration
 const size_t MAX_EAGLES = 15;
@@ -343,13 +343,6 @@ void WorldSystem::restart_game()
 		createHeart(renderer, vec2(30 + i * create_heart_distance, 20));
 	}
 
-}
-// Render a new level
-void WorldSystem::render_new_level(){
-	while (registry.motions.entities.size() > 0)
-		registry.remove_all_components_of(registry.motions.entities.back());
-	auto map = loadMap(MAP_PATH + "level2.txt");
-	createEntityBaseOnMap(map);
 }
 
 

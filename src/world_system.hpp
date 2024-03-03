@@ -47,8 +47,6 @@ private:
 	
 	void showKeyOnScreen(RenderSystem *renderer, bool have_key);
 
-	void render_new_level();
-
 	// restart level
 	void restart_game();
 
