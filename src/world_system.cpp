@@ -343,25 +343,16 @@ void WorldSystem::restart_game()
 		createHeart(renderer, vec2(30 + i * create_heart_distance, 20));
 	}
 
-	// create one level of platform for now
-	// intialize x, the left grid
-	// float x = PLATFORM_WIDTH / 2;
-	// // fixed y for now, only bottom level of platform
-	// float y = window_height_px - PLATFORM_HEIGHT / 2;
-	// float a = window_width_px / 2;
-	// float b = 300;
-	// while (b < a + 200)
-	// {
-	// 	createPlatform(renderer, vec2(b, window_height_px - 400));
-	// 	b += PLATFORM_WIDTH;
-	// }
-	// float i = x;
-	// while (i - PLATFORM_WIDTH < window_width_px)
-	// {
-	// 	createPlatform(renderer, vec2(i, y));
-	// 	i += PLATFORM_WIDTH;
-	// }
 }
+// Render a new level
+void WorldSystem::render_new_level(){
+	while (registry.motions.entities.size() > 0)
+		registry.remove_all_components_of(registry.motions.entities.back());
+	auto map = loadMap(MAP_PATH + "level2.txt");
+	createEntityBaseOnMap(map);
+}
+
+
 // Compute collisions between entities
 void WorldSystem::handle_collisions()
 {
@@ -474,6 +465,17 @@ void WorldSystem::handle_collisions()
 					std::cout << "have key: " << have_key << std::endl;
 					showKeyOnScreen(renderer, have_key);
 					// registry.doors.get(registry.doors.entities[0]).is_open = true;
+				}
+			} else if (registry.doors.has(entity_other))
+			{
+				if (have_key)
+				{
+					// open the door
+					Door &door = registry.doors.get(entity_other);
+					door.is_open = true;
+					// remove the key from the screen
+					showKeyOnScreen(renderer, false);
+					render_new_level();
 				}
 			}
 			else if (registry.doors.has(entity_other))
