@@ -78,26 +78,31 @@ std::queue<Vertex*> findPathAStar(Vertex* start, Vertex* end) {
 	return std::queue<Vertex*>();
 }
 
-std::queue<Vertex*> findPath(Motion motion_z, Motion motion_p) {
-	Vertex* start = findNearestVertex(motion_z.position);
-	Vertex* end = findNearestVertex(motion_p.position);
-	std::queue<Vertex*> path = findPathAStar(start, end);
-	return path;
-}
+//std::queue<Vertex*> findPath(Motion motion_z, Motion motion_p) {
+//	Vertex* start = findNearestVertex(motion_z.position);
+//	Vertex* end = findNearestVertex(motion_p.position);
+//	std::queue<Vertex*> path = findPathAStar(start, end);
+//	return path;
+//}
 
-void followPath(Motion& motion, std::queue<Vertex*> path) {
+void followPath(Motion& motion, std::queue<Vertex*> path,ACTION action, Vertex* end) {
 	if (!path.empty()) {
 		Vertex* v = path.front();
-		ACTION action = v->adjs[v];
+		//ACTION action = v->adjs[v];
 		printf("Target vertex {%f} with id {%d}\n", v->x, v->id);
 		printf("Current Action {%d}\n", action);
 		float dp = v->x - motion.position.x;
-		if (abs(dp) < 50) {
+		float current_h = findDistanceBetween(motion.position, { end->x, end->y });
+		float potential_h = findDistanceBetween({ v->x, v->y }, { end->x, end->y });
+		if (current_h < potential_h) {
 			path.pop();
+			Vertex* next = path.front();
+			ACTION action = v->adjs[next];
 			printf("Reached vertex {%f}\n", v->x);
-			followPath(motion, path);
+			followPath(motion, path, action, end);
 			return;
 		}
+
 		float dir = dp / abs(dp);
 		printf("%f\n", dir);
 		if (action == ACTION::WALK) {
@@ -125,15 +130,19 @@ void updateZombiePath(float elapsed_ms)
 					printf("zombie is alerted right\n");
 					zombie.is_alerted = true;
 					zombie.memory = memory;
-					auto path = findPath(motion_z, motion_p);
-					followPath(motion_z, path);
+					Vertex* start = findNearestVertex(motion_z.position);
+					Vertex* end = findNearestVertex(motion_p.position);
+					auto path = findPathAStar(start, end);
+					followPath(motion_z, path, ACTION::WALK, end);
 				}
 				if (zombie.face == DIRECTION::LEFT && (motion_p.position.x < motion_z.position.x)) {
 					printf("zombie is alerted");
 					zombie.is_alerted = true;
 					zombie.memory = memory;
-					auto path = findPath(motion_z, motion_p);
-					followPath(motion_z, path);
+					Vertex* start = findNearestVertex(motion_z.position);
+					Vertex* end = findNearestVertex(motion_p.position);
+					auto path = findPathAStar(start, end);
+					followPath(motion_z, path, ACTION::WALK, end);
 				}
 			}
 			else if (zombie.is_alerted) {

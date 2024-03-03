@@ -47,7 +47,7 @@ int main()
 		latest = v;
 		id++;
 	}
-	Vertex* v3 = new Vertex(id, 480, 420);
+	Vertex* v3 = new Vertex(id, 470, 420);
 	graph.addVertex(v3);
 	graph.addEdge(latest, v3, ACTION::JUMP);
 	id++;
