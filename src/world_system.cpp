@@ -9,8 +9,8 @@
 #include "physics_system.hpp"
 
 #include <fstream>
-#include <ft2build.h>
-#include FT_FREETYPE_H
+// #include <ft2build.h>
+// #include FT_FREETYPE_H
 
 // Game configuration
 const size_t MAX_EAGLES = 15;
@@ -344,13 +344,6 @@ void WorldSystem::restart_game()
 	}
 
 }
-// Render a new level
-void WorldSystem::render_new_level(){
-	while (registry.motions.entities.size() > 0)
-		registry.remove_all_components_of(registry.motions.entities.back());
-	auto map = loadMap(MAP_PATH + "level2.txt");
-	createEntityBaseOnMap(map);
-}
 
 
 // Compute collisions between entities
@@ -478,6 +471,18 @@ void WorldSystem::handle_collisions()
 					render_new_level();
 				}
 			}
+			else if (registry.doors.has(entity_other))
+			{
+				if (have_key)
+				{
+					// open the door
+					Door &door = registry.doors.get(entity_other);
+					door.is_open = true;
+					// remove the key from the screen
+					showKeyOnScreen(renderer, false);
+					render_new_level();
+				}
+			}
 		}
 		else
 		{
@@ -503,7 +508,9 @@ void WorldSystem::showKeyOnScreen(RenderSystem *renderer, bool have_key)
 	{
 		// show key on screen
 		createKey(renderer, vec2(30, HEART_BB_HEIGHT + 40));
-	} else {
+	}
+	else
+	{
 		// remove key from screen
 		uint i = 0;
 		while (i < registry.keys.components.size())
@@ -513,6 +520,20 @@ void WorldSystem::showKeyOnScreen(RenderSystem *renderer, bool have_key)
 			registry.keys.remove(entity);
 			registry.renderRequests.remove(entity);
 		}
+	}
+}
+
+// Render a new level
+void WorldSystem::render_new_level()
+{
+	while (registry.motions.entities.size() > 0)
+		registry.remove_all_components_of(registry.motions.entities.back());
+	auto map = loadMap(MAP_PATH + "level2.txt");
+	createEntityBaseOnMap(map);
+
+	for (int i = 0; i < hp_count; i++)
+	{
+		createHeart(renderer, vec2(30 + i * create_heart_distance, 20));
 	}
 }
 
@@ -573,7 +594,6 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 			josh_motion.velocity.x = 0.f;
 		}
 
-		
 		// josh jump
 		if (action == GLFW_PRESS && key == GLFW_KEY_SPACE && !jumped && registry.motions.get(player_josh).velocity.y == 0.f)
 		{
