@@ -37,6 +37,7 @@ struct Platform
 
 struct Door
 {
+	bool is_open = false;
 };
 
 // Bug and Chicken have a soft shell
