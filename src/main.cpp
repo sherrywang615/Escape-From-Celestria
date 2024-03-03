@@ -9,7 +9,9 @@
 #include "physics_system.hpp"
 #include "render_system.hpp"
 #include "world_system.hpp"
+
 #include "ai_system.hpp"
+
 
 using Clock = std::chrono::high_resolution_clock;
 
@@ -59,6 +61,9 @@ int main()
 		latest = v;
 		id++;
 	}
+	std::string font_filename = "../data/fonts/Kenney_Pixel_Square.ttf";
+	unsigned int font_default_size = 48;
+	// renderer.fontInit(*window, font_filename, font_default_size);
 
 	// variable timestep loop
 	auto t = Clock::now();
@@ -78,6 +83,9 @@ int main()
 		world.handle_collisions();
 		
 		renderer.draw();
+
+		// renderer.renderText("test", -0.6f, 0.0f, 1.0f, glm::vec3(1.0f, 1.0f, 1.0f), trans);
+
 	}
 
 	return EXIT_SUCCESS;

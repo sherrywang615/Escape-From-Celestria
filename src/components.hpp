@@ -7,18 +7,16 @@
 // Player component
 struct Player
 {
-
 };
-
 
 struct Deadly
 {
-
 };
 
 // normal zombies
 struct NormalZombie
 {
+
 	//zombie state 0 = unalerted, 1 = alerted
 	int is_alerted = 0;
 	// walking range of zombie based on initial position
@@ -31,27 +29,45 @@ struct NormalZombie
 
 struct Platform
 {
-	//height and width
-	//vec2 size = {300,300};
-	vec2 position = { 0, 0 };
-	vec2 scale = { 10, 10 };
+	// height and width
+	// vec2 size = {300,300};
+	vec2 position = {0, 0};
+	vec2 scale = {10, 10};
+};
+
+struct Door
+{
+	bool is_open = false;
 };
 
 // Bug and Chicken have a soft shell
 struct Eatable
 {
+};
 
+struct Food
+{
+};
+
+struct Bullet
+{
+};
+
+struct Key
+{
 };
 
 // All data relevant to the shape and motion of entities
-struct Motion {
-	vec2 position = { 0, 0 };
+struct Motion
+{
+	vec2 position = {0, 0};
 	float angle = 0;
-	vec2 velocity = { 0, 0 };
-	vec2 scale = { 10, 10 };
+	vec2 velocity = {0, 0};
+	vec2 scale = {10, 10};
 };
 
-struct Gravity {
+struct Gravity
+{
 };
 
 // Stucture to store collision information
@@ -59,11 +75,12 @@ struct Collision
 {
 	// Note, the first object is stored in the ECS container.entities
 	Entity other; // the second object involved in the collision
-	Collision(Entity& other) { this->other = other; };
+	Collision(Entity &other) { this->other = other; };
 };
 
 // Data structure for toggling debug mode
-struct Debug {
+struct Debug
+{
 	bool in_debug_mode = 0;
 	bool in_freeze_mode = 0;
 };
@@ -87,7 +104,6 @@ struct DeathTimer
 	float counter_ms = 800;
 };
 
-
 // Single Vertex Buffer element for non-textured meshes (coloured.vs.glsl & chicken.vs.glsl)
 struct ColoredVertex
 {
@@ -105,8 +121,8 @@ struct TexturedVertex
 // Mesh datastructure for storing vertex and index buffers
 struct Mesh
 {
-	static bool loadFromOBJFile(std::string obj_path, std::vector<ColoredVertex>& out_vertices, std::vector<uint16_t>& out_vertex_indices, vec2& out_size);
-	vec2 original_size = {1,1};
+	static bool loadFromOBJFile(std::string obj_path, std::vector<ColoredVertex> &out_vertices, std::vector<uint16_t> &out_vertex_indices, vec2 &out_size);
+	vec2 original_size = {1, 1};
 	std::vector<ColoredVertex> vertices;
 	std::vector<uint16_t> vertex_indices;
 };
@@ -114,20 +130,34 @@ struct Mesh
 // When a direction key is released, the chicken will move towards its current direction with decreasing speed (momentum)
 struct Sliding
 {
-	vec2 velocity = { 0, 0 };
+	vec2 velocity = {0, 0};
 };
 
-//change josh's color on death
-struct ColorChange {
+// change josh's color on death
+struct ColorChange
+{
 	vec3 color_start;
 	vec3 color_end;
 	float color_duration;
 	float color_time_elapsed;
 };
 
-struct LightUp
+struct DeductHpTimer
 {
 	float counter_ms = 900;
+};
+
+struct Character
+{
+	unsigned int TextureID; // ID handle of the glyph texture
+	glm::ivec2 Size;		// Size of glyph
+	glm::ivec2 Bearing;		// Offset from baseline to left/top of glyph
+	unsigned int Advance;	// Offset to advance to next glyph
+	char character;
+};
+
+struct Heart {
+
 };
 
 /**
@@ -154,41 +184,49 @@ struct LightUp
  * enums there are, and as a default value to represent uninitialized fields.
  */
 
-enum class TEXTURE_ASSET_ID {
-	BUG = 0,
-	JOSH = BUG + 1,
+enum class TEXTURE_ASSET_ID
+{
+	FOOD = 0,
+	JOSH = FOOD + 1,
 	ZOMBIE = JOSH + 1,
 	PLATFORM = ZOMBIE + 1,
-	TEXTURE_COUNT = PLATFORM + 1
+	BULLET = PLATFORM + 1,
+	DOOR = BULLET + 1,
+	KEY = DOOR + 1,
+	HEART = KEY + 1,
+	TEXTURE_COUNT = HEART + 1
 };
 const int texture_count = (int)TEXTURE_ASSET_ID::TEXTURE_COUNT;
 
-enum class EFFECT_ASSET_ID {
+enum class EFFECT_ASSET_ID
+{
 	COLOURED = 0,
 	EGG = COLOURED + 1,
 	JOSH = EGG + 1,
 	TEXTURED = JOSH + 1,
 	WIND = TEXTURED + 1,
-	EFFECT_COUNT = WIND + 1
+	FONT = WIND + 1,
+	EFFECT_COUNT = FONT + 1
 };
 const int effect_count = (int)EFFECT_ASSET_ID::EFFECT_COUNT;
 
-enum class GEOMETRY_BUFFER_ID {
+enum class GEOMETRY_BUFFER_ID
+{
 	JOSH = 0,
 	SPRITE = JOSH + 1,
 	EGG = SPRITE + 1,
 	DEBUG_LINE = EGG + 1,
 	SCREEN_TRIANGLE = DEBUG_LINE + 1,
 	GEOMETRY_COUNT = SCREEN_TRIANGLE + 1
-	
+
 };
 const int geometry_count = (int)GEOMETRY_BUFFER_ID::GEOMETRY_COUNT;
 
 
 
-struct RenderRequest {
+struct RenderRequest
+{
 	TEXTURE_ASSET_ID used_texture = TEXTURE_ASSET_ID::TEXTURE_COUNT;
 	EFFECT_ASSET_ID used_effect = EFFECT_ASSET_ID::EFFECT_COUNT;
 	GEOMETRY_BUFFER_ID used_geometry = GEOMETRY_BUFFER_ID::GEOMETRY_COUNT;
 };
-
