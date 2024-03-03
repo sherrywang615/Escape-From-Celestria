@@ -53,6 +53,9 @@ private:
 
 	// Number of bug eaten by the chicken, displayed in the window title
 	unsigned int points;
+	unsigned int hp_count;
+	bool have_key;
+	unsigned int bullets_count;
 
 	// Game state
 	RenderSystem* renderer;
@@ -61,6 +64,8 @@ private:
 	float next_bug_spawn;
 	Entity player_chicken;
 	Entity player_josh;
+	bool jumped = false;
+	unsigned int create_heart_distance = 50;
 
 	// music references
 	Mix_Music* background_music;
