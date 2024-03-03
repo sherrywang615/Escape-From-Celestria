@@ -37,6 +37,12 @@ inline std::string mesh_path(const std::string& name) {return data_path() + "/me
 const int window_width_px = 1020;
 const int window_height_px = 700;
 
+const int width = window_width_px / 10;
+const int height = window_height_px / 10;
+
+// const std::string MAP_PATH = "..//..//..//data//maps//";
+const std::string MAP_PATH = "../data/maps/";
+
 #ifndef M_PI
 #define M_PI 3.14159265358979323846f
 #endif
@@ -52,3 +58,11 @@ struct Transform {
 };
 
 bool gl_has_errors();
+
+enum class DIRECTION {
+	RIGHT = 0,
+	TOP = RIGHT + 1,
+	LEFT = TOP + 1,
+	BOT = LEFT + 1,
+	ALL = BOT + 1         // ALL is used to check if one object is colliding at all
+};

@@ -42,14 +42,25 @@ private:
 	void on_key(int key, int, int action, int mod);
 	void on_mouse_move(vec2 pos);
 
+	// read map
+	bool createEntityBaseOnMap(std::vector<std::vector<char>> map);
+	
+	void showKeyOnScreen(RenderSystem *renderer, bool have_key);
+
 	// restart level
 	void restart_game();
+
+	//render new level
+	void render_new_level();
 
 	// OpenGL window handle
 	GLFWwindow* window;
 
 	// Number of bug eaten by the chicken, displayed in the window title
 	unsigned int points;
+	unsigned int hp_count;
+	bool have_key;
+	unsigned int bullets_count;
 
 	// Game state
 	RenderSystem* renderer;
@@ -58,6 +69,8 @@ private:
 	float next_bug_spawn;
 	Entity player_chicken;
 	Entity player_josh;
+	bool jumped = false;
+	unsigned int create_heart_distance = 50;
 
 	// music references
 	Mix_Music* background_music;

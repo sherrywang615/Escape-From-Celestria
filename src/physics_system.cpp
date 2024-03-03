@@ -207,16 +207,6 @@ bool collides(const Motion& motion1, const Motion& motion2, float step_secs, DIR
 	vec2 vel1 = motion1.velocity;
 	vec2 vel2 = motion2.velocity;
 
-	//float left_b1 = pos1.x - abs(scale1.x) / 2;
-	//float right_b1 = pos1.x + abs(scale1.x) / 2;
-	//float left_b2 = pos2.x - abs(scale2.x) / 2;
-	//float right_b2 = pos2.x + abs(scale2.x) / 2;
-
-	//float top_b1 = pos1.y - abs(scale1.y) / 2;
-	//float bot_b1 = pos1.y + abs(scale1.y) / 2;
-	//float top_b2 = pos2.y - abs(scale2.y) / 2;
-	//float bot_b2 = pos2.y + abs(scale2.y) / 2;
-
 	float left_b1	= pos1.x - abs(scale1.x) / 2 + vel1.x * step_secs;
 	float right_b1	= pos1.x + abs(scale1.x) / 2 + vel1.x * step_secs;
 	float left_b2	= pos2.x - abs(scale2.x) / 2 + vel2.x * step_secs;
@@ -294,12 +284,11 @@ void PhysicsSystem::step(float elapsed_ms)
 	for (int i = (int)zombie_registry.components.size() - 1; i >= 0; --i)
 	{
 		NormalZombie& zombie = zombie_registry.components[i];
-		double xPosition = registry.motions.get(zombie_registry.entities[i]).position.x;
-		// if zombie state == unalert (0), then check if it has reached the edge of its walking range and switch direction if so
-		if (zombie.state == 0 && (xPosition - 1 <= zombie.walking_range[0] || xPosition + 1 >= zombie.walking_range[1])) {
-			registry.motions.get(zombie_registry.entities[i]).velocity.x *= -1;
-			registry.motions.get(zombie_registry.entities[i]).scale[0] *= -1;
-		}
+		Entity entity = zombie_registry.entities[i];
+		Motion& motion = registry.motions.get(entity);
+
+
+		
 	}
 
 	// Check for collisions
@@ -412,25 +401,20 @@ void PhysicsSystem::step(float elapsed_ms)
 	for (uint i = 0; i < motion_registry.size(); i++) {
 		Motion& motion = motion_registry.components[i];
 		if ((motion.position.x - abs(motion.scale.x) / 2) < 0) {
-			//printf("Colliding with left boundary\n");
 			motion.velocity.x = 0;
 			motion.position.x = abs(motion.scale.x) / 2;
 		}
 		if ((motion.position.x + abs(motion.scale.x) / 2) > window_width_px) {
 			motion.velocity.x = 0;
 			motion.position.x = window_width_px - abs(motion.scale.x) / 2;
-			//printf("Colliding with right boundary\n");
 		}
 		if ((motion.position.y - abs(motion.scale.y) / 2) < 0) {
 			motion.velocity.y = 0;
 			motion.position.y = abs(motion.scale.y) / 2;
-			//printf("Colliding with top boundary\n");
 		}
 		if ((motion.position.y + abs(motion.scale.y) / 2) > window_height_px) {
 			motion.velocity.y = 0;
 			motion.position.y = window_height_px - abs(motion.scale.y) / 2;
-			//printf("%f\n", motion.position.y + abs(motion.scale.y) / 2);
-			//printf("Colliding with bot boundary\n");
 		}
 	}
 
