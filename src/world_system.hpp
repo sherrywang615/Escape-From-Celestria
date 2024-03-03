@@ -50,6 +50,9 @@ private:
 	// restart level
 	void restart_game();
 
+	//render new level
+	void render_new_level();
+
 	// OpenGL window handle
 	GLFWwindow* window;
 
