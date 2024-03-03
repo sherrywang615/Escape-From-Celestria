@@ -340,7 +340,7 @@ void WorldSystem::restart_game()
 
 	for (int i = 0; i < hp_count; i++)
 	{
-		createHeart(renderer, vec2(20 + i * 40, 20));
+		createHeart(renderer, vec2(30 + i * create_heart_distance, 20));
 	}
 
 	// create one level of platform for now
@@ -393,7 +393,7 @@ void WorldSystem::handle_collisions()
 					}
 					for (int i = 0; i < hp_count - 1; i++)
 					{
-						createHeart(renderer, vec2(20 + i * 40, 20));
+						createHeart(renderer, vec2(30 + i * create_heart_distance, 20));
 					}
 					// initiate death unless already dying
 					if (!registry.deathTimers.has(entity))
@@ -434,7 +434,7 @@ void WorldSystem::handle_collisions()
 					}
 					for (int i = 0; i < hp_count; i++)
 					{
-						createHeart(renderer, vec2(20 + i * 40, 20));
+						createHeart(renderer, vec2(30 + i * create_heart_distance, 20));
 					}
 				}
 			}
@@ -451,7 +451,6 @@ void WorldSystem::handle_collisions()
 					uint i = 0;
 					while (i < registry.hearts.components.size())
 					{
-						std::cout << "Size of registry.hearts.components: " << registry.hearts.components.size() << std::endl;
 						Entity entity = registry.hearts.entities[i];
 						registry.meshPtrs.remove(entity);
 						registry.hearts.remove(entity);
@@ -459,7 +458,7 @@ void WorldSystem::handle_collisions()
 					}
 					for (int i = 0; i < hp_count; i++)
 					{
-						createHeart(renderer, vec2(20 + i * 40, 20));
+						createHeart(renderer, vec2(30 + i * create_heart_distance, 20));
 					}
 				}
 				else if (registry.bullets.has(entity_other))
