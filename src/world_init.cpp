@@ -6,9 +6,9 @@ Entity createJosh(RenderSystem *renderer, vec2 position)
 {
 	auto entity = Entity();
 
-	Mesh &mesh = renderer->getMesh(GEOMETRY_BUFFER_ID::SPRITE);
-	registry.meshPtrs.emplace(entity, &mesh);
-	auto &motion = registry.motions.emplace(entity);
+    Mesh& mesh = renderer->getMesh(GEOMETRY_BUFFER_ID::JOSH);
+    registry.meshPtrs.emplace(entity, &mesh);
+    auto& motion = registry.motions.emplace(entity);
 
 	motion.angle = 0.f;
 	motion.velocity = {0, 0};
