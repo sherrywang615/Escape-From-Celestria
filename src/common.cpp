@@ -56,3 +56,32 @@ bool gl_has_errors()
 
 	return true;
 }
+
+float findDistanceBetween(vec2 pos1, vec2 pos2) {
+	float dist = sqrt(pow((pos1.x - pos2.x), 2) + pow((pos1.y - pos2.y), 2));
+	return dist;
+}
+
+Graph graph;
+
+void Graph::addVertex(Vertex* v) {
+	if (vertices.size() < v->id) {
+		vertices.push_back(v);
+	}
+	else {
+		printf("Vertex already contained in vertices");
+	}
+}
+
+void Graph::addEdge(Vertex* v1, Vertex* v2, ACTION action) {
+	//v1->adjs.push_back(std::make_pair(v2, action));
+	//v2->adjs.push_back(std::make_pair(v1, action));
+
+	v1->adjs[v2] = action;
+	v2->adjs[v1] = action;
+}
+
+std::vector<Vertex*> Graph::getVertices() {
+	return vertices;
+}
+
