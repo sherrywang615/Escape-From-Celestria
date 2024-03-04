@@ -81,11 +81,12 @@ std::queue<Vertex*> findPathAStar(Vertex* start, Vertex* end) {
 
 
 // Zombie will move according to the path
-void followPath(Motion& motion, std::queue<Vertex*> path,ACTION action, Vertex* end) {
+void followPath(Motion& motion, std::queue<Vertex*> path,ACTION action, Vertex* end, float speed) {
 	if (!path.empty()) {
+		printf("Current location: {%f, %f}\n", motion.position.x, motion.position.y);
 		Vertex* v = path.front();
 		//ACTION action = v->adjs[v];
-		printf("Target vertex {%f} with id {%d}\n", v->x, v->id);
+		printf("Target vertex {%f, %f} with id {%d}\n", v->x, v->y, v->id);
 		printf("Current Action {%d}\n", action);
 		float dp = v->x - motion.position.x;
 		float current_h = findDistanceBetween(motion.position, { end->x, end->y });
@@ -95,17 +96,17 @@ void followPath(Motion& motion, std::queue<Vertex*> path,ACTION action, Vertex* 
 			Vertex* next = path.front();
 			ACTION action = v->adjs[next];
 			printf("Reached vertex {%f}\n", v->x);
-			followPath(motion, path, action, end);
+			followPath(motion, path, action, end, speed);
 			return;
 		}
 
 		float dir = dp / abs(dp);
 		printf("%f\n", dir);
 		if (action == ACTION::WALK) {
-			motion.velocity.x = dir * 30;
+			motion.velocity.x = dir * speed;
 		}
 		else if (action == ACTION::JUMP) {
-			motion.velocity.x = dir * 30;
+			motion.velocity.x = dir * speed;
 			motion.velocity.y = -50;
 		}
 	}
@@ -113,7 +114,7 @@ void followPath(Motion& motion, std::queue<Vertex*> path,ACTION action, Vertex* 
 
 void updateZombiePath(float elapsed_ms) 
 {
-	float memory = 3000.f;
+	float memory = 500.f;
 	for (Entity entity_z : registry.zombies.entities) {
 		NormalZombie& zombie = registry.zombies.get(entity_z);
 		Motion& motion_z = registry.motions.get(entity_z);
@@ -130,34 +131,54 @@ void updateZombiePath(float elapsed_ms)
 					Vertex* start = findNearestVertex(motion_z.position);
 					Vertex* end = findNearestVertex(motion_p.position);
 					auto path = findPathAStar(start, end);
-					followPath(motion_z, path, ACTION::WALK, end);
+					followPath(motion_z, path, ACTION::WALK, end, zombie.alerted_speed);
 				}
 				if (zombie.face == DIRECTION::LEFT && (motion_p.position.x < motion_z.position.x)) {
-					printf("zombie is alerted");
+					printf("zombie is alerted left\n");
 					zombie.is_alerted = true;
 					zombie.memory = memory;
 					Vertex* start = findNearestVertex(motion_z.position);
 					Vertex* end = findNearestVertex(motion_p.position);
 					auto path = findPathAStar(start, end);
-					followPath(motion_z, path, ACTION::WALK, end);
+					followPath(motion_z, path, ACTION::WALK, end, zombie.alerted_speed);
 				}
 			}
 			// Zombie lose memory when it is not alerted
 			else if (zombie.is_alerted) {
 				zombie.memory -= elapsed_ms;
 				if (zombie.memory < 0) {
+					printf("zombie is not alerted anymore\n");
 					zombie.is_alerted = false;
+					zombie.walking_bound[0] = motion_z.position.x - zombie.walking_range;
+					zombie.walking_bound[1] = motion_z.position.x + zombie.walking_range;
+					zombie.memory = 0;
+					printf("zombie walking_bound: {%f, %f}", zombie.walking_bound[0], zombie.walking_bound[1]);
 				}
 			}
 			double xPosition = motion_z.position.x;
 			// if zombie state == unalert (0), then check if it has reached the edge of its walking range and switch direction if so
-			if (!zombie.is_alerted && (xPosition <= zombie.walking_range[0] || xPosition >= zombie.walking_range[1])) {
-				motion_z.velocity.x *= -1;
-				motion_z.scale[0] *= -1;
+			//if (!zombie.is_alerted && (xPosition <= zombie.walking_bound[0] || xPosition >= zombie.walking_bound[1])) {
+			//	motion_z.velocity.x *= -1;
+			//	motion_z.scale[0] *= -1;
+			//}
+
+			// if zombie is unalerted, begin wander around
+			if (!zombie.is_alerted) {
+				// if zombie touches the boundaries of its wandering range, turn around
+				if (motion_z.position.x <= zombie.walking_bound[0] || motion_z.position.x >= zombie.walking_bound[1]) {
+					motion_z.velocity.x *= -1;
+					motion_z.scale.x *= -1;
+				}
+				// also turn around if the zombie touches the boundaries
+				if (motion_z.position.x <= 0 + (motion_z.scale.x / 2) || motion_z.position.x >= window_width_px + (motion_z.scale.x / 2)) {
+					motion_z.velocity.x *= -1;
+					motion_z.scale.x *= -1;
+				}
+				motion_z.velocity.x = -30 * (motion_z.scale.x / abs(motion_z.scale.x));
 			}
 
 			// change zombie's facing direction
-			if (motion_z.velocity.x > 0) {
+			if (motion_z.scale.x < 0) {
 				zombie.face = DIRECTION::RIGHT;
 			}
 			else {
