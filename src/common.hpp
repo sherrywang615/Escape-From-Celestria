@@ -42,7 +42,9 @@ const int width = window_width_px / 10;
 const int height = window_height_px / 10;
 
 // const std::string MAP_PATH = "..//..//..//data//maps//";
-const std::string MAP_PATH = "../data/maps/";
+// const std::string MAP_PATH = "../../../data/maps/";
+const std::string MAP_PATH = "/Users/ellenzhang/Downloads/Team7-main-3/data/maps/";
+
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846f

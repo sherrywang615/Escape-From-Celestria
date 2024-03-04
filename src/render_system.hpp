@@ -38,10 +38,12 @@ class RenderSystem {
 		textures_path("josh_gun1.png"),
 		textures_path("zombie1.png"), 
 		textures_path("ground.png"),
-		textures_path("bullet.png"),
+    textures_path("bullet.png"),
 		textures_path("door.png"),
 		textures_path("key.png"),
 		textures_path("heart.png"),
+		textures_path("help_info.png"),
+		textures_path("help_sign.png")
 			 };
 
 	std::array<GLuint, effect_count> effects;
@@ -52,7 +54,8 @@ class RenderSystem {
 		shader_path("Josh"),
 		shader_path("textured"),
 		shader_path("wind"),
-		shader_path("font")};
+		//shader_path("font")
+		};
 
 	std::array<GLuint, geometry_count> vertex_buffers;
 	std::array<GLuint, geometry_count> index_buffers;

@@ -198,7 +198,9 @@ enum class TEXTURE_ASSET_ID
 	DOOR = BULLET + 1,
 	KEY = DOOR + 1,
 	HEART = KEY + 1,
-	TEXTURE_COUNT = HEART + 1
+    HELP_INFO = HEART + 1,
+	HELP_SIGN = HELP_INFO + 1,
+	TEXTURE_COUNT = HELP_SIGN + 1
 };
 const int texture_count = (int)TEXTURE_ASSET_ID::TEXTURE_COUNT;
 
@@ -209,8 +211,8 @@ enum class EFFECT_ASSET_ID
 	JOSH = EGG + 1,
 	TEXTURED = JOSH + 1,
 	WIND = TEXTURED + 1,
-	FONT = WIND + 1,
-	EFFECT_COUNT = FONT + 1
+	//FONT = WIND + 1,
+	EFFECT_COUNT = WIND + 1
 };
 const int effect_count = (int)EFFECT_ASSET_ID::EFFECT_COUNT;
 

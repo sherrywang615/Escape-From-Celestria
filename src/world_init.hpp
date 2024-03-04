@@ -39,7 +39,12 @@ Entity createEagle(RenderSystem *renderer, vec2 position);
 // Josh
 Entity createJosh(RenderSystem *renderer, vec2 position);
 // Platform
-Entity createPlatform(RenderSystem *renderer, vec2 pos);
+Entity createPlatform(RenderSystem* renderer, vec2 pos);
+//help help_sign
+Entity createHelpSign(RenderSystem* renderer, vec2 position);
+//help help_info
+Entity createHelpInfo(RenderSystem* renderer, vec2 position);
+
 
 // a red line for debugging purposes
 Entity createLine(vec2 position, vec2 size);
