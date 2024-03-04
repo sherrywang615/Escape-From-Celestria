@@ -36,7 +36,7 @@ Entity createZombie(RenderSystem *renderer, vec2 position, int state, double ran
 	// Initialize the motion of zombie to rightwards
 	auto &motion = registry.motions.emplace(entity);
 	motion.angle = 0.f;
-	motion.velocity = {30.f, 0};
+	motion.velocity = {0, 0};
 	motion.position = position;
 
 	// Setting initial values, scale is negative to make it face the opposite way
@@ -46,8 +46,8 @@ Entity createZombie(RenderSystem *renderer, vec2 position, int state, double ran
 	registry.deadlys.emplace(entity);
 	registry.zombies.emplace(entity);
 	registry.gravities.emplace(entity);
-	registry.zombies.get(entity).walking_range[0] = position.x - range;
-	registry.zombies.get(entity).walking_range[1] = position.x + range;
+	registry.zombies.get(entity).walking_bound[0] = position.x - range;
+	registry.zombies.get(entity).walking_bound[1] = position.x + range;
 	registry.renderRequests.insert(
 		entity,
 		{TEXTURE_ASSET_ID::ZOMBIE,
@@ -171,6 +171,35 @@ Entity createDoor(RenderSystem *renderer, vec2 position)
 	registry.renderRequests.insert(
 		entity,
 		{TEXTURE_ASSET_ID::DOOR,
+		 EFFECT_ASSET_ID::TEXTURED,
+		 GEOMETRY_BUFFER_ID::SPRITE});
+
+	return entity;
+}
+
+Entity createCabinet(RenderSystem *renderer, vec2 position)
+{
+	// Reserve en entity
+	auto entity = Entity();
+
+	// Store a reference to the potentially re-used mesh object
+	Mesh &mesh = renderer->getMesh(GEOMETRY_BUFFER_ID::SPRITE);
+	registry.meshPtrs.emplace(entity, &mesh);
+
+	// Initialize the position, scale, and physics components
+	auto &motion = registry.motions.emplace(entity);
+	motion.angle = 0.f;
+	motion.velocity = {0, 0};
+	motion.position = position;
+
+	// Setting initial values, scale is negative to make it face the opposite way
+	motion.scale = vec2({-DOOR_BB_WIDTH, DOOR_BB_HEIGHT});
+
+	// Create an (empty) Bug component to be able to refer to all bug
+	registry.cabinets.emplace(entity);
+	registry.renderRequests.insert(
+		entity,
+		{TEXTURE_ASSET_ID::CABINET,
 		 EFFECT_ASSET_ID::TEXTURED,
 		 GEOMETRY_BUFFER_ID::SPRITE});
 

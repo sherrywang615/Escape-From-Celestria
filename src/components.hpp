@@ -20,11 +20,13 @@ struct NormalZombie
 	//zombie state 0 = unalerted, 1 = alerted
 	int is_alerted = 0;
 	// walking range of zombie based on initial position
-	std::vector<double> walking_range = { 0, 0 };
-	float sensing_range = 500;
+	std::vector<double> walking_bound = { 0, 0 };
+	float walking_range = 100;
+	float sensing_range = 250;
 	DIRECTION face = DIRECTION::RIGHT;
 	// memory decides how long does it takes for an alerted zombie turn back into unalerted after losing the player in sight
 	float memory = 3000;
+	float alerted_speed = 50;
 };
 
 struct Platform
@@ -160,6 +162,10 @@ struct Heart {
 
 };
 
+struct Cabinet{
+
+};
+
 /**
  * The following enumerators represent global identifiers refering to graphic
  * assets. For example TEXTURE_ASSET_ID are the identifiers of each texture
@@ -189,7 +195,7 @@ enum class TEXTURE_ASSET_ID
 {
 	FOOD = 0,
 	JOSH = FOOD + 1,
-  JOSH1 = JOSH + 1,
+  	JOSH1 = JOSH + 1,
 	JOSHGUN = JOSH1 + 1,
 	JOSHGUN1 = JOSHGUN + 1,
 	ZOMBIE = JOSHGUN1 + 1,
@@ -198,9 +204,12 @@ enum class TEXTURE_ASSET_ID
 	DOOR = BULLET + 1,
 	KEY = DOOR + 1,
 	HEART = KEY + 1,
+
   HELP_INFO = HEART + 1,
 	HELP_SIGN = HELP_INFO + 1,
-	TEXTURE_COUNT = HELP_SIGN + 1
+	CABINET = HELP_SIGN + 1,
+	TEXTURE_COUNT = CABINET + 1
+
 };
 const int texture_count = (int)TEXTURE_ASSET_ID::TEXTURE_COUNT;
 
@@ -211,7 +220,7 @@ enum class EFFECT_ASSET_ID
 	JOSH = EGG + 1,
 	TEXTURED = JOSH + 1,
 	WIND = TEXTURED + 1,
-	// FONT = WIND + 1,
+	//FONT = WIND + 1,
 	EFFECT_COUNT = WIND + 1
 };
 const int effect_count = (int)EFFECT_ASSET_ID::EFFECT_COUNT;

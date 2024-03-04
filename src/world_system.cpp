@@ -148,23 +148,22 @@ vec3 lerp(vec3 start, vec3 end, float t)
 	return start * (1 - t) + end * t;
 }
 
-
 // Update our game world
 bool WorldSystem::step(float elapsed_ms_since_last_update)
 {
 
-	//for fps counter
-    fpsTimer += elapsed_ms_since_last_update;
+	// for fps counter
+	fpsTimer += elapsed_ms_since_last_update;
 	fpsCount++;
-    if (fpsTimer >= 1000.0f) { 
+	if (fpsTimer >= 1000.0f)
+	{
 		fpsTimer -= 1000.0f;
-        fps = fpsCount;
-        fpsCount = 0;
-        std::stringstream windowCaption;
-        windowCaption << "Escape from Celestria - FPS Counter: " << fps;
-        glfwSetWindowTitle(window, windowCaption.str().c_str());
-    }
-
+		fps = fpsCount;
+		fpsCount = 0;
+		std::stringstream windowCaption;
+		windowCaption << "Escape from Celestria - FPS Counter: " << fps;
+		glfwSetWindowTitle(window, windowCaption.str().c_str());
+	}
 
 	// Remove debug info from the last step
 	while (registry.debugComponents.entities.size() > 0)
@@ -224,7 +223,6 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 		}
 	}
 
-
 	// Processing the chicken state
 	assert(registry.screenStates.components.size() <= 1);
 	ScreenState &screen = registry.screenStates.components[0];
@@ -271,11 +269,19 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 		}
 	}
 
+	// for (Entity entity : registry.bullets.entities){
+	// 	if(registry.eatables.has(entity)){
+	// 		auto motion = registry.motions.get(entity);
+	// 		motion.velocity = vec2
+	// 	}
+	// }
+
 	return true;
 }
 
 bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map)
 {
+	float josh_x = 0, josh_y = 0;
 	for (int i = 0; i < map.size(); i++)
 	{
 		for (int j = 0; j < map[i].size(); j++)
@@ -289,8 +295,8 @@ bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map)
 			}
 			else if (tok == 'J')
 			{
-				player_josh = createJosh(renderer, {x, y});
-				registry.colors.insert(player_josh, {1, 0.8f, 0.8f});
+				josh_x = x;
+				josh_y = y;
 			}
 			else if (tok == 'P')
 			{
@@ -316,6 +322,10 @@ bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map)
 			{
 				createKey(renderer, {x, y});
 			}
+			else if (tok == 'C')
+			{
+				createCabinet(renderer, {x, y});
+			}
 			else
 			{
 				printf("Map contains invalid character '%c' at [%d, %d].", tok, i, j);
@@ -323,6 +333,9 @@ bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map)
 			}
 		}
 	}
+	// Recreate Josh so that Josh appears in the very front
+	player_josh = createJosh(renderer, {josh_x, josh_y});
+	registry.colors.insert(player_josh, {1, 0.8f, 0.8f});
 	return true;
 }
 
@@ -358,15 +371,14 @@ void WorldSystem::restart_game()
 	// createDoor(renderer, vec2(900, window_height_px - 80));
 	// createBullet(renderer, vec2(600, window_height_px - 450));
 	// createKey(renderer, vec2(400, window_height_px - 450));
-  createHelpSign(renderer, vec2(window_width_px - 70, window_height_px - 700));
+
+	createHelpSign(renderer, vec2(window_width_px - 70, window_height_px - 700));
 
 	for (int i = 0; i < hp_count; i++)
 	{
 		createHeart(renderer, vec2(30 + i * create_heart_distance, 20));
 	}
-
 }
-
 
 // Compute collisions between entities
 void WorldSystem::handle_collisions()
@@ -482,7 +494,8 @@ void WorldSystem::handle_collisions()
 					showKeyOnScreen(renderer, have_key);
 					// registry.doors.get(registry.doors.entities[0]).is_open = true;
 				}
-			} else if (registry.doors.has(entity_other))
+			}
+			else if (registry.doors.has(entity_other))
 			{
 				if (have_key)
 				{
@@ -556,7 +569,7 @@ void WorldSystem::render_new_level()
 
 	for (int i = 0; i < hp_count; i++)
 	{
-		createHeart(renderer, vec2(30 + i * create_heart_distance, 20));	
+		createHeart(renderer, vec2(30 + i * create_heart_distance, 20));
 	}
 	createHelpSign(renderer, vec2(window_width_px - 70, window_height_px - 700));
 }
@@ -566,7 +579,6 @@ bool WorldSystem::is_over() const
 {
 	return bool(glfwWindowShouldClose(window));
 }
-
 
 int josh_step_counter = 0;
 // On key callback
@@ -588,27 +600,51 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 	// control chicken movement
 	if (!registry.deathTimers.has(player_josh))
 	{
-		if((action == GLFW_REPEAT || action == GLFW_PRESS) && (key == GLFW_KEY_B)){
-			//JOSH holding gun
-			// registry.renderRequests.get(player_josh) = { TEXTURE_ASSET_ID::JOSHGUN, 
-			// 												EFFECT_ASSET_ID::TEXTURED,
-			// 												GEOMETRY_BUFFER_ID::SPRITE };
-															
-			registry.renderRequests.get(player_josh) = { TEXTURE_ASSET_ID::JOSHGUN1, 
+
+		if ((action == GLFW_REPEAT || action == GLFW_PRESS) && (key == GLFW_KEY_J))
+		{
+			// JOSH holding gun
+			//  registry.renderRequests.get(player_josh) = { TEXTURE_ASSET_ID::JOSHGUN,
+			//  												EFFECT_ASSET_ID::TEXTURED,
+			//  												GEOMETRY_BUFFER_ID::SPRITE };
+
+			registry.renderRequests.get(player_josh) = {TEXTURE_ASSET_ID::JOSHGUN1,
 														EFFECT_ASSET_ID::TEXTURED,
-														GEOMETRY_BUFFER_ID::SPRITE };
+														GEOMETRY_BUFFER_ID::SPRITE};
+
+			vec2 josh_pos = registry.motions.get(player_josh).position;
+
+			if (registry.motions.get(player_josh).scale.x > 0)
+			{
+				Entity bullet = createBullet(renderer, vec2(josh_pos.x + JOSH_BB_WIDTH / 2, josh_pos.y));
+				registry.eatables.remove(bullet);
+				Motion &motion = registry.motions.get(bullet);
+				motion.scale = vec2(20.0, 20.0);
+				motion.velocity.x = 80.0;
+			}
+			else
+			{
+				Entity bullet = createBullet(renderer, vec2(josh_pos.x - JOSH_BB_WIDTH / 2, josh_pos.y));
+				registry.eatables.remove(bullet);
+				Motion &motion = registry.motions.get(bullet);
+				motion.scale = vec2(-20.0, 20.0);
+				motion.velocity.x = -80.0;
+			}
 		}
 		if ((action == GLFW_REPEAT || action == GLFW_PRESS) && (key == GLFW_KEY_LEFT || key == GLFW_KEY_A))
 		{
 			josh_step_counter++;
-			if(josh_step_counter % 2 == 0){
-				registry.renderRequests.get(player_josh) = { TEXTURE_ASSET_ID::JOSH1, 
+			if (josh_step_counter % 2 == 0)
+			{
+				registry.renderRequests.get(player_josh) = {TEXTURE_ASSET_ID::JOSH1,
 															EFFECT_ASSET_ID::TEXTURED,
-															GEOMETRY_BUFFER_ID::SPRITE };
-			}else{
-				registry.renderRequests.get(player_josh) = { TEXTURE_ASSET_ID::JOSH, 
+															GEOMETRY_BUFFER_ID::SPRITE};
+			}
+			else
+			{
+				registry.renderRequests.get(player_josh) = {TEXTURE_ASSET_ID::JOSH,
 															EFFECT_ASSET_ID::TEXTURED,
-															GEOMETRY_BUFFER_ID::SPRITE };
+															GEOMETRY_BUFFER_ID::SPRITE};
 			}
 			Motion &josh_motion = registry.motions.get(player_josh);
 			josh_motion.velocity.x = -200.f * cos(josh_motion.angle);
@@ -627,14 +663,17 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 		if ((action == GLFW_REPEAT || action == GLFW_PRESS) && (key == GLFW_KEY_RIGHT || key == GLFW_KEY_D))
 		{
 			josh_step_counter++;
-			if(josh_step_counter % 2 == 0){
-				registry.renderRequests.get(player_josh) = { TEXTURE_ASSET_ID::JOSH1, 
+			if (josh_step_counter % 2 == 0)
+			{
+				registry.renderRequests.get(player_josh) = {TEXTURE_ASSET_ID::JOSH1,
 															EFFECT_ASSET_ID::TEXTURED,
-															GEOMETRY_BUFFER_ID::SPRITE };
-			}else{
-				registry.renderRequests.get(player_josh) = { TEXTURE_ASSET_ID::JOSH, 
+															GEOMETRY_BUFFER_ID::SPRITE};
+			}
+			else
+			{
+				registry.renderRequests.get(player_josh) = {TEXTURE_ASSET_ID::JOSH,
 															EFFECT_ASSET_ID::TEXTURED,
-															GEOMETRY_BUFFER_ID::SPRITE };
+															GEOMETRY_BUFFER_ID::SPRITE};
 			}
 			Motion &josh_motion = registry.motions.get(player_josh);
 			josh_motion.velocity.x = -200.f * cos(josh_motion.angle - M_PI);
@@ -667,6 +706,32 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 	if (action == GLFW_PRESS && key == GLFW_KEY_I)
 	{
 		renderInfo = !renderInfo;
+	}
+
+	if (action == GLFW_PRESS && key == GLFW_KEY_H)
+	{
+		if (!isJoshHidden)
+		{
+			for (Entity entity : registry.cabinets.entities)
+			{
+				if (isNearCabinet(player_josh, entity, 50))
+				{
+					// hide josh
+					joshPosition = registry.motions.get(player_josh).position;
+					// joshScale  = registry.motions.get(player_josh).scale;
+					hideJosh(renderer);
+					isJoshHidden = true;
+					break;
+				}
+			}
+		}
+		else
+		{
+			// show josh
+			player_josh = createJosh(renderer, joshPosition);
+			registry.colors.insert(player_josh, {1, 0.8f, 0.8f});
+			isJoshHidden = false;
+		}
 	}
 
 	// Resetting game
@@ -780,4 +845,21 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 
 void WorldSystem::on_mouse_move(vec2 mouse_position)
 {
+}
+
+bool WorldSystem::isNearCabinet(Entity player, Entity cabinet, float threshold)
+{
+	vec2 playerPos = registry.motions.get(player).position;
+	vec2 cabinetPos = registry.motions.get(cabinet).position;
+	return findDistanceBetween(playerPos, cabinetPos) <= threshold;
+}
+
+void WorldSystem::hideJosh(RenderSystem *renderer)
+{
+	// remove josh from screen
+	Entity entity = registry.players.entities[0];
+	// registry.meshPtrs.remove(entity);
+	// registry.players.remove(entity);
+	// registry.renderRequests.remove(entity);
+	registry.remove_all_components_of(entity);
 }

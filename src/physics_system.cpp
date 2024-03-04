@@ -186,7 +186,7 @@ std::vector<int> collides_with_mesh(const Motion& motion, const Motion& mesh_mot
 			{
 				collision_dirs[0] = 1;
 				collision_dirs[4] = 1;
-				std::cout << currX << ", " << currY << std::endl;
+				//std::cout << currX << ", " << currY << std::endl;
 			}
 			//top
 			if (check_line_intersects(bot_left, bot_right, { currX, currY }, { nextX, nextY }))
@@ -317,6 +317,13 @@ void PhysicsSystem::step(float elapsed_ms)
 		motion.position[0] += motion.velocity[0] * step_seconds;
 		motion.position[1] += motion.velocity[1] * step_seconds;
 
+
+		//remove bullet
+		if(registry.bullets.has(entity) && !registry.eatables.has(entity)){
+			
+			//registry.collisions.emplace_with_duplicates(entity, entity);
+		}
+
 	}
 
 	// Check for collisions between all moving entities and platforms
@@ -411,14 +418,27 @@ void PhysicsSystem::step(float elapsed_ms)
 	// Check boundaries
 	auto& motion_registry = registry.motions;
 	for (uint i = 0; i < motion_registry.size(); i++) {
+		Entity entity = motion_container.entities[i];
 		Motion& motion = motion_registry.components[i];
 		if ((motion.position.x - abs(motion.scale.x) / 2) < 0) {
 			motion.velocity.x = 0;
 			motion.position.x = abs(motion.scale.x) / 2;
+
+			if(registry.bullets.has(entity) && !registry.eatables.has(entity)){
+				registry.meshPtrs.remove(entity);
+				registry.hearts.remove(entity);
+				registry.renderRequests.remove(entity);
+			}
 		}
 		if ((motion.position.x + abs(motion.scale.x) / 2) > window_width_px) {
 			motion.velocity.x = 0;
 			motion.position.x = window_width_px - abs(motion.scale.x) / 2;
+
+			if(registry.bullets.has(entity) && !registry.eatables.has(entity)){
+				registry.meshPtrs.remove(entity);
+				registry.hearts.remove(entity);
+				registry.renderRequests.remove(entity);
+			}
 		}
 		if ((motion.position.y - abs(motion.scale.y) / 2) < 0) {
 			motion.velocity.y = 0;
@@ -428,6 +448,9 @@ void PhysicsSystem::step(float elapsed_ms)
 			motion.velocity.y = 0;
 			motion.position.y = window_height_px - abs(motion.scale.y) / 2;
 		}
+
+
+	
 	}
 
 
