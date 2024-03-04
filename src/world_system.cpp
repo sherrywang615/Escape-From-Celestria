@@ -157,7 +157,7 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 	fpsCount++;
 	if (fpsTimer >= 1000.0f)
 	{
-		fpsTimer -= 1000.0f;
+		fpsTimer = 0.0f;
 		fps = fpsCount;
 		fpsCount = 0;
 		std::stringstream windowCaption;
