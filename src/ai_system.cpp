@@ -81,7 +81,7 @@ std::queue<Vertex*> findPathAStar(Vertex* start, Vertex* end) {
 
 
 // Zombie will move according to the path
-void followPath(Motion& motion, std::queue<Vertex*> path,ACTION action, Vertex* end, float speed) {
+void followPath(Motion& motion, std::queue<Vertex*> path,ACTION action, Vertex* end, float speed, bool is_jumping) {
 	if (!path.empty()) {
 		// printf("Current location: {%f, %f}\n", motion.position.x, motion.position.y);
 		Vertex* v = path.front();
@@ -92,11 +92,14 @@ void followPath(Motion& motion, std::queue<Vertex*> path,ACTION action, Vertex* 
 		float current_h = findDistanceBetween(motion.position, { end->x, end->y });
 		float potential_h = findDistanceBetween({ v->x, v->y }, { end->x, end->y });
 		if (current_h < potential_h) {
+			printf("current h: %f\n", current_h);
+			printf("potential h: %f\n", potential_h);
+			printf("Go to next point\n");
 			path.pop();
 			Vertex* next = path.front();
 			ACTION action = v->adjs[next];
-			// printf("Reached vertex {%f}\n", v->x);
-			followPath(motion, path, action, end, speed);
+			printf("Reached vertex {%f}\n", v->x);
+			followPath(motion, path, action, end, speed, is_jumping);
 			return;
 		}
 
@@ -105,9 +108,10 @@ void followPath(Motion& motion, std::queue<Vertex*> path,ACTION action, Vertex* 
 		if (action == ACTION::WALK) {
 			motion.velocity.x = dir * speed;
 		}
-		else if (action == ACTION::JUMP) {
+		else if (action == ACTION::JUMP || is_jumping) {
+			is_jumping = true;
 			motion.velocity.x = dir * speed;
-			motion.velocity.y = -50;
+			motion.velocity.y = -700;
 		}
 	}
 }
@@ -131,7 +135,7 @@ void updateZombiePath(float elapsed_ms)
 					Vertex* start = findNearestVertex(motion_z.position);
 					Vertex* end = findNearestVertex(motion_p.position);
 					auto path = findPathAStar(start, end);
-					followPath(motion_z, path, ACTION::WALK, end, zombie.alerted_speed);
+					followPath(motion_z, path, ACTION::WALK, end, zombie.alerted_speed, zombie.is_jumping);
 				}
 				if (zombie.face == DIRECTION::LEFT && (motion_p.position.x < motion_z.position.x)) {
 					// printf("zombie is alerted left\n");
@@ -140,7 +144,7 @@ void updateZombiePath(float elapsed_ms)
 					Vertex* start = findNearestVertex(motion_z.position);
 					Vertex* end = findNearestVertex(motion_p.position);
 					auto path = findPathAStar(start, end);
-					followPath(motion_z, path, ACTION::WALK, end, zombie.alerted_speed);
+					followPath(motion_z, path, ACTION::WALK, end, zombie.alerted_speed, zombie.is_jumping);
 				}
 			}
 			// Zombie lose memory when it is not alerted

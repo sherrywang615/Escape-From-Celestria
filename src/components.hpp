@@ -26,7 +26,8 @@ struct NormalZombie
 	DIRECTION face = DIRECTION::RIGHT;
 	// memory decides how long does it takes for an alerted zombie turn back into unalerted after losing the player in sight
 	float memory = 3000;
-	float alerted_speed = 50;
+	float alerted_speed = 100;
+	bool is_jumping = 0;
 };
 
 struct Platform

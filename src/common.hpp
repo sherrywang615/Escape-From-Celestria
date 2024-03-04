@@ -74,13 +74,14 @@ float findDistanceBetween(vec2 pos1, vec2 pos2);
 
 struct Vertex {
 	unsigned int id;
+	static unsigned int id_count;
 public:
 	float x;
 	float y;
 	std::unordered_map<Vertex*, ACTION> adjs;
-	Vertex(unsigned int _id, float _x, float _y)
+	Vertex(float _x, float _y)
 	{
-		id = _id;
+		id = id_count++;
 		x = _x;
 		y = _y;
 	}
