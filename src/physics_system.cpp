@@ -186,7 +186,7 @@ std::vector<int> collides_with_mesh(const Motion& motion, const Motion& mesh_mot
 			{
 				collision_dirs[0] = 1;
 				collision_dirs[4] = 1;
-				std::cout << currX << ", " << currY << std::endl;
+				//std::cout << currX << ", " << currY << std::endl;
 			}
 			//top
 			if (check_line_intersects(bot_left, bot_right, { currX, currY }, { nextX, nextY }))
