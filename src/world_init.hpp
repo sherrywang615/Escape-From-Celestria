@@ -35,6 +35,7 @@ Entity createDoor(RenderSystem *renderer, vec2 position);
 Entity createKey(RenderSystem *renderer, vec2 position);
 Entity createHeart(RenderSystem *renderer, vec2 position);
 Entity createCabinet(RenderSystem *renderer, vec2 position);
+Entity createBulletSmall(RenderSystem *renderer, vec2 position);
 // the enemy
 Entity createEagle(RenderSystem *renderer, vec2 position);
 // Josh
