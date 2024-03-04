@@ -2,6 +2,7 @@
 
 #include <array>
 #include <utility>
+#include <map>
 
 #include "common.hpp"
 #include "components.hpp"
@@ -32,8 +33,15 @@ class RenderSystem {
 	const std::array<std::string, texture_count> texture_paths = {
 		textures_path("bug.png"),
 		textures_path("josh.png"),
+		textures_path("josh1.png"),
+		textures_path("josh_gun.png"),
+		textures_path("josh_gun1.png"),
 		textures_path("zombie1.png"), 
 		textures_path("ground.png"),
+    textures_path("bullet.png"),
+		textures_path("door.png"),
+		textures_path("key.png"),
+		textures_path("heart.png"),
 		textures_path("help_info.png"),
 		textures_path("help_sign.png")
 			 };
@@ -45,7 +53,8 @@ class RenderSystem {
 		shader_path("egg"),
 		shader_path("Josh"),
 		shader_path("textured"),
-		shader_path("wind")};
+		shader_path("wind"),
+		shader_path("font")};
 
 	std::array<GLuint, geometry_count> vertex_buffers;
 	std::array<GLuint, geometry_count> index_buffers;
@@ -79,10 +88,13 @@ public:
 
 	mat3 createProjectionMatrix();
 
+	void renderText(const std::string& text, float x, float y, float scale, const glm::vec3& color, const glm::mat4& trans);
+	bool fontInit(GLFWwindow& window, const std::string& font_filename, unsigned int font_default_size);
 private:
 	// Internal drawing functions for each entity type
 	void drawTexturedMesh(Entity entity, const mat3& projection);
 	void drawToScreen();
+	
 
 	// Window handle
 	GLFWwindow* window;
@@ -91,6 +103,12 @@ private:
 	GLuint frame_buffer;
 	GLuint off_screen_render_buffer_color;
 	GLuint off_screen_render_buffer_depth;
+
+	// fonts
+	std::map<char, Character> m_ftCharacters;
+	GLuint m_font_shaderProgram;
+	GLuint m_font_VAO;
+	GLuint m_font_VBO;
 
 	Entity screen_state_entity;
 };

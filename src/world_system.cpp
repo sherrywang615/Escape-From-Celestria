@@ -9,6 +9,8 @@
 #include "physics_system.hpp"
 
 #include <fstream>
+// #include <ft2build.h>
+// #include FT_FREETYPE_H
 
 // Game configuration
 const size_t MAX_EAGLES = 15;
@@ -18,7 +20,7 @@ const size_t BUG_DELAY_MS = 5000 * 3;
 
 // Create the bug world
 WorldSystem::WorldSystem()
-	: points(0), next_eagle_spawn(0.f), next_bug_spawn(0.f), fps(0.f), fpsCount(0.f), fpsTimer(0.f)
+	: hp_count(0), next_eagle_spawn(0.f), next_bug_spawn(0.f), bullets_count(0), have_key(false), fps(0.f), fpsCount(0.f), fpsTimer(0.f)
 {
 	// Seeding rng with random device
 	renderInfo = false;
@@ -146,9 +148,11 @@ vec3 lerp(vec3 start, vec3 end, float t)
 	return start * (1 - t) + end * t;
 }
 
+
 // Update our game world
 bool WorldSystem::step(float elapsed_ms_since_last_update)
 {
+
 	//for fps counter
     fpsTimer += elapsed_ms_since_last_update;
 	fpsCount++;
@@ -160,6 +164,7 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
         windowCaption << "Escape from Celestria - FPS Counter: " << fps;
         glfwSetWindowTitle(window, windowCaption.str().c_str());
     }
+
 
 	// Remove debug info from the last step
 	while (registry.debugComponents.entities.size() > 0)
@@ -219,16 +224,6 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 		}
 	}
 
-	// Spawning new eagles
-	// Do we need eagles???
-	// next_eagle_spawn -= elapsed_ms_since_last_update * current_speed;
-	// if (registry.deadlys.components.size() <= MAX_EAGLES && next_eagle_spawn < 0.f)
-	//{
-	//	// Reset timer
-	//	next_eagle_spawn = (EAGLE_DELAY_MS / 2) + uniform_dist(rng) * (EAGLE_DELAY_MS / 2);
-	//	// Create eagle with random initial position
-	//	createEagle(renderer, vec2(50.f + uniform_dist(rng) * (window_width_px - 100.f), -100.f));
-	//}
 
 	// Processing the chicken state
 	assert(registry.screenStates.components.size() <= 1);
@@ -258,10 +253,10 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 	// reduce window brightness if any of the present chickens is dying
 	// screen.darken_screen_factor = 1 - min_counter_ms / 3000;
 
-	for (Entity entity : registry.lightUps.entities)
+	for (Entity entity : registry.deductHpTimers.entities)
 	{
 		// Progress timer
-		LightUp &counter = registry.lightUps.get(entity);
+		DeductHpTimer &counter = registry.deductHpTimers.get(entity);
 		counter.counter_ms -= elapsed_ms_since_last_update;
 
 		if (counter.counter_ms < min_counter_ms)
@@ -271,11 +266,63 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 
 		if (counter.counter_ms < 0)
 		{
-			registry.lightUps.remove(entity);
+			registry.deductHpTimers.remove(entity);
 			return true;
 		}
 	}
 
+	return true;
+}
+
+bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map)
+{
+	for (int i = 0; i < map.size(); i++)
+	{
+		for (int j = 0; j < map[i].size(); j++)
+		{
+			float x = j * 10;
+			float y = i * 10;
+			char tok = map[i][j];
+			if (tok == ' ')
+			{
+				continue;
+			}
+			else if (tok == 'J')
+			{
+				player_josh = createJosh(renderer, {x, y});
+				registry.colors.insert(player_josh, {1, 0.8f, 0.8f});
+			}
+			else if (tok == 'P')
+			{
+				createPlatform(renderer, {x, y});
+			}
+			else if (tok == 'Z')
+			{
+				createZombie(renderer, {x, y}, 0, 50);
+			}
+			else if (tok == 'F')
+			{
+				createFood(renderer, {x, y});
+			}
+			else if (tok == 'B')
+			{
+				createBullet(renderer, {x, y});
+			}
+			else if (tok == 'D')
+			{
+				createDoor(renderer, {x, y});
+			}
+			else if (tok == 'K')
+			{
+				createKey(renderer, {x, y});
+			}
+			else
+			{
+				printf("Map contains invalid character '%c' at [%d, %d].", tok, i, j);
+				return false;
+			}
+		}
+	}
 	return true;
 }
 
@@ -287,6 +334,7 @@ void WorldSystem::restart_game()
 
 	// Reset the game speed
 	current_speed = 1.f;
+	hp_count = 3;
 
 	// Remove all entities that we created
 	// All that have a motion, we could also iterate over all bug, eagles, ... but that would be more cumbersome
@@ -296,34 +344,30 @@ void WorldSystem::restart_game()
 	// Debugging for memory/component leaks
 	registry.list_all_components();
 
-	player_josh = createJosh(renderer, {window_width_px / 2, window_height_px - 500});
+	auto map = loadMap(MAP_PATH + "level1.txt");
+	createEntityBaseOnMap(map);
 
-	registry.colors.insert(player_josh, {1, 0.8f, 0.8f});
-	// test zombie
-	//  TODO: Create a room setup function to call on restart
+	// player_josh = createJosh(renderer, {window_width_px / 2, window_height_px - 500});
 
-	createBug(renderer, vec2(300, window_height_px - 450));
-	createZombie(renderer, vec2(400, 400), 0, 50);
-	createHelpSign(renderer, vec2(window_width_px - 70, window_height_px - 700));
-	// create one level of platform for now
-	// intialize x, the left grid
-	float x = PLATFORM_WIDTH / 2;
-	// fixed y for now, only bottom level of platform
-	float y = window_height_px - PLATFORM_HEIGHT / 2;
-	float a = window_width_px / 2;
-	float b = 300;
-	while (b < a + 200)
+	// registry.colors.insert(player_josh, {1, 0.8f, 0.8f});
+	// // test zombie
+	// //  TODO: Create a room setup function to call on restart
+
+	// createFood(renderer, vec2(300, window_height_px - 450));
+	// createZombie(renderer, vec2(400, 400), 0, 50);
+	// createDoor(renderer, vec2(900, window_height_px - 80));
+	// createBullet(renderer, vec2(600, window_height_px - 450));
+	// createKey(renderer, vec2(400, window_height_px - 450));
+  createHelpSign(renderer, vec2(window_width_px - 70, window_height_px - 700));
+
+	for (int i = 0; i < hp_count; i++)
 	{
-		createPlatform(renderer, vec2(b, window_height_px - 400));
-		b += PLATFORM_WIDTH;
+		createHeart(renderer, vec2(30 + i * create_heart_distance, 20));
 	}
-	float i = x;
-	while (i - PLATFORM_WIDTH < window_width_px)
-	{
-		createPlatform(renderer, vec2(i, y));
-		i += PLATFORM_WIDTH;
-	}
+
 }
+
+
 // Compute collisions between entities
 void WorldSystem::handle_collisions()
 {
@@ -339,40 +383,127 @@ void WorldSystem::handle_collisions()
 		if (registry.players.has(entity))
 		{
 			// Player& player = registry.players.get(entity);
-
 			// Checking Player - Deadly collisions
-			if (registry.deadlys.has(entity_other))
+			if (registry.deadlys.has(entity_other) && !registry.deductHpTimers.has(entity))
 			{
-				// initiate death unless already dying
-				if (!registry.deathTimers.has(entity))
+				if (hp_count == 1)
 				{
-					// Scream, reset timer, and make the chicken sink
-					registry.deathTimers.emplace(entity);
-					// Mix_PlayChannel(-1, chicken_dead_sound, 0);
 
-					Motion &motion = registry.motions.get(entity);
-					motion.velocity[0] = 0;
-					motion.velocity[1] = 0;
+					// Game over and update the hearts
+					uint i = 0;
+					while (i < registry.hearts.components.size())
+					{
+						Entity entity = registry.hearts.entities[i];
+						registry.meshPtrs.remove(entity);
+						registry.hearts.remove(entity);
+						registry.renderRequests.remove(entity);
+					}
+					for (int i = 0; i < hp_count - 1; i++)
+					{
+						createHeart(renderer, vec2(30 + i * create_heart_distance, 20));
+					}
+					// initiate death unless already dying
+					if (!registry.deathTimers.has(entity))
+					{
+						// Scream, reset timer, and make the chicken sink
+						registry.deathTimers.emplace(entity);
+						// Mix_PlayChannel(-1, chicken_dead_sound, 0);
 
-					// change color to red on death
-					vec3 death_color = {255.0f, 0.0f, 0.0f};
-					vec3 color = registry.colors.get(entity);
-					float duration = 1.0f;
-					registry.colors.remove(entity);
+						Motion &motion = registry.motions.get(entity);
+						motion.velocity[0] = 0;
+						motion.velocity[1] = 0;
 
-					// registry.colors.emplace(entity, death_color);
-					ColorChange colorChange = {color, death_color, duration, 0.0f};
-					registry.colorChanges.emplace(entity, colorChange);
+						// change color to red on death
+						vec3 death_color = {255.0f, 0.0f, 0.0f};
+						vec3 color = registry.colors.get(entity);
+						float duration = 1.0f;
+						registry.colors.remove(entity);
+
+						// registry.colors.emplace(entity, death_color);
+						ColorChange colorChange = {color, death_color, duration, 0.0f};
+						registry.colorChanges.emplace(entity, colorChange);
+					}
+				}
+				else
+				{
+					hp_count = fmax(0, hp_count - 1);
+					registry.deductHpTimers.emplace(entity);
+					std::cout << "hp count: " << hp_count << std::endl;
+
+					// update hearts
+					uint i = 0;
+					while (i < registry.hearts.components.size())
+					{
+						Entity entity = registry.hearts.entities[i];
+						registry.meshPtrs.remove(entity);
+						registry.hearts.remove(entity);
+						registry.renderRequests.remove(entity);
+					}
+					for (int i = 0; i < hp_count; i++)
+					{
+						createHeart(renderer, vec2(30 + i * create_heart_distance, 20));
+					}
 				}
 			}
 			// Checking Player - Eatable collisions
 			else if (registry.eatables.has(entity_other))
 			{
-				if (!registry.deathTimers.has(entity))
+				if (registry.foods.has(entity_other))
 				{
-					// chew, count points, and set the LightUp timer
+					// chew, add hp if hp is not full
 					registry.remove_all_components_of(entity_other);
-					registry.lightUps.emplace(entity);
+					++hp_count;
+					std::cout << "hp count: " << hp_count << std::endl;
+
+					uint i = 0;
+					while (i < registry.hearts.components.size())
+					{
+						Entity entity = registry.hearts.entities[i];
+						registry.meshPtrs.remove(entity);
+						registry.hearts.remove(entity);
+						registry.renderRequests.remove(entity);
+					}
+					for (int i = 0; i < hp_count; i++)
+					{
+						createHeart(renderer, vec2(30 + i * create_heart_distance, 20));
+					}
+				}
+				else if (registry.bullets.has(entity_other))
+				{
+					registry.remove_all_components_of(entity_other);
+					bullets_count = bullets_count + 10;
+					std::cout << "bullets count: " << bullets_count << std::endl;
+				}
+				else if (registry.keys.has(entity_other))
+				{
+					registry.remove_all_components_of(entity_other);
+					have_key = true;
+					std::cout << "have key: " << have_key << std::endl;
+					showKeyOnScreen(renderer, have_key);
+					// registry.doors.get(registry.doors.entities[0]).is_open = true;
+				}
+			} else if (registry.doors.has(entity_other))
+			{
+				if (have_key)
+				{
+					// open the door
+					Door &door = registry.doors.get(entity_other);
+					door.is_open = true;
+					// remove the key from the screen
+					showKeyOnScreen(renderer, false);
+					render_new_level();
+				}
+			}
+			else if (registry.doors.has(entity_other))
+			{
+				if (have_key)
+				{
+					// open the door
+					Door &door = registry.doors.get(entity_other);
+					door.is_open = true;
+					// remove the key from the screen
+					showKeyOnScreen(renderer, false);
+					render_new_level();
 				}
 			}
 		}
@@ -393,12 +524,50 @@ void WorldSystem::handle_collisions()
 	registry.collisions.clear();
 }
 
+// Show the key on top left of the screen
+void WorldSystem::showKeyOnScreen(RenderSystem *renderer, bool have_key)
+{
+	if (have_key)
+	{
+		// show key on screen
+		createKey(renderer, vec2(30, HEART_BB_HEIGHT + 40));
+	}
+	else
+	{
+		// remove key from screen
+		uint i = 0;
+		while (i < registry.keys.components.size())
+		{
+			Entity entity = registry.keys.entities[i];
+			registry.meshPtrs.remove(entity);
+			registry.keys.remove(entity);
+			registry.renderRequests.remove(entity);
+		}
+	}
+}
+
+// Render a new level
+void WorldSystem::render_new_level()
+{
+	while (registry.motions.entities.size() > 0)
+		registry.remove_all_components_of(registry.motions.entities.back());
+	auto map = loadMap(MAP_PATH + "level2.txt");
+	createEntityBaseOnMap(map);
+
+	for (int i = 0; i < hp_count; i++)
+	{
+		createHeart(renderer, vec2(30 + i * create_heart_distance, 20));
+	}
+}
+
 // Should the game be over ?
 bool WorldSystem::is_over() const
 {
 	return bool(glfwWindowShouldClose(window));
 }
 
+
+int josh_step_counter = 0;
 // On key callback
 void WorldSystem::on_key(int key, int, int action, int mod)
 {
@@ -418,8 +587,28 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 	// control chicken movement
 	if (!registry.deathTimers.has(player_josh))
 	{
+		if((action == GLFW_REPEAT || action == GLFW_PRESS) && (key == GLFW_KEY_B)){
+			//JOSH holding gun
+			// registry.renderRequests.get(player_josh) = { TEXTURE_ASSET_ID::JOSHGUN, 
+			// 												EFFECT_ASSET_ID::TEXTURED,
+			// 												GEOMETRY_BUFFER_ID::SPRITE };
+															
+			registry.renderRequests.get(player_josh) = { TEXTURE_ASSET_ID::JOSHGUN1, 
+														EFFECT_ASSET_ID::TEXTURED,
+														GEOMETRY_BUFFER_ID::SPRITE };
+		}
 		if ((action == GLFW_REPEAT || action == GLFW_PRESS) && (key == GLFW_KEY_LEFT || key == GLFW_KEY_A))
 		{
+			josh_step_counter++;
+			if(josh_step_counter % 2 == 0){
+				registry.renderRequests.get(player_josh) = { TEXTURE_ASSET_ID::JOSH1, 
+															EFFECT_ASSET_ID::TEXTURED,
+															GEOMETRY_BUFFER_ID::SPRITE };
+			}else{
+				registry.renderRequests.get(player_josh) = { TEXTURE_ASSET_ID::JOSH, 
+															EFFECT_ASSET_ID::TEXTURED,
+															GEOMETRY_BUFFER_ID::SPRITE };
+			}
 			Motion &josh_motion = registry.motions.get(player_josh);
 			josh_motion.velocity.x = -200.f * cos(josh_motion.angle);
 			josh_motion.velocity.y = 200.f * sin(josh_motion.angle);
@@ -436,6 +625,16 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 		}
 		if ((action == GLFW_REPEAT || action == GLFW_PRESS) && (key == GLFW_KEY_RIGHT || key == GLFW_KEY_D))
 		{
+			josh_step_counter++;
+			if(josh_step_counter % 2 == 0){
+				registry.renderRequests.get(player_josh) = { TEXTURE_ASSET_ID::JOSH1, 
+															EFFECT_ASSET_ID::TEXTURED,
+															GEOMETRY_BUFFER_ID::SPRITE };
+			}else{
+				registry.renderRequests.get(player_josh) = { TEXTURE_ASSET_ID::JOSH, 
+															EFFECT_ASSET_ID::TEXTURED,
+															GEOMETRY_BUFFER_ID::SPRITE };
+			}
 			Motion &josh_motion = registry.motions.get(player_josh);
 			josh_motion.velocity.x = -200.f * cos(josh_motion.angle - M_PI);
 			josh_motion.velocity.y = 00.f * sin(josh_motion.angle - M_PI);
@@ -449,6 +648,18 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 			Motion &josh_motion = registry.motions.get(player_josh);
 			josh_motion.velocity.y = 0.f;
 			josh_motion.velocity.x = 0.f;
+		}
+
+		// josh jump
+		if (action == GLFW_PRESS && key == GLFW_KEY_SPACE && !jumped && registry.motions.get(player_josh).velocity.y == 0.f)
+		{
+			Motion &josh_motion = registry.motions.get(player_josh);
+			josh_motion.velocity.y = -700.f;
+			jumped = true;
+		}
+		else if (action == GLFW_RELEASE && key == GLFW_KEY_SPACE)
+		{
+			jumped = false;
 		}
 	}
 
@@ -568,19 +779,4 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 
 void WorldSystem::on_mouse_move(vec2 mouse_position)
 {
-	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	// TODO A1: HANDLE CHICKEN ROTATION HERE
-	// xpos and ypos are relative to the top-left of the window, the chicken's
-	// default facing direction is (1, 0)
-	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	// for (Entity entity : registry.players.entities) {
-	// 	if (registry.deathTimers.has(entity)) {
-	// 		return;
-	// 	}
-	// 	Motion& motion = registry.motions.get(entity);
-	// 	vec2 chicken_pos = motion.position;
-	// 	float x = chicken_pos[0] - mouse_position[0];
-	// 	float y = chicken_pos[1] - mouse_position[1];
-	// 	motion.angle = atan2(y, x);
-	// }
 }
