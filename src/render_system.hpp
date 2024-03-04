@@ -49,7 +49,8 @@ class RenderSystem {
 		shader_path("Josh"),
 		shader_path("textured"),
 		shader_path("wind"),
-		shader_path("font")};
+		//shader_path("font")
+		};
 
 	std::array<GLuint, geometry_count> vertex_buffers;
 	std::array<GLuint, geometry_count> index_buffers;
