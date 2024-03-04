@@ -171,7 +171,7 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 		registry.remove_all_components_of(registry.debugComponents.entities.back());
 
 	if(renderInfo){
-		createHelpInfo(renderer, vec2(window_width_px - 150, window_height_px - 450));
+		createHelpInfo(renderer, vec2(window_width_px - 220, window_height_px - 450));
 	}
 
 	// Removing out of screen entities
@@ -556,8 +556,9 @@ void WorldSystem::render_new_level()
 
 	for (int i = 0; i < hp_count; i++)
 	{
-		createHeart(renderer, vec2(30 + i * create_heart_distance, 20));
+		createHeart(renderer, vec2(30 + i * create_heart_distance, 20));	
 	}
+	createHelpSign(renderer, vec2(window_width_px - 70, window_height_px - 700));
 }
 
 // Should the game be over ?
