@@ -20,9 +20,10 @@ const size_t BUG_DELAY_MS = 5000 * 3;
 
 // Create the bug world
 WorldSystem::WorldSystem()
-	: hp_count(0), next_eagle_spawn(0.f), next_bug_spawn(0.f), bullets_count(0), have_key(false)
+	: hp_count(0), next_eagle_spawn(0.f), next_bug_spawn(0.f), bullets_count(0), have_key(false), fps(0.f), fpsCount(0.f), fpsTimer(0.f)
 {
 	// Seeding rng with random device
+	renderInfo = false;
 	rng = std::default_random_engine(std::random_device()());
 }
 
@@ -84,6 +85,7 @@ GLFWwindow *WorldSystem::create_window()
 	if (window == nullptr)
 	{
 		fprintf(stderr, "Failed to glfwCreateWindow");
+		//     glfwTerminate();
 		return nullptr;
 	}
 
@@ -151,9 +153,26 @@ vec3 lerp(vec3 start, vec3 end, float t)
 bool WorldSystem::step(float elapsed_ms_since_last_update)
 {
 
+	//for fps counter
+    fpsTimer += elapsed_ms_since_last_update;
+	fpsCount++;
+    if (fpsTimer >= 1000.0f) { 
+		fpsTimer -= 1000.0f;
+        fps = fpsCount;
+        fpsCount = 0;
+        std::stringstream windowCaption;
+        windowCaption << "Escape from Celestria - FPS Counter: " << fps;
+        glfwSetWindowTitle(window, windowCaption.str().c_str());
+    }
+
+
 	// Remove debug info from the last step
 	while (registry.debugComponents.entities.size() > 0)
 		registry.remove_all_components_of(registry.debugComponents.entities.back());
+
+	if(renderInfo){
+		createHelpInfo(renderer, vec2(window_width_px - 220, window_height_px - 450));
+	}
 
 	// Removing out of screen entities
 	auto &motions_registry = registry.motions;
@@ -204,6 +223,7 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 			}
 		}
 	}
+
 
 	// Processing the chicken state
 	assert(registry.screenStates.components.size() <= 1);
@@ -338,6 +358,7 @@ void WorldSystem::restart_game()
 	// createDoor(renderer, vec2(900, window_height_px - 80));
 	// createBullet(renderer, vec2(600, window_height_px - 450));
 	// createKey(renderer, vec2(400, window_height_px - 450));
+  createHelpSign(renderer, vec2(window_width_px - 70, window_height_px - 700));
 
 	for (int i = 0; i < hp_count; i++)
 	{
@@ -367,6 +388,7 @@ void WorldSystem::handle_collisions()
 			{
 				if (hp_count == 1)
 				{
+
 					// Game over and update the hearts
 					uint i = 0;
 					while (i < registry.hearts.components.size())
@@ -534,8 +556,9 @@ void WorldSystem::render_new_level()
 
 	for (int i = 0; i < hp_count; i++)
 	{
-		createHeart(renderer, vec2(30 + i * create_heart_distance, 20));
+		createHeart(renderer, vec2(30 + i * create_heart_distance, 20));	
 	}
+	createHelpSign(renderer, vec2(window_width_px - 70, window_height_px - 700));
 }
 
 // Should the game be over ?
@@ -549,6 +572,7 @@ int josh_step_counter = 0;
 // On key callback
 void WorldSystem::on_key(int key, int, int action, int mod)
 {
+
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	// TODO A1: HANDLE CHICKEN MOVEMENT HERE
 	// key is of 'type' GLFW_KEY_
@@ -638,6 +662,11 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 		{
 			jumped = false;
 		}
+	}
+
+	if (action == GLFW_PRESS && key == GLFW_KEY_I)
+	{
+		renderInfo = !renderInfo;
 	}
 
 	// Resetting game
