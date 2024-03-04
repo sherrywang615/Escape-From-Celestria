@@ -184,17 +184,23 @@ struct Heart {
  * enums there are, and as a default value to represent uninitialized fields.
  */
 
+
 enum class TEXTURE_ASSET_ID
 {
 	FOOD = 0,
 	JOSH = FOOD + 1,
-	ZOMBIE = JOSH + 1,
+  JOSH1 = JOSH + 1,
+	JOSHGUN = JOSH1 + 1,
+	JOSHGUN1 = JOSHGUN + 1,
+	ZOMBIE = JOSHGUN1 + 1,
 	PLATFORM = ZOMBIE + 1,
 	BULLET = PLATFORM + 1,
 	DOOR = BULLET + 1,
 	KEY = DOOR + 1,
 	HEART = KEY + 1,
-	TEXTURE_COUNT = HEART + 1
+  HELP_INFO = HEART + 1,
+	HELP_SIGN = HELP_INFO + 1,
+	TEXTURE_COUNT = HELP_SIGN + 1
 };
 const int texture_count = (int)TEXTURE_ASSET_ID::TEXTURE_COUNT;
 

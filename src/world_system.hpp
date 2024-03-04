@@ -20,6 +20,11 @@ class WorldSystem
 public:
 	WorldSystem();
 
+	//for fps counter
+	float fps;
+    float fpsCount;
+    float fpsTimer;
+
 	// Creates a window
 	GLFWwindow* create_window();
 
@@ -39,6 +44,7 @@ public:
 	bool is_over()const;
 private:
 	// Input callback functions
+	bool renderInfo;
 	void on_key(int key, int, int action, int mod);
 	void on_mouse_move(vec2 pos);
 

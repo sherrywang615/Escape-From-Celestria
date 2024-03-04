@@ -20,9 +20,10 @@ const size_t BUG_DELAY_MS = 5000 * 3;
 
 // Create the bug world
 WorldSystem::WorldSystem()
-	: hp_count(0), next_eagle_spawn(0.f), next_bug_spawn(0.f), bullets_count(0), have_key(false)
+	: hp_count(0), next_eagle_spawn(0.f), next_bug_spawn(0.f), bullets_count(0), have_key(false), fps(0.f), fpsCount(0.f), fpsTimer(0.f)
 {
 	// Seeding rng with random device
+	renderInfo = false;
 	rng = std::default_random_engine(std::random_device()());
 }
 
@@ -84,6 +85,7 @@ GLFWwindow *WorldSystem::create_window()
 	if (window == nullptr)
 	{
 		fprintf(stderr, "Failed to glfwCreateWindow");
+		//     glfwTerminate();
 		return nullptr;
 	}
 
@@ -146,13 +148,31 @@ vec3 lerp(vec3 start, vec3 end, float t)
 	return start * (1 - t) + end * t;
 }
 
+
 // Update our game world
 bool WorldSystem::step(float elapsed_ms_since_last_update)
 {
 
+	//for fps counter
+    fpsTimer += elapsed_ms_since_last_update;
+	fpsCount++;
+    if (fpsTimer >= 1000.0f) { 
+		fpsTimer -= 1000.0f;
+        fps = fpsCount;
+        fpsCount = 0;
+        std::stringstream windowCaption;
+        windowCaption << "Escape from Celestria - FPS Counter: " << fps;
+        glfwSetWindowTitle(window, windowCaption.str().c_str());
+    }
+
+
 	// Remove debug info from the last step
 	while (registry.debugComponents.entities.size() > 0)
 		registry.remove_all_components_of(registry.debugComponents.entities.back());
+
+	if(renderInfo){
+		createHelpInfo(renderer, vec2(window_width_px - 150, window_height_px - 450));
+	}
 
 	// Removing out of screen entities
 	auto &motions_registry = registry.motions;
@@ -203,6 +223,7 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 			}
 		}
 	}
+
 
 	// Processing the chicken state
 	assert(registry.screenStates.components.size() <= 1);
@@ -337,6 +358,7 @@ void WorldSystem::restart_game()
 	// createDoor(renderer, vec2(900, window_height_px - 80));
 	// createBullet(renderer, vec2(600, window_height_px - 450));
 	// createKey(renderer, vec2(400, window_height_px - 450));
+  createHelpSign(renderer, vec2(window_width_px - 70, window_height_px - 700));
 
 	for (int i = 0; i < hp_count; i++)
 	{
@@ -366,6 +388,7 @@ void WorldSystem::handle_collisions()
 			{
 				if (hp_count == 1)
 				{
+
 					// Game over and update the hearts
 					uint i = 0;
 					while (i < registry.hearts.components.size())
@@ -543,9 +566,12 @@ bool WorldSystem::is_over() const
 	return bool(glfwWindowShouldClose(window));
 }
 
+
+int josh_step_counter = 0;
 // On key callback
 void WorldSystem::on_key(int key, int, int action, int mod)
 {
+
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	// TODO A1: HANDLE CHICKEN MOVEMENT HERE
 	// key is of 'type' GLFW_KEY_
@@ -561,8 +587,28 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 	// control chicken movement
 	if (!registry.deathTimers.has(player_josh))
 	{
+		if((action == GLFW_REPEAT || action == GLFW_PRESS) && (key == GLFW_KEY_B)){
+			//JOSH holding gun
+			// registry.renderRequests.get(player_josh) = { TEXTURE_ASSET_ID::JOSHGUN, 
+			// 												EFFECT_ASSET_ID::TEXTURED,
+			// 												GEOMETRY_BUFFER_ID::SPRITE };
+															
+			registry.renderRequests.get(player_josh) = { TEXTURE_ASSET_ID::JOSHGUN1, 
+														EFFECT_ASSET_ID::TEXTURED,
+														GEOMETRY_BUFFER_ID::SPRITE };
+		}
 		if ((action == GLFW_REPEAT || action == GLFW_PRESS) && (key == GLFW_KEY_LEFT || key == GLFW_KEY_A))
 		{
+			josh_step_counter++;
+			if(josh_step_counter % 2 == 0){
+				registry.renderRequests.get(player_josh) = { TEXTURE_ASSET_ID::JOSH1, 
+															EFFECT_ASSET_ID::TEXTURED,
+															GEOMETRY_BUFFER_ID::SPRITE };
+			}else{
+				registry.renderRequests.get(player_josh) = { TEXTURE_ASSET_ID::JOSH, 
+															EFFECT_ASSET_ID::TEXTURED,
+															GEOMETRY_BUFFER_ID::SPRITE };
+			}
 			Motion &josh_motion = registry.motions.get(player_josh);
 			josh_motion.velocity.x = -200.f * cos(josh_motion.angle);
 			josh_motion.velocity.y = 200.f * sin(josh_motion.angle);
@@ -579,6 +625,16 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 		}
 		if ((action == GLFW_REPEAT || action == GLFW_PRESS) && (key == GLFW_KEY_RIGHT || key == GLFW_KEY_D))
 		{
+			josh_step_counter++;
+			if(josh_step_counter % 2 == 0){
+				registry.renderRequests.get(player_josh) = { TEXTURE_ASSET_ID::JOSH1, 
+															EFFECT_ASSET_ID::TEXTURED,
+															GEOMETRY_BUFFER_ID::SPRITE };
+			}else{
+				registry.renderRequests.get(player_josh) = { TEXTURE_ASSET_ID::JOSH, 
+															EFFECT_ASSET_ID::TEXTURED,
+															GEOMETRY_BUFFER_ID::SPRITE };
+			}
 			Motion &josh_motion = registry.motions.get(player_josh);
 			josh_motion.velocity.x = -200.f * cos(josh_motion.angle - M_PI);
 			josh_motion.velocity.y = 00.f * sin(josh_motion.angle - M_PI);
@@ -605,6 +661,11 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 		{
 			jumped = false;
 		}
+	}
+
+	if (action == GLFW_PRESS && key == GLFW_KEY_I)
+	{
+		renderInfo = !renderInfo;
 	}
 
 	// Resetting game
