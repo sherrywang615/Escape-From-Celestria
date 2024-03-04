@@ -274,6 +274,7 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 
 bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map)
 {
+	float josh_x = 0, josh_y = 0;
 	for (int i = 0; i < map.size(); i++)
 	{
 		for (int j = 0; j < map[i].size(); j++)
@@ -287,8 +288,8 @@ bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map)
 			}
 			else if (tok == 'J')
 			{
-				player_josh = createJosh(renderer, {x, y});
-				registry.colors.insert(player_josh, {1, 0.8f, 0.8f});
+				josh_x = x;
+				josh_y = y;
 			}
 			else if (tok == 'P')
 			{
@@ -325,6 +326,9 @@ bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map)
 			}
 		}
 	}
+	// Recreate Josh so that Josh appears in the very front
+	player_josh = createJosh(renderer, { josh_x, josh_y });
+	registry.colors.insert(player_josh, { 1, 0.8f, 0.8f });
 	return true;
 }
 
