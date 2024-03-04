@@ -631,7 +631,7 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 					registry.eatables.remove(bullet);
 					Motion &motion = registry.motions.get(bullet);
 					motion.scale = vec2(20.0, 20.0);
-					motion.velocity.x = 80.0;
+					motion.velocity.x = 500.0;
 					bullets_count--;
 				}
 				else
@@ -640,7 +640,7 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 					registry.eatables.remove(bullet);
 					Motion &motion = registry.motions.get(bullet);
 					motion.scale = vec2(-20.0, 20.0);
-					motion.velocity.x = -80.0;
+					motion.velocity.x = -500.0;
 					bullets_count--;
 				}
 			}
@@ -659,13 +659,13 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 			josh_step_counter++;
 			if (josh_step_counter % 2 == 0)
 			{
-				registry.renderRequests.get(player_josh) = {TEXTURE_ASSET_ID::JOSH1,
+				registry.renderRequests.get(player_josh) = {TEXTURE_ASSET_ID::JOSHGUN1,
 															EFFECT_ASSET_ID::TEXTURED,
 															GEOMETRY_BUFFER_ID::SPRITE};
 			}
 			else
 			{
-				registry.renderRequests.get(player_josh) = {TEXTURE_ASSET_ID::JOSH,
+				registry.renderRequests.get(player_josh) = {TEXTURE_ASSET_ID::JOSHGUN,
 															EFFECT_ASSET_ID::TEXTURED,
 															GEOMETRY_BUFFER_ID::SPRITE};
 			}
@@ -688,13 +688,13 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 			josh_step_counter++;
 			if (josh_step_counter % 2 == 0)
 			{
-				registry.renderRequests.get(player_josh) = {TEXTURE_ASSET_ID::JOSH1,
+				registry.renderRequests.get(player_josh) = {TEXTURE_ASSET_ID::JOSHGUN1,
 															EFFECT_ASSET_ID::TEXTURED,
 															GEOMETRY_BUFFER_ID::SPRITE};
 			}
 			else
 			{
-				registry.renderRequests.get(player_josh) = {TEXTURE_ASSET_ID::JOSH,
+				registry.renderRequests.get(player_josh) = {TEXTURE_ASSET_ID::JOSHGUN,
 															EFFECT_ASSET_ID::TEXTURED,
 															GEOMETRY_BUFFER_ID::SPRITE};
 			}

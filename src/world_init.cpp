@@ -18,7 +18,7 @@ Entity createJosh(RenderSystem *renderer, vec2 position)
 	registry.gravities.emplace(entity);
 	registry.renderRequests.insert(
 		entity,
-		{TEXTURE_ASSET_ID::JOSH,
+		{TEXTURE_ASSET_ID::JOSHGUN1,
 		 EFFECT_ASSET_ID::TEXTURED,
 		 GEOMETRY_BUFFER_ID::SPRITE});
 
