@@ -31,10 +31,6 @@ inline std::string textures_path(const std::string& name) {return data_path() + 
 inline std::string audio_path(const std::string& name) {return data_path() + "/audio/" + std::string(name);};
 inline std::string mesh_path(const std::string& name) {return data_path() + "/meshes/" + std::string(name);};
 
-//const int window_width_px = 600;
-//const int window_height_px = 600;
-//const int window_width_px = 1920;
-//const int window_height_px = 1080;
 const int window_width_px = 1020;
 const int window_height_px = 700;
 
@@ -42,7 +38,7 @@ const int width = window_width_px / 10;
 const int height = window_height_px / 10;
 
 // const std::string MAP_PATH = "..//..//..//data//maps//";
-const std::string MAP_PATH = "../data/maps/";
+const std::string MAP_PATH = "..//..//..//data//maps//";
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846f
@@ -102,27 +98,5 @@ public:
 };
 
 extern Graph graph;
-
-
-//Graph& createGraph() {
-//	Graph graph;
-//	Vertex v1 = Vertex(1, 220, 420);
-//	Vertex v2 = Vertex(2, 370, 300);
-//	Vertex v3 = Vertex(3, 500, 420);
-//	Vertex v4 = Vertex(4, 620, 420);
-//	Vertex v5 = Vertex(5, 780, 300);
-//
-//	graph.addVertex(v1);
-//	graph.addVertex(v2);
-//	graph.addVertex(v3);
-//	graph.addVertex(v4);
-//	graph.addVertex(v5);
-//
-//	graph.addEdge(v1, v2);
-//	graph.addEdge(v2, v3);
-//	graph.addEdge(v3, v4);
-//	graph.addEdge(v4, v5);
-//	return graph;
-//}
 
 
