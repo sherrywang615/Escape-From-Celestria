@@ -696,7 +696,8 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 	if (action == GLFW_PRESS && key == GLFW_KEY_L && isJoshHidden)
 	{
 		std::cout << registry.players.components.size() << std::endl;
-		createJosh(renderer, joshPosition);
+		player_josh = createJosh(renderer, joshPosition);
+		registry.colors.insert(player_josh, { 1, 0.8f, 0.8f });
 	}
 
 	// Resetting game
@@ -812,14 +813,10 @@ void WorldSystem::on_mouse_move(vec2 mouse_position)
 {
 }
 
-float WorldSystem::distanceToCabinet(Entity player, Entity cabinet) {
-    vec2 playerPos = registry.motions.get(player).position;
-    vec2 cabinetPos = registry.motions.get(cabinet).position;
-    return sqrt(pow(playerPos.x - cabinetPos.x, 2) + pow(playerPos.y - cabinetPos.y, 2));
-}
-
 bool WorldSystem::isNearCabinet(Entity player, Entity cabinet, float threshold) {
-    return distanceToCabinet(player, cabinet) <= threshold;
+	vec2 playerPos = registry.motions.get(player).position;
+	vec2 cabinetPos = registry.motions.get(cabinet).position;
+    return findDistanceBetween(playerPos, cabinetPos) <= threshold;
 }
 
 
@@ -827,8 +824,9 @@ void WorldSystem::hideJosh(RenderSystem *renderer)
 {
 	// remove josh from screen
 	Entity entity = registry.players.entities[0];
-	registry.meshPtrs.remove(entity);
-	registry.players.remove(entity);
-	registry.renderRequests.remove(entity);
+	//registry.meshPtrs.remove(entity);
+	//registry.players.remove(entity);
+	//registry.renderRequests.remove(entity);
+	registry.remove_all_components_of(entity);
 }
 
