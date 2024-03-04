@@ -36,7 +36,7 @@ Entity createZombie(RenderSystem *renderer, vec2 position, int state, double ran
 	// Initialize the motion of zombie to rightwards
 	auto &motion = registry.motions.emplace(entity);
 	motion.angle = 0.f;
-	motion.velocity = {30.f, 0};
+	motion.velocity = {0, 0};
 	motion.position = position;
 
 	// Setting initial values, scale is negative to make it face the opposite way
@@ -46,8 +46,8 @@ Entity createZombie(RenderSystem *renderer, vec2 position, int state, double ran
 	registry.deadlys.emplace(entity);
 	registry.zombies.emplace(entity);
 	registry.gravities.emplace(entity);
-	registry.zombies.get(entity).walking_range[0] = position.x - range;
-	registry.zombies.get(entity).walking_range[1] = position.x + range;
+	registry.zombies.get(entity).walking_bound[0] = position.x - range;
+	registry.zombies.get(entity).walking_bound[1] = position.x + range;
 	registry.renderRequests.insert(
 		entity,
 		{TEXTURE_ASSET_ID::ZOMBIE,
