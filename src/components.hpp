@@ -202,10 +202,12 @@ enum class TEXTURE_ASSET_ID
 	DOOR = BULLET + 1,
 	KEY = DOOR + 1,
 	HEART = KEY + 1,
-  	HELP_INFO = HEART + 1,
+
+  HELP_INFO = HEART + 1,
 	HELP_SIGN = HELP_INFO + 1,
 	CABINET = HELP_SIGN + 1,
 	TEXTURE_COUNT = CABINET + 1
+
 };
 const int texture_count = (int)TEXTURE_ASSET_ID::TEXTURE_COUNT;
 
