@@ -300,8 +300,7 @@ Entity createHelpInfo(RenderSystem* renderer, vec2 position)
 	motion.position = position;
 
 	// Setting initial values, scale is negative to make it face the opposite way
-
-	motion.scale = vec2(400,280);
+	motion.scale = vec2(700,280);
 
 	registry.eatables.emplace(entity);
 	registry.renderRequests.insert(

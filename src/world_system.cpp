@@ -169,10 +169,8 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 	while (registry.debugComponents.entities.size() > 0)
 		registry.remove_all_components_of(registry.debugComponents.entities.back());
 
-	if (renderInfo)
-	{
-
-		createHelpInfo(renderer, vec2(window_width_px - 220, window_height_px - 450));
+	if(renderInfo){
+		createHelpInfo(renderer, vec2(window_width_px - 500, window_height_px - 450));
 	}
 
 	// Removing out of screen entities
