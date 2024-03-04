@@ -23,6 +23,7 @@ Vertex* findNearestVertex(vec2 pos) {
 	return point;
 }
 
+// Helper function to reverse a queue
 std::queue<Vertex*> reverseQueue(std::queue<Vertex*>& reversedQueue) {
 	std::vector<Vertex*> temp;
 	while (!reversedQueue.empty()) {
@@ -35,6 +36,7 @@ std::queue<Vertex*> reverseQueue(std::queue<Vertex*>& reversedQueue) {
 	return reversedQueue;
 }
 
+// pathfinding using A*
 std::queue<Vertex*> findPathAStar(Vertex* start, Vertex* end) {
 	std::priority_queue<std::pair<Vertex*, float>> open;
 	std::unordered_map<Vertex*, Vertex*> parent;
@@ -74,17 +76,11 @@ std::queue<Vertex*> findPathAStar(Vertex* start, Vertex* end) {
 			}
 		}
 	}
-
 	return std::queue<Vertex*>();
 }
 
-//std::queue<Vertex*> findPath(Motion motion_z, Motion motion_p) {
-//	Vertex* start = findNearestVertex(motion_z.position);
-//	Vertex* end = findNearestVertex(motion_p.position);
-//	std::queue<Vertex*> path = findPathAStar(start, end);
-//	return path;
-//}
 
+// Zombie will move according to the path
 void followPath(Motion& motion, std::queue<Vertex*> path,ACTION action, Vertex* end) {
 	if (!path.empty()) {
 		Vertex* v = path.front();
@@ -124,6 +120,7 @@ void updateZombiePath(float elapsed_ms)
 		for (Entity entity_p : registry.players.entities) {
 			Motion& motion_p = registry.motions.get(entity_p);
 			float dist = findDistanceBetween(motion_z.position, motion_p.position);
+
 			// chase player if player is within sensing range and zombie is facing the plaeyr
 			if (dist <= zombie.sensing_range) {
 				if (zombie.face == DIRECTION::RIGHT && (motion_p.position.x > motion_z.position.x)) {
@@ -143,6 +140,7 @@ void updateZombiePath(float elapsed_ms)
 					followPath(motion_z, path, ACTION::WALK, end);
 				}
 			}
+			// Zombie lose memory when it is not alerted
 			else if (zombie.is_alerted) {
 				zombie.memory -= elapsed_ms;
 				if (zombie.memory < 0) {
@@ -163,6 +161,15 @@ void updateZombiePath(float elapsed_ms)
 			else {
 				zombie.face = DIRECTION::LEFT;
 			}
+
+
+			// Change zombie's scale
+			if (motion_z.velocity.x > 0 && motion_z.scale.x > 0) {
+				motion_z.scale.x *= -1;
+			}
+			if (motion_z.velocity.x < 0 && motion_z.scale.x < 0) {
+				motion_z.scale.x *= -1;
+			}
 		}
 	}
 }
@@ -170,5 +177,4 @@ void updateZombiePath(float elapsed_ms)
 void AISystem::step(float elapsed_ms)
 {
 	updateZombiePath(elapsed_ms);
-
 }
