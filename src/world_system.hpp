@@ -20,16 +20,16 @@ class WorldSystem
 public:
 	WorldSystem();
 
-	//for fps counter
+	// for fps counter
 	float fps;
-    float fpsCount;
-    float fpsTimer;
+	float fpsCount;
+	float fpsTimer;
 
 	// Creates a window
-	GLFWwindow* create_window();
+	GLFWwindow *create_window();
 
 	// starts the game
-	void init(RenderSystem* renderer);
+	void init(RenderSystem *renderer);
 
 	// Releases all associated resources
 	~WorldSystem();
@@ -41,7 +41,8 @@ public:
 	void handle_collisions();
 
 	// Should the game be over ?
-	bool is_over()const;
+	bool is_over() const;
+
 private:
 	// Input callback functions
 	bool renderInfo;
@@ -50,22 +51,23 @@ private:
 
 	// read map
 	bool createEntityBaseOnMap(std::vector<std::vector<char>> map);
-	
+
 	void showKeyOnScreen(RenderSystem *renderer, bool have_key);
 
 	// restart level
 	void restart_game();
 
-	//render new level
+	// render new level
 	void render_new_level();
 
 	bool isJoshHidden = false;
 	void hideJosh(RenderSystem *renderer);
 	float distanceToCabinet(Entity player, Entity cabinet);
 	bool isNearCabinet(Entity player, Entity cabinet, float threshold);
+	void removeSmallBullets(RenderSystem *renderer);
 	vec2 joshPosition;
 	// OpenGL window handle
-	GLFWwindow* window;
+	GLFWwindow *window;
 
 	// Number of bug eaten by the chicken, displayed in the window title
 	unsigned int points;
@@ -74,7 +76,7 @@ private:
 	unsigned int bullets_count;
 
 	// Game state
-	RenderSystem* renderer;
+	RenderSystem *renderer;
 	float current_speed;
 	float next_eagle_spawn;
 	float next_bug_spawn;
@@ -84,9 +86,9 @@ private:
 	unsigned int create_heart_distance = 50;
 
 	// music references
-	Mix_Music* background_music;
-	Mix_Chunk* chicken_dead_sound;
-	Mix_Chunk* chicken_eat_sound;
+	Mix_Music *background_music;
+	Mix_Chunk *chicken_dead_sound;
+	Mix_Chunk *chicken_eat_sound;
 
 	// C++ random number generator
 	std::default_random_engine rng;

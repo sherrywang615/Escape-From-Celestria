@@ -117,6 +117,35 @@ Entity createBullet(RenderSystem *renderer, vec2 position)
 	return entity;
 }
 
+Entity createBulletSmall(RenderSystem *renderer, vec2 position)
+{
+	// Reserve en entity
+	auto entity = Entity();
+
+	// Store a reference to the potentially re-used mesh object
+	Mesh &mesh = renderer->getMesh(GEOMETRY_BUFFER_ID::SPRITE);
+	registry.meshPtrs.emplace(entity, &mesh);
+
+	// Initialize the position, scale, and physics components
+	auto &motion = registry.motions.emplace(entity);
+	motion.angle = 0.f;
+	motion.velocity = {0, 0};
+	motion.position = position;
+
+	// Setting initial values, scale is negative to make it face the opposite way
+	motion.scale = vec2({-HEART_BB_WIDTH, HEART_BB_HEIGHT});
+
+	// Create an (empty) Bug component to be able to refer to all bug
+	registry.smallBullets.emplace(entity);
+	registry.renderRequests.insert(
+		entity,
+		{TEXTURE_ASSET_ID::BULLET,
+		 EFFECT_ASSET_ID::TEXTURED,
+		 GEOMETRY_BUFFER_ID::SPRITE});
+
+	return entity;
+}
+
 Entity createKey(RenderSystem *renderer, vec2 position)
 {
 	// Reserve en entity
@@ -300,7 +329,7 @@ Entity createHelpInfo(RenderSystem* renderer, vec2 position)
 	motion.position = position;
 
 	// Setting initial values, scale is negative to make it face the opposite way
-	motion.scale = vec2(400,280);
+	motion.scale = vec2(700,280);
 
 	registry.eatables.emplace(entity);
 	registry.renderRequests.insert(

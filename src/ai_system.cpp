@@ -83,11 +83,11 @@ std::queue<Vertex*> findPathAStar(Vertex* start, Vertex* end) {
 // Zombie will move according to the path
 void followPath(Motion& motion, std::queue<Vertex*> path,ACTION action, Vertex* end, float speed, bool is_jumping) {
 	if (!path.empty()) {
-		printf("Current location: {%f, %f}\n", motion.position.x, motion.position.y);
+		// printf("Current location: {%f, %f}\n", motion.position.x, motion.position.y);
 		Vertex* v = path.front();
 		//ACTION action = v->adjs[v];
-		printf("Target vertex {%f, %f} with id {%d}\n", v->x, v->y, v->id);
-		printf("Current Action {%d}\n", action);
+		// printf("Target vertex {%f, %f} with id {%d}\n", v->x, v->y, v->id);
+		// printf("Current Action {%d}\n", action);
 		float dp = v->x - motion.position.x;
 		float current_h = findDistanceBetween(motion.position, { end->x, end->y });
 		float potential_h = findDistanceBetween({ v->x, v->y }, { end->x, end->y });
@@ -104,7 +104,7 @@ void followPath(Motion& motion, std::queue<Vertex*> path,ACTION action, Vertex* 
 		}
 
 		float dir = dp / abs(dp);
-		printf("%f\n", dir);
+		// printf("%f\n", dir);
 		if (action == ACTION::WALK) {
 			motion.velocity.x = dir * speed;
 		}
@@ -129,7 +129,7 @@ void updateZombiePath(float elapsed_ms)
 			// chase player if player is within sensing range and zombie is facing the plaeyr
 			if (dist <= zombie.sensing_range) {
 				if (zombie.face == DIRECTION::RIGHT && (motion_p.position.x > motion_z.position.x)) {
-					printf("zombie is alerted right\n");
+					// printf("zombie is alerted right\n");
 					zombie.is_alerted = true;
 					zombie.memory = memory;
 					Vertex* start = findNearestVertex(motion_z.position);
@@ -138,7 +138,7 @@ void updateZombiePath(float elapsed_ms)
 					followPath(motion_z, path, ACTION::WALK, end, zombie.alerted_speed, zombie.is_jumping);
 				}
 				if (zombie.face == DIRECTION::LEFT && (motion_p.position.x < motion_z.position.x)) {
-					printf("zombie is alerted left\n");
+					// printf("zombie is alerted left\n");
 					zombie.is_alerted = true;
 					zombie.memory = memory;
 					Vertex* start = findNearestVertex(motion_z.position);
