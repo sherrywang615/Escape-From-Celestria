@@ -59,6 +59,11 @@ private:
 	//render new level
 	void render_new_level();
 
+	bool isJoshHidden = false;
+	void hideJosh(RenderSystem *renderer);
+	float distanceToCabinet(Entity player, Entity cabinet);
+	bool isNearCabinet(Entity player, Entity cabinet, float threshold);
+	vec2 joshPosition;
 	// OpenGL window handle
 	GLFWwindow* window;
 
