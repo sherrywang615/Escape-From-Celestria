@@ -177,6 +177,35 @@ Entity createDoor(RenderSystem *renderer, vec2 position)
 	return entity;
 }
 
+Entity createCabinet(RenderSystem *renderer, vec2 position)
+{
+	// Reserve en entity
+	auto entity = Entity();
+
+	// Store a reference to the potentially re-used mesh object
+	Mesh &mesh = renderer->getMesh(GEOMETRY_BUFFER_ID::SPRITE);
+	registry.meshPtrs.emplace(entity, &mesh);
+
+	// Initialize the position, scale, and physics components
+	auto &motion = registry.motions.emplace(entity);
+	motion.angle = 0.f;
+	motion.velocity = {0, 0};
+	motion.position = position;
+
+	// Setting initial values, scale is negative to make it face the opposite way
+	motion.scale = vec2({-DOOR_BB_WIDTH, DOOR_BB_HEIGHT});
+
+	// Create an (empty) Bug component to be able to refer to all bug
+	registry.cabinets.emplace(entity);
+	registry.renderRequests.insert(
+		entity,
+		{TEXTURE_ASSET_ID::CABINET,
+		 EFFECT_ASSET_ID::TEXTURED,
+		 GEOMETRY_BUFFER_ID::SPRITE});
+
+	return entity;
+}
+
 Entity createPlatform(RenderSystem *renderer, vec2 pos)
 {
 	auto entity = Entity();
@@ -271,7 +300,8 @@ Entity createHelpInfo(RenderSystem* renderer, vec2 position)
 	motion.position = position;
 
 	// Setting initial values, scale is negative to make it face the opposite way
-	motion.scale = vec2(280,280);
+
+	motion.scale = vec2(400,280);
 
 	registry.eatables.emplace(entity);
 	registry.renderRequests.insert(
