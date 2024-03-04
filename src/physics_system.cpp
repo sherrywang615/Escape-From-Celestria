@@ -124,7 +124,7 @@ bool check_line_intersects(vec2 point1, vec2 point2, vec2 point3, vec2 point4)
 
 void collision_resolve(Motion& motion, vec2 prev_pos, std::vector<int> dir)
 {
-	if (motion.position.y != prev_pos.y && (dir[0] == 1 || dir[1] == 1)) {
+	if (motion.position.y != prev_pos.y ) {
 		motion.velocity.y = 0;
 		motion.position.y = prev_pos.y;
 	}
@@ -182,11 +182,12 @@ std::vector<int> collides_with_mesh(const Motion& motion, const Motion& mesh_mot
 			check_point_within_boundary({ nextX, nextY }, { left_b1, right_b1 }, { top_b1, bot_b1 }) ||
 			check_point_within_boundary({ meshPosX * (pscale.x) , meshPosY * (pscale.x) }, { left_b1, right_b1 }, { top_b1, bot_b1 })) {
 			//bot
+			std::cout << "checking intersects" << std::endl;
 			if (check_line_intersects(top_left, top_right, { currX, currY }, { nextX, nextY }))
 			{
 				collision_dirs[0] = 1;
 				collision_dirs[4] = 1;
-				std::cout << currX << ", " << currY << std::endl;
+				
 			}
 			//top
 			if (check_line_intersects(bot_left, bot_right, { currX, currY }, { nextX, nextY }))
