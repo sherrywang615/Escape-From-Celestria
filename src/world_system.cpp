@@ -713,6 +713,13 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 		restart_game();
 	}
 
+	if (action == GLFW_PRESS && key == GLFW_KEY_P)
+	{
+		Motion motion = registry.motions.get(player_josh);
+		printf("Josh curr_loc: %f, %f\n", motion.position.x, motion.position.y);
+	}
+
+
 	// Debugging
 	if (key == GLFW_KEY_D)
 	{
@@ -721,6 +728,8 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 		else
 			debugging.in_debug_mode = true;
 	}
+
+
 
 	if (action == GLFW_PRESS && key == GLFW_KEY_B)
 	{

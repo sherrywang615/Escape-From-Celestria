@@ -38,29 +38,39 @@ int main()
 	world.init(&renderer);
 
 
-	int id = 1;
 	Vertex* latest;
+	Vertex* v900;
 	for (int i = 0; i < 1051; i += 50) {
-		Vertex* v = new Vertex(id, i, 622);
+		Vertex* v = new Vertex(i, 622);
 		graph.addVertex(v);
 		if (i != 0) {
 			graph.addEdge(v, latest, ACTION::WALK);
+			graph.addEdge(latest, v, ACTION::WALK);
+		}
+		if (i == 850) {
+			v900 = v;
 		}
 		latest = v;
-		id++;
 	}
-	//Vertex* v3 = new Vertex(id, 470, 420);
-	//graph.addVertex(v3);
-	//graph.addEdge(latest, v3, ACTION::JUMP);
-	//id++;
-	//latest = v3;
-	//for (int i = 500; i < 801; i += 50) {
-	//	Vertex* v = new Vertex(id, i, 420);
-	//	graph.addVertex(v);
-	//	graph.addEdge(v, latest, ACTION::WALK);
-	//	latest = v;
-	//	id++;
-	//}
+	Vertex* first_mid_plat = new Vertex(950, 522);
+	graph.addVertex(first_mid_plat);
+	graph.addEdge(v900, first_mid_plat, ACTION::JUMP);
+	graph.addEdge(first_mid_plat, v900, ACTION::WALK);
+	latest = first_mid_plat;
+
+	Vertex* second_plat = new Vertex(830, 422);
+	graph.addVertex(second_plat);
+	graph.addEdge(second_plat, latest, ACTION::JUMP);
+	graph.addEdge(latest, second_plat, ACTION::JUMP);
+	latest = second_plat;
+
+	for (int i = 800; i >= 0; i -= 50) {
+		Vertex* v = new Vertex(i, 422);
+		graph.addVertex(v);
+		graph.addEdge(v, latest, ACTION::WALK);
+		graph.addEdge(latest, v, ACTION::WALK);
+		latest = v;
+	}
 	std::string font_filename = "../data/fonts/Kenney_Pixel_Square.ttf";
 	unsigned int font_default_size = 48;
 	// renderer.fontInit(*window, font_filename, font_default_size);
