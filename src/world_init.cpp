@@ -103,7 +103,7 @@ Entity createBullet(RenderSystem *renderer, vec2 position)
 	motion.position = position;
 
 	// Setting initial values, scale is negative to make it face the opposite way
-	motion.scale = vec2({-FOOD_BB_WIDTH, FOOD_BB_HEIGHT});
+	motion.scale = vec2({-HEART_BB_WIDTH, HEART_BB_HEIGHT});
 
 	// Create an (empty) Bug component to be able to refer to all bug
 	registry.eatables.emplace(entity);
@@ -128,12 +128,13 @@ Entity createBulletSmall(RenderSystem *renderer, vec2 position)
 
 	// Initialize the position, scale, and physics components
 	auto &motion = registry.motions.emplace(entity);
-	motion.angle = 0.f;
+	motion.angle = 2.4f; 
 	motion.velocity = {0, 0};
 	motion.position = position;
 
 	// Setting initial values, scale is negative to make it face the opposite way
-	motion.scale = vec2({-HEART_BB_WIDTH, HEART_BB_HEIGHT});
+	motion.scale = vec2({-SMALL_BULLET_BB_WIDTH, SMALL_BULLET_BB_HEIGHT});
+	
 
 	// Create an (empty) Bug component to be able to refer to all bug
 	registry.smallBullets.emplace(entity);
@@ -162,11 +163,41 @@ Entity createKey(RenderSystem *renderer, vec2 position)
 	motion.position = position;
 
 	// Setting initial values, scale is negative to make it face the opposite way
-	motion.scale = vec2({-FOOD_BB_WIDTH, FOOD_BB_HEIGHT});
+	motion.scale = vec2({-HEART_BB_WIDTH, HEART_BB_HEIGHT});
 
 	// Create an (empty) Bug component to be able to refer to all bug
 	registry.eatables.emplace(entity);
 	registry.keys.emplace(entity);
+	registry.renderRequests.insert(
+		entity,
+		{TEXTURE_ASSET_ID::KEY,
+		 EFFECT_ASSET_ID::TEXTURED,
+		 GEOMETRY_BUFFER_ID::SPRITE});
+
+	return entity;
+}
+
+Entity createSmallKey(RenderSystem *renderer, vec2 position)
+{
+	// Reserve en entity
+	auto entity = Entity();
+
+	// Store a reference to the potentially re-used mesh object
+	Mesh &mesh = renderer->getMesh(GEOMETRY_BUFFER_ID::SPRITE);
+	registry.meshPtrs.emplace(entity, &mesh);
+
+	// Initialize the position, scale, and physics components
+	auto &motion = registry.motions.emplace(entity);
+	motion.angle = 0.8f;
+	motion.velocity = {0, 0};
+	motion.position = position;
+
+	// Setting initial values, scale is negative to make it face the opposite way
+	motion.scale = vec2({-KEY_BB_WIDTH, KEY_BB_HEIGHT});
+
+	// Create an (empty) Bug component to be able to refer to all bug
+	// registry.eatables.emplace(entity);
+	// registry.keys.emplace(entity);
 	registry.renderRequests.insert(
 		entity,
 		{TEXTURE_ASSET_ID::KEY,
@@ -278,7 +309,7 @@ Entity createHeart(RenderSystem *renderer, vec2 position)
 	motion.position = position;
 
 	// Setting initial values, scale is negative to make it face the opposite way
-	motion.scale = vec2({-FOOD_BB_WIDTH, FOOD_BB_HEIGHT});
+	motion.scale = vec2({-HEART_BB_HEIGHT, HEART_BB_WIDTH});
 
 	// Create an (empty) Bug component to be able to refer to all bug
 	registry.hearts.emplace(entity);

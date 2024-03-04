@@ -491,7 +491,7 @@ void WorldSystem::handle_collisions()
 					{
 						// if (i % 10 == 0)
 						// {
-							createBulletSmall(renderer, vec2(30 + i  * create_heart_distance, 20 + HEART_BB_HEIGHT));
+							createBulletSmall(renderer, vec2(30 + i  * create_bullet_distance, 20 + HEART_BB_HEIGHT));
 						// }
 					}
 				}
@@ -552,7 +552,7 @@ void WorldSystem::showKeyOnScreen(RenderSystem *renderer, bool have_key)
 	if (have_key)
 	{
 		// show key on screen
-		createKey(renderer, vec2(30, HEART_BB_HEIGHT * 2 + 40));
+		createSmallKey(renderer, vec2(30, SMALL_BULLET_BB_HEIGHT + HEART_BB_HEIGHT + 25));
 	}
 	else
 	{
@@ -650,7 +650,7 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 			{
 				// if (i % 10 == 0)
 				// {
-					createBulletSmall(renderer, vec2(30 + i * create_heart_distance, 20 + HEART_BB_HEIGHT));
+					createBulletSmall(renderer, vec2(30 + i * create_bullet_distance, 20 + HEART_BB_HEIGHT));
 				// }
 			}
 		}

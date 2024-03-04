@@ -84,6 +84,7 @@ private:
 	Entity player_josh;
 	bool jumped = false;
 	unsigned int create_heart_distance = 50;
+	unsigned int create_bullet_distance = 30;
 
 	// music references
 	Mix_Music *background_music;
