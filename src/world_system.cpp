@@ -485,8 +485,17 @@ void WorldSystem::handle_collisions()
 				else if (registry.bullets.has(entity_other))
 				{
 					registry.remove_all_components_of(entity_other);
-					bullets_count = bullets_count + 10;
+					bullets_count = bullets_count + 1;
 					std::cout << "bullets count: " << bullets_count << std::endl;
+
+					removeSmallBullets(renderer);
+					for (int i = 0; i < bullets_count; i++)
+					{
+						// if (i % 10 == 0)
+						// {
+							createBulletSmall(renderer, vec2(30 + i  * create_heart_distance, 20 + HEART_BB_HEIGHT));
+						// }
+					}
 				}
 				else if (registry.keys.has(entity_other))
 				{
@@ -545,7 +554,7 @@ void WorldSystem::showKeyOnScreen(RenderSystem *renderer, bool have_key)
 	if (have_key)
 	{
 		// show key on screen
-		createKey(renderer, vec2(30, HEART_BB_HEIGHT + 40));
+		createKey(renderer, vec2(30, HEART_BB_HEIGHT * 2 + 40));
 	}
 	else
 	{
@@ -616,21 +625,35 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 
 			vec2 josh_pos = registry.motions.get(player_josh).position;
 
-			if (registry.motions.get(player_josh).scale.x > 0)
+			if (bullets_count > 0)
 			{
-				Entity bullet = createBullet(renderer, vec2(josh_pos.x + JOSH_BB_WIDTH / 2, josh_pos.y));
-				registry.eatables.remove(bullet);
-				Motion &motion = registry.motions.get(bullet);
-				motion.scale = vec2(20.0, 20.0);
-				motion.velocity.x = 80.0;
+				if (registry.motions.get(player_josh).scale.x > 0)
+				{
+					Entity bullet = createBullet(renderer, vec2(josh_pos.x + JOSH_BB_WIDTH / 2, josh_pos.y));
+					registry.eatables.remove(bullet);
+					Motion &motion = registry.motions.get(bullet);
+					motion.scale = vec2(20.0, 20.0);
+					motion.velocity.x = 80.0;
+					bullets_count--;
+				}
+				else
+				{
+					Entity bullet = createBullet(renderer, vec2(josh_pos.x - JOSH_BB_WIDTH / 2, josh_pos.y));
+					registry.eatables.remove(bullet);
+					Motion &motion = registry.motions.get(bullet);
+					motion.scale = vec2(-20.0, 20.0);
+					motion.velocity.x = -80.0;
+					bullets_count--;
+				}
 			}
-			else
+
+			removeSmallBullets(renderer);
+			for (int i = 0; i < bullets_count; i++)
 			{
-				Entity bullet = createBullet(renderer, vec2(josh_pos.x - JOSH_BB_WIDTH / 2, josh_pos.y));
-				registry.eatables.remove(bullet);
-				Motion &motion = registry.motions.get(bullet);
-				motion.scale = vec2(-20.0, 20.0);
-				motion.velocity.x = -80.0;
+				// if (i % 10 == 0)
+				// {
+					createBulletSmall(renderer, vec2(30 + i * create_heart_distance, 20 + HEART_BB_HEIGHT));
+				// }
 			}
 		}
 		if ((action == GLFW_REPEAT || action == GLFW_PRESS) && (key == GLFW_KEY_LEFT || key == GLFW_KEY_A))
@@ -864,4 +887,14 @@ void WorldSystem::hideJosh(RenderSystem *renderer)
 	// registry.players.remove(entity);
 	// registry.renderRequests.remove(entity);
 	registry.remove_all_components_of(entity);
+}
+
+void WorldSystem::removeSmallBullets(RenderSystem *renderer)
+{
+	uint i = 0;
+	while (i < registry.smallBullets.components.size())
+	{
+		Entity entity = registry.smallBullets.entities[i];
+		registry.remove_all_components_of(entity);
+	}
 }
