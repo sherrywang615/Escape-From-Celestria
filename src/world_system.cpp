@@ -738,7 +738,7 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 		if (action == GLFW_PRESS && key == GLFW_KEY_SPACE && !jumped && registry.motions.get(player_josh).velocity.y == 0.f)
 		{
 			Motion &josh_motion = registry.motions.get(player_josh);
-			josh_motion.velocity.y = -700.f;
+			josh_motion.velocity.y = -1000.f;
 			jumped = true;
 		}
 		else if (action == GLFW_RELEASE && key == GLFW_KEY_SPACE)
