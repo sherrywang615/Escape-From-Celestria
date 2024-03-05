@@ -169,7 +169,8 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 	while (registry.debugComponents.entities.size() > 0)
 		registry.remove_all_components_of(registry.debugComponents.entities.back());
 
-	if(renderInfo){
+	if (renderInfo)
+	{
 		createHelpInfo(renderer, vec2(window_width_px - 500, window_height_px - 450));
 	}
 
@@ -491,7 +492,7 @@ void WorldSystem::handle_collisions()
 					{
 						// if (i % 10 == 0)
 						// {
-							createBulletSmall(renderer, vec2(30 + i  * create_bullet_distance, 20 + HEART_BB_HEIGHT));
+						createBulletSmall(renderer, vec2(30 + i * create_bullet_distance, 20 + HEART_BB_HEIGHT));
 						// }
 					}
 				}
@@ -513,19 +514,10 @@ void WorldSystem::handle_collisions()
 					door.is_open = true;
 					// remove the key from the screen
 					showKeyOnScreen(renderer, false);
-					render_new_level();
-				}
-			}
-			else if (registry.doors.has(entity_other))
-			{
-				if (have_key)
-				{
-					// open the door
-					Door &door = registry.doors.get(entity_other);
-					door.is_open = true;
-					// remove the key from the screen
-					showKeyOnScreen(renderer, false);
-					render_new_level();
+					if (isNearDoor(player_josh, entity_other, 20))
+					{
+						render_new_level();
+					}
 				}
 			}
 		}
@@ -581,6 +573,14 @@ void WorldSystem::render_new_level()
 		createHeart(renderer, vec2(30 + i * create_heart_distance, 20));
 	}
 	createHelpSign(renderer, vec2(window_width_px - 70, window_height_px - 700));
+
+	for (int i = 0; i < bullets_count; i++)
+	{
+		// if (i % 10 == 0)
+		// {
+		createBulletSmall(renderer, vec2(30 + i * create_bullet_distance, 20 + HEART_BB_HEIGHT));
+		// }
+	}
 }
 
 // Should the game be over ?
@@ -650,7 +650,7 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 			{
 				// if (i % 10 == 0)
 				// {
-					createBulletSmall(renderer, vec2(30 + i * create_bullet_distance, 20 + HEART_BB_HEIGHT));
+				createBulletSmall(renderer, vec2(30 + i * create_bullet_distance, 20 + HEART_BB_HEIGHT));
 				// }
 			}
 		}
@@ -772,7 +772,6 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 		printf("Josh curr_loc: %f, %f\n", motion.position.x, motion.position.y);
 	}
 
-
 	// Debugging
 	if (key == GLFW_KEY_D)
 	{
@@ -781,8 +780,6 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 		else
 			debugging.in_debug_mode = true;
 	}
-
-
 
 	if (action == GLFW_PRESS && key == GLFW_KEY_B)
 	{
@@ -884,6 +881,14 @@ bool WorldSystem::isNearCabinet(Entity player, Entity cabinet, float threshold)
 	vec2 playerPos = registry.motions.get(player).position;
 	vec2 cabinetPos = registry.motions.get(cabinet).position;
 	return findDistanceBetween(playerPos, cabinetPos) <= threshold;
+}
+
+// check if player is near the door
+bool WorldSystem::isNearDoor(Entity player, Entity door, float threshold)
+{
+	vec2 playerPos = registry.motions.get(player).position;
+	vec2 doorPos = registry.motions.get(door).position;
+	return findDistanceBetween(playerPos, doorPos) <= threshold;
 }
 
 void WorldSystem::hideJosh(RenderSystem *renderer)

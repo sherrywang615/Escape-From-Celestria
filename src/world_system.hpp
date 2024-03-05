@@ -64,6 +64,7 @@ private:
 	void hideJosh(RenderSystem *renderer);
 	float distanceToCabinet(Entity player, Entity cabinet);
 	bool isNearCabinet(Entity player, Entity cabinet, float threshold);
+	bool isNearDoor(Entity player, Entity door, float threshold);
 	void removeSmallBullets(RenderSystem *renderer);
 	vec2 joshPosition;
 	// OpenGL window handle
@@ -74,7 +75,7 @@ private:
 	unsigned int hp_count;
 	bool have_key;
 	unsigned int bullets_count;
-
+	
 	// Game state
 	RenderSystem *renderer;
 	float current_speed;
