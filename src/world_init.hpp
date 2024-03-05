@@ -42,6 +42,7 @@ Entity createCabinet(RenderSystem *renderer, vec2 position);
 Entity createBulletSmall(RenderSystem *renderer, vec2 position);
 Entity createSmallKey(RenderSystem *renderer, vec2 position);
 Entity createBulletShoot(RenderSystem *renderer, vec2 position);
+Entity createBackground(RenderSystem* renderer, vec2 position);
 // the enemy
 Entity createEagle(RenderSystem *renderer, vec2 position);
 // Josh
