@@ -47,6 +47,7 @@ class RenderSystem {
 		textures_path("help_sign.png"),
 		textures_path("cabinet.png"),
 		textures_path("background.png"),
+		textures_path("Barrel2.png"),
 			 };
 
 	std::array<GLuint, effect_count> effects;

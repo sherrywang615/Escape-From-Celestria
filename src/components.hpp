@@ -17,10 +17,10 @@ struct Deadly
 struct NormalZombie
 {
 
-	//zombie state 0 = unalerted, 1 = alerted
+	// zombie state 0 = unalerted, 1 = alerted
 	int is_alerted = 0;
 	// walking range of zombie based on initial position
-	std::vector<double> walking_bound = { 0, 0 };
+	std::vector<double> walking_bound = {0, 0};
 	float walking_range = 100;
 	float sensing_range = 300;
 	DIRECTION face = DIRECTION::RIGHT;
@@ -159,20 +159,20 @@ struct Character
 	char character;
 };
 
-struct Heart {
-
+struct Heart
+{
 };
 
-struct Cabinet{
-
+struct Cabinet
+{
 };
 
-struct SmallBullet{
-
+struct SmallBullet
+{
 };
 
-struct ShootBullet{
-
+struct ShootBullet
+{
 };
 
 /**
@@ -199,12 +199,11 @@ struct ShootBullet{
  * enums there are, and as a default value to represent uninitialized fields.
  */
 
-
 enum class TEXTURE_ASSET_ID
 {
 	FOOD = 0,
 	JOSH = FOOD + 1,
-  	JOSH1 = JOSH + 1,
+	JOSH1 = JOSH + 1,
 	JOSHGUN = JOSH1 + 1,
 	JOSHGUN1 = JOSHGUN + 1,
 	ZOMBIE = JOSHGUN1 + 1,
@@ -214,11 +213,12 @@ enum class TEXTURE_ASSET_ID
 	KEY = DOOR + 1,
 	HEART = KEY + 1,
 
-  HELP_INFO = HEART + 1,
+	HELP_INFO = HEART + 1,
 	HELP_SIGN = HELP_INFO + 1,
 	CABINET = HELP_SIGN + 1,
 	BACKGROUND = CABINET + 1,
-	TEXTURE_COUNT = BACKGROUND + 1
+	BARREL = BACKGROUND + 1,
+	TEXTURE_COUNT = BARREL + 1
 
 };
 const int texture_count = (int)TEXTURE_ASSET_ID::TEXTURE_COUNT;
@@ -230,7 +230,7 @@ enum class EFFECT_ASSET_ID
 	JOSH = EGG + 1,
 	TEXTURED = JOSH + 1,
 	WIND = TEXTURED + 1,
-	//FONT = WIND + 1,
+	// FONT = WIND + 1,
 	EFFECT_COUNT = WIND + 1
 };
 const int effect_count = (int)EFFECT_ASSET_ID::EFFECT_COUNT;
@@ -246,8 +246,6 @@ enum class GEOMETRY_BUFFER_ID
 
 };
 const int geometry_count = (int)GEOMETRY_BUFFER_ID::GEOMETRY_COUNT;
-
-
 
 struct RenderRequest
 {

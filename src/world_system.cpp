@@ -474,6 +474,9 @@ bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map)
             {
                 createCabinet(renderer, {x, y});
             }
+			else if (tok == '1'){
+				createObject(renderer, {x, y});
+			}
             else
             {
                 printf("Map contains invalid character '%c' at [%d, %d].", tok, i, j);
