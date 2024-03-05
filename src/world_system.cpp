@@ -283,6 +283,7 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map)
 {
 	float josh_x = 0, josh_y = 0;
+	std::vector<std::pair<float, float>> zombiePositions; 
 	for (int i = 0; i < map.size(); i++)
 	{
 		for (int j = 0; j < map[i].size(); j++)
@@ -305,7 +306,8 @@ bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map)
 			}
 			else if (tok == 'Z')
 			{
-				createZombie(renderer, {x, y}, 0, 50);
+				// createZombie(renderer, {x, y}, 0, 50);
+				zombiePositions.push_back({x, y});
 			}
 			else if (tok == 'F')
 			{
@@ -334,7 +336,14 @@ bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map)
 			}
 		}
 	}
-	// Recreate Josh so that Josh appears in the very front
+
+	// create zombies in front of other entities
+	for (const auto& pos : zombiePositions)
+    {
+        createZombie(renderer, {pos.first, pos.second});
+    }
+
+	// Recreate Josh so that Josh appears at the very front
 	player_josh = createJosh(renderer, {josh_x, josh_y});
 	registry.colors.insert(player_josh, {1, 0.8f, 0.8f});
 	return true;
