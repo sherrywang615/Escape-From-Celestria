@@ -67,6 +67,7 @@ private:
 	bool isNearDoor(Entity player, Entity door, float threshold);
 	void removeSmallBullets(RenderSystem *renderer);
 	vec2 joshPosition;
+	vec2 joshScale;
 	// OpenGL window handle
 	GLFWwindow *window;
 

@@ -750,7 +750,7 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 				{
 					// hide josh
 					joshPosition = registry.motions.get(player_josh).position;
-					// joshScale  = registry.motions.get(player_josh).scale;
+					joshScale = registry.motions.get(player_josh).scale;
 					hideJosh(renderer);
 					isJoshHidden = true;
 					break;
@@ -761,6 +761,7 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 		{
 			// show josh
 			player_josh = createJosh(renderer, joshPosition);
+			registry.motions.get(player_josh).scale = joshScale;
 			registry.colors.insert(player_josh, {1, 0.8f, 0.8f});
 			isJoshHidden = false;
 		}
