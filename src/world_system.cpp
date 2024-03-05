@@ -168,7 +168,7 @@ void handleMovementKeys(Entity entity) {
 		if (rightKeyPressed) {
 			// printf("rightKeyPressed is true\n");
 			josh_step_counter++;
-			if (josh_step_counter % 2 == 0)
+			if (josh_step_counter % 3 == 0)
 			{
 				registry.renderRequests.get(entity) = { TEXTURE_ASSET_ID::JOSHGUN1,
 															EFFECT_ASSET_ID::TEXTURED,
@@ -190,7 +190,7 @@ void handleMovementKeys(Entity entity) {
 		// Handle left key
 		if (leftKeyPressed) {
 			josh_step_counter++;
-			if (josh_step_counter % 2 == 0)
+			if (josh_step_counter % 3 == 0)
 			{
 				registry.renderRequests.get(entity) = { TEXTURE_ASSET_ID::JOSHGUN1,
 															EFFECT_ASSET_ID::TEXTURED,
@@ -339,7 +339,7 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 		}
 	}
 
-	handleMovementKeys(player_josh);
+	//handleMovementKeys(player_josh);
 
 	return true;
 }
@@ -768,6 +768,8 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 		else if (action == GLFW_RELEASE)
 			rightKeyPressed = false;
 	}
+
+	handleMovementKeys(player_josh);
 
 	if (action == GLFW_PRESS && key == GLFW_KEY_ESCAPE)
 	{
