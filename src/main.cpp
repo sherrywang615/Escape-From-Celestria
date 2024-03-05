@@ -15,6 +15,30 @@
 
 using Clock = std::chrono::high_resolution_clock;
 
+VecVertice createVerticesForAPlatform(vec2 range, float y, int head, int tail) {
+	Vertex* latest;
+	Vertex* vHead;
+	Vertex* vTail;
+	for (int i = range[0]; i <= range[1]; i += 50) {
+		Vertex* v = new Vertex(i, y);
+		graph.addVertex(v);
+		if (i != range[0]) {
+			graph.addEdge(v, latest, ACTION::WALK);
+			graph.addEdge(latest, v, ACTION::WALK);
+		}
+		if (i == head) {
+			vHead = v;
+		}
+		if (i == tail) {
+			vTail = v;
+		}
+		latest = v;
+	}
+	VecVertice result = { vHead, vTail };
+	return result;
+}
+
+
 // Entry point
 int main()
 {
@@ -37,41 +61,27 @@ int main()
 	renderer.init(window);
 	world.init(&renderer);
 
-
-	Vertex* latest;
-	Vertex* v900;
-	// Generate vertices for first row
-	for (int i = 0; i < 1051; i += 50) {
-		Vertex* v = new Vertex(i, 622);
-		graph.addVertex(v);
-		if (i != 0) {
-			graph.addEdge(v, latest, ACTION::WALK);
-			graph.addEdge(latest, v, ACTION::WALK);
-		}
-		if (i == 900) {
-			v900 = v;
-		}
-		latest = v;
-	}
-	Vertex* first_mid_plat = new Vertex(950, 522);
+	VecVertice vv;
+	vv = createVerticesForAPlatform({ 0, 1050 }, 644, 900, 100);
+	Vertex* first_mid_plat = new Vertex(950, 544);
 	graph.addVertex(first_mid_plat);
-	graph.addEdge(v900, first_mid_plat, ACTION::JUMP);
-	graph.addEdge(first_mid_plat, v900, ACTION::WALK);
-	latest = first_mid_plat;
+	graph.addEdge(vv.head, first_mid_plat, ACTION::JUMP);
+	graph.addEdge(first_mid_plat, vv.head, ACTION::WALK);
 
-	Vertex* second_plat = new Vertex(830, 422);
+	Vertex* second_plat = new Vertex(830, 444);
 	graph.addVertex(second_plat);
 	graph.addEdge(second_plat, first_mid_plat, ACTION::JUMP);
-	graph.addEdge(latest, second_plat, ACTION::JUMP);
-	latest = second_plat;
+	graph.addEdge(first_mid_plat, second_plat, ACTION::JUMP);
+	vv = createVerticesForAPlatform({ 0, 800 }, 444, 100, 800);
+	Vertex* second_mid_plat = new Vertex(60, 344);
+	graph.addVertex(second_mid_plat);
+	graph.addEdge(second_mid_plat, vv.head, ACTION::WALK);
+	graph.addEdge(vv.head, second_mid_plat, ACTION::JUMP);
+	vv = createVerticesForAPlatform({ 210, 1060 }, 244, 210, 1060);
+	graph.addEdge(vv.head, second_mid_plat, ACTION::WALK);
+	graph.addEdge(second_mid_plat, vv.head, ACTION::JUMP);
 
-	for (int i = 800; i >= 0; i -= 50) {
-		Vertex* v = new Vertex(i, 422);
-		graph.addVertex(v);
-		graph.addEdge(v, latest, ACTION::WALK);
-		graph.addEdge(latest, v, ACTION::WALK);
-		latest = v;
-	}
+
 	std::string font_filename = "../data/fonts/Kenney_Pixel_Square.ttf";
 	unsigned int font_default_size = 48;
 	// renderer.fontInit(*window, font_filename, font_default_size);
