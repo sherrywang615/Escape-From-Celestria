@@ -283,7 +283,7 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map)
 {
 	float josh_x = 0, josh_y = 0;
-	std::vector<std::pair<float, float>> zombiePositions; 
+	std::vector<std::pair<float, float>> zombiePositions;
 	for (int i = 0; i < map.size(); i++)
 	{
 		for (int j = 0; j < map[i].size(); j++)
@@ -338,10 +338,10 @@ bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map)
 	}
 
 	// create zombies in front of other entities
-	for (const auto& pos : zombiePositions)
-    {
-        createZombie(renderer, {pos.first, pos.second});
-    }
+	for (const auto &pos : zombiePositions)
+	{
+		createZombie(renderer, {pos.first, pos.second});
+	}
 
 	// Recreate Josh so that Josh appears at the very front
 	player_josh = createJosh(renderer, {josh_x, josh_y});
@@ -450,7 +450,7 @@ void WorldSystem::handle_collisions()
 				{
 					hp_count = fmax(0, hp_count - 1);
 					registry.deductHpTimers.emplace(entity);
-					std::cout << "hp count: " << hp_count << std::endl;
+					// std::cout << "hp count: " << hp_count << std::endl;
 
 					// update hearts
 					uint i = 0;
@@ -475,7 +475,7 @@ void WorldSystem::handle_collisions()
 					// chew, add hp if hp is not full
 					registry.remove_all_components_of(entity_other);
 					++hp_count;
-					std::cout << "hp count: " << hp_count << std::endl;
+					// std::cout << "hp count: " << hp_count << std::endl;
 
 					uint i = 0;
 					while (i < registry.hearts.components.size())
@@ -494,7 +494,7 @@ void WorldSystem::handle_collisions()
 				{
 					registry.remove_all_components_of(entity_other);
 					bullets_count = bullets_count + 1;
-					std::cout << "bullets count: " << bullets_count << std::endl;
+					// std::cout << "bullets count: " << bullets_count << std::endl;
 
 					removeSmallBullets(renderer);
 					for (int i = 0; i < bullets_count; i++)
@@ -509,7 +509,7 @@ void WorldSystem::handle_collisions()
 				{
 					registry.remove_all_components_of(entity_other);
 					have_key = true;
-					std::cout << "have key: " << have_key << std::endl;
+					// std::cout << "have key: " << have_key << std::endl;
 					showKeyOnScreen(renderer, have_key);
 					// registry.doors.get(registry.doors.entities[0]).is_open = true;
 				}
@@ -530,6 +530,18 @@ void WorldSystem::handle_collisions()
 				}
 			}
 		}
+		// Zombie and Bullet collision
+		else if (registry.zombies.has(entity))
+		{
+			if (registry.shootBullets.has(entity_other))
+			{
+				// Remove bullet and zombie
+				registry.remove_all_components_of(entity_other);
+				NormalZombie &zombie = registry.zombies.get(entity);
+				registry.remove_all_components_of(entity);
+			}
+		}
+
 		else
 		{
 			if (registry.zombies.has(entity))
@@ -636,7 +648,7 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 			{
 				if (registry.motions.get(player_josh).scale.x > 0)
 				{
-					Entity bullet = createBullet(renderer, vec2(josh_pos.x + JOSH_BB_WIDTH / 2, josh_pos.y));
+					Entity bullet = createBulletShoot(renderer, vec2(josh_pos.x + JOSH_BB_WIDTH / 2, josh_pos.y));
 					registry.eatables.remove(bullet);
 					Motion &motion = registry.motions.get(bullet);
 					motion.scale = vec2(20.0, 20.0);
@@ -645,7 +657,7 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 				}
 				else
 				{
-					Entity bullet = createBullet(renderer, vec2(josh_pos.x - JOSH_BB_WIDTH / 2, josh_pos.y));
+					Entity bullet = createBulletShoot(renderer, vec2(josh_pos.x - JOSH_BB_WIDTH / 2, josh_pos.y));
 					registry.eatables.remove(bullet);
 					Motion &motion = registry.motions.get(bullet);
 					motion.scale = vec2(-20.0, 20.0);
