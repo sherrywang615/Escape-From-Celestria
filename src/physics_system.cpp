@@ -424,7 +424,7 @@ void PhysicsSystem::step(float elapsed_ms)
 			motion.velocity.x = 0;
 			motion.position.x = abs(motion.scale.x) / 2;
 
-			if(registry.bullets.has(entity) && !registry.eatables.has(entity)){
+			if(registry.shootBullets.has(entity) && !registry.eatables.has(entity)){
 				registry.meshPtrs.remove(entity);
 				registry.hearts.remove(entity);
 				registry.renderRequests.remove(entity);
@@ -434,7 +434,7 @@ void PhysicsSystem::step(float elapsed_ms)
 			motion.velocity.x = 0;
 			motion.position.x = window_width_px - abs(motion.scale.x) / 2;
 
-			if(registry.bullets.has(entity) && !registry.eatables.has(entity)){
+			if(registry.shootBullets.has(entity) && !registry.eatables.has(entity)){
 				registry.meshPtrs.remove(entity);
 				registry.hearts.remove(entity);
 				registry.renderRequests.remove(entity);
