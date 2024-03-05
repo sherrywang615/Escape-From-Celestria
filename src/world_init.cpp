@@ -13,7 +13,7 @@ Entity createJosh(RenderSystem *renderer, vec2 position)
 	motion.angle = 0.f;
 	motion.velocity = {0, 0};
 	motion.position = position;
-	motion.scale = vec2({-JOSH_BB_WIDTH, JOSH_BB_HEIGHT});
+	motion.scale = vec2({-JOSH_BB_WIDTH * 0.6, JOSH_BB_HEIGHT * 0.6});
 	registry.players.emplace(entity);
 	registry.gravities.emplace(entity);
 	registry.renderRequests.insert(
@@ -40,7 +40,7 @@ Entity createZombie(RenderSystem *renderer, vec2 position, int state, double ran
 	motion.position = position;
 
 	// Setting initial values, scale is negative to make it face the opposite way
-	motion.scale = vec2({-ZOMBIE_BB_WIDTH, ZOMBIE_BB_HEIGHT});
+	motion.scale = vec2({-ZOMBIE_BB_WIDTH * 0.6, ZOMBIE_BB_HEIGHT * 0.6});
 
 	// Create and (empty) Eagle component to be able to refer to all eagles
 	registry.deadlys.emplace(entity);

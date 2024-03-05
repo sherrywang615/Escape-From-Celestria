@@ -159,13 +159,6 @@ void updateZombiePath(float elapsed_ms)
 					printf("zombie walking_bound: {%f, %f}", zombie.walking_bound[0], zombie.walking_bound[1]);
 				}
 			}
-			double xPosition = motion_z.position.x;
-			// if zombie state == unalert (0), then check if it has reached the edge of its walking range and switch direction if so
-			//if (!zombie.is_alerted && (xPosition <= zombie.walking_bound[0] || xPosition >= zombie.walking_bound[1])) {
-			//	motion_z.velocity.x *= -1;
-			//	motion_z.scale[0] *= -1;
-			//}
-
 			// if zombie is unalerted, begin wander around
 			if (!zombie.is_alerted) {
 				// if zombie touches the boundaries of its wandering range, turn around
