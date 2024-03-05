@@ -40,6 +40,7 @@ int main()
 
 	Vertex* latest;
 	Vertex* v900;
+	// Generate vertices for first row
 	for (int i = 0; i < 1051; i += 50) {
 		Vertex* v = new Vertex(i, 622);
 		graph.addVertex(v);
@@ -47,7 +48,7 @@ int main()
 			graph.addEdge(v, latest, ACTION::WALK);
 			graph.addEdge(latest, v, ACTION::WALK);
 		}
-		if (i == 850) {
+		if (i == 900) {
 			v900 = v;
 		}
 		latest = v;
@@ -60,7 +61,7 @@ int main()
 
 	Vertex* second_plat = new Vertex(830, 422);
 	graph.addVertex(second_plat);
-	graph.addEdge(second_plat, latest, ACTION::JUMP);
+	graph.addEdge(second_plat, first_mid_plat, ACTION::JUMP);
 	graph.addEdge(latest, second_plat, ACTION::JUMP);
 	latest = second_plat;
 

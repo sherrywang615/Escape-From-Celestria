@@ -22,7 +22,7 @@ struct NormalZombie
 	// walking range of zombie based on initial position
 	std::vector<double> walking_bound = { 0, 0 };
 	float walking_range = 100;
-	float sensing_range = 250;
+	float sensing_range = 300;
 	DIRECTION face = DIRECTION::RIGHT;
 	// memory decides how long does it takes for an alerted zombie turn back into unalerted after losing the player in sight
 	float memory = 3000;

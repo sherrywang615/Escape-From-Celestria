@@ -17,6 +17,16 @@ const size_t MAX_EAGLES = 15;
 const size_t MAX_BUG = 5;
 const size_t EAGLE_DELAY_MS = 2000 * 3;
 const size_t BUG_DELAY_MS = 5000 * 3;
+const float JOSH_SPEED = 200.f;
+const float JOSH_JUMP = 800.f;
+
+// Key flags to track key pressed
+bool leftKeyPressed = false;
+bool rightKeyPressed = false;
+bool spacePressed = false;
+
+// Animation controls
+int josh_step_counter = 0;
 
 // Create the bug world
 WorldSystem::WorldSystem()
@@ -148,10 +158,69 @@ vec3 lerp(vec3 start, vec3 end, float t)
 	return start * (1 - t) + end * t;
 }
 
+
+// Handle movement related key events
+void handleMovementKeys(Entity entity) {
+	if (!registry.deathTimers.has(entity))
+	{
+		Motion& motion = registry.motions.get(entity);
+		// Handle right key
+		if (rightKeyPressed) {
+			printf("rightKeyPressed is true\n");
+			josh_step_counter++;
+			if (josh_step_counter % 2 == 0)
+			{
+				registry.renderRequests.get(entity) = { TEXTURE_ASSET_ID::JOSHGUN1,
+															EFFECT_ASSET_ID::TEXTURED,
+															GEOMETRY_BUFFER_ID::SPRITE };
+			}
+			else
+			{
+				registry.renderRequests.get(entity) = { TEXTURE_ASSET_ID::JOSHGUN,
+															EFFECT_ASSET_ID::TEXTURED,
+															GEOMETRY_BUFFER_ID::SPRITE };
+			}
+			if (motion.scale.x < 0)
+			{
+				motion.scale.x *= -1;
+			}
+			motion.velocity.x = JOSH_SPEED;
+		}
+
+		// Handle left key
+		if (leftKeyPressed) {
+			josh_step_counter++;
+			if (josh_step_counter % 2 == 0)
+			{
+				registry.renderRequests.get(entity) = { TEXTURE_ASSET_ID::JOSHGUN1,
+															EFFECT_ASSET_ID::TEXTURED,
+															GEOMETRY_BUFFER_ID::SPRITE };
+			}
+			else
+			{
+				registry.renderRequests.get(entity) = { TEXTURE_ASSET_ID::JOSHGUN,
+															EFFECT_ASSET_ID::TEXTURED,
+															GEOMETRY_BUFFER_ID::SPRITE };
+			}
+			motion.velocity.x = -JOSH_SPEED;
+			if (motion.scale.x > 0)
+			{
+				motion.scale.x *= -1;
+			}
+		}
+
+		// Handle when both key are pressed
+		if (!leftKeyPressed ^ rightKeyPressed) {
+			motion.velocity.x = 0;
+		}
+	}
+}
+
+
+
 // Update our game world
 bool WorldSystem::step(float elapsed_ms_since_last_update)
 {
-
 	// for fps counter
 	fpsTimer += elapsed_ms_since_last_update;
 	fpsCount++;
@@ -270,12 +339,7 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 		}
 	}
 
-	// for (Entity entity : registry.bullets.entities){
-	// 	if(registry.eatables.has(entity)){
-	// 		auto motion = registry.motions.get(entity);
-	// 		motion.velocity = vec2
-	// 	}
-	// }
+	handleMovementKeys(player_josh);
 
 	return true;
 }
@@ -306,7 +370,6 @@ bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map)
 			}
 			else if (tok == 'Z')
 			{
-				// createZombie(renderer, {x, y}, 0, 50);
 				zombiePositions.push_back({x, y});
 			}
 			else if (tok == 'F')
@@ -369,18 +432,6 @@ void WorldSystem::restart_game()
 
 	auto map = loadMap(MAP_PATH + "level1.txt");
 	createEntityBaseOnMap(map);
-
-	// player_josh = createJosh(renderer, {window_width_px / 2, window_height_px - 500});
-
-	// registry.colors.insert(player_josh, {1, 0.8f, 0.8f});
-	// // test zombie
-	// //  TODO: Create a room setup function to call on restart
-
-	// createFood(renderer, vec2(300, window_height_px - 450));
-	// createZombie(renderer, vec2(400, 400), 0, 50);
-	// createDoor(renderer, vec2(900, window_height_px - 80));
-	// createBullet(renderer, vec2(600, window_height_px - 450));
-	// createKey(renderer, vec2(400, window_height_px - 450));
 
 	createHelpSign(renderer, vec2(window_width_px - 70, window_height_px - 700));
 
@@ -610,7 +661,7 @@ bool WorldSystem::is_over() const
 	return bool(glfwWindowShouldClose(window));
 }
 
-int josh_step_counter = 0;
+
 // On key callback
 void WorldSystem::on_key(int key, int, int action, int mod)
 {
@@ -620,24 +671,31 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 	// key is of 'type' GLFW_KEY_
 	// action can be GLFW_PRESS GLFW_RELEASE GLFW_REPEAT
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	float velocity = 200.0f;
+	if (key == GLFW_KEY_LEFT || key == GLFW_KEY_A)
+	{
+		if (action == GLFW_PRESS || action == GLFW_REPEAT)
+			leftKeyPressed = true;
+		else if (action == GLFW_RELEASE)
+			leftKeyPressed = false;
+	}
+	if (key == GLFW_KEY_RIGHT || key == GLFW_KEY_D)
+	{
+		if (action == GLFW_PRESS || action == GLFW_REPEAT)
+			rightKeyPressed = true;
+		else if (action == GLFW_RELEASE)
+			rightKeyPressed = false;
+	}
 
 	if (action == GLFW_PRESS && key == GLFW_KEY_ESCAPE)
 	{
 		glfwSetWindowShouldClose(window, true);
 	}
 
-	// control chicken movement
 	if (!registry.deathTimers.has(player_josh))
 	{
 
 		if ((action == GLFW_REPEAT || action == GLFW_PRESS) && (key == GLFW_KEY_J))
 		{
-			// JOSH holding gun
-			//  registry.renderRequests.get(player_josh) = { TEXTURE_ASSET_ID::JOSHGUN,
-			//  												EFFECT_ASSET_ID::TEXTURED,
-			//  												GEOMETRY_BUFFER_ID::SPRITE };
-
 			registry.renderRequests.get(player_josh) = {TEXTURE_ASSET_ID::JOSHGUN1,
 														EFFECT_ASSET_ID::TEXTURED,
 														GEOMETRY_BUFFER_ID::SPRITE};
@@ -669,76 +727,15 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 			removeSmallBullets(renderer);
 			for (int i = 0; i < bullets_count; i++)
 			{
-				// if (i % 10 == 0)
-				// {
 				createBulletSmall(renderer, vec2(30 + i * create_bullet_distance, 20 + HEART_BB_HEIGHT));
-				// }
 			}
-		}
-		if ((action == GLFW_REPEAT || action == GLFW_PRESS) && (key == GLFW_KEY_LEFT || key == GLFW_KEY_A))
-		{
-			josh_step_counter++;
-			if (josh_step_counter % 2 == 0)
-			{
-				registry.renderRequests.get(player_josh) = {TEXTURE_ASSET_ID::JOSHGUN1,
-															EFFECT_ASSET_ID::TEXTURED,
-															GEOMETRY_BUFFER_ID::SPRITE};
-			}
-			else
-			{
-				registry.renderRequests.get(player_josh) = {TEXTURE_ASSET_ID::JOSHGUN,
-															EFFECT_ASSET_ID::TEXTURED,
-															GEOMETRY_BUFFER_ID::SPRITE};
-			}
-			Motion &josh_motion = registry.motions.get(player_josh);
-			josh_motion.velocity.x = -200.f * cos(josh_motion.angle);
-			josh_motion.velocity.y = 200.f * sin(josh_motion.angle);
-			if (josh_motion.scale.x > 0)
-			{
-				josh_motion.scale.x *= -1;
-			}
-		}
-		if (action == GLFW_RELEASE && (key == GLFW_KEY_LEFT || key == GLFW_KEY_A))
-		{
-			Motion &josh_motion = registry.motions.get(player_josh);
-			josh_motion.velocity.y = 0.f;
-			josh_motion.velocity.x = 0.f;
-		}
-		if ((action == GLFW_REPEAT || action == GLFW_PRESS) && (key == GLFW_KEY_RIGHT || key == GLFW_KEY_D))
-		{
-			josh_step_counter++;
-			if (josh_step_counter % 2 == 0)
-			{
-				registry.renderRequests.get(player_josh) = {TEXTURE_ASSET_ID::JOSHGUN1,
-															EFFECT_ASSET_ID::TEXTURED,
-															GEOMETRY_BUFFER_ID::SPRITE};
-			}
-			else
-			{
-				registry.renderRequests.get(player_josh) = {TEXTURE_ASSET_ID::JOSHGUN,
-															EFFECT_ASSET_ID::TEXTURED,
-															GEOMETRY_BUFFER_ID::SPRITE};
-			}
-			Motion &josh_motion = registry.motions.get(player_josh);
-			josh_motion.velocity.x = -200.f * cos(josh_motion.angle - M_PI);
-			josh_motion.velocity.y = 00.f * sin(josh_motion.angle - M_PI);
-			if (josh_motion.scale.x < 0)
-			{
-				josh_motion.scale.x *= -1;
-			}
-		}
-		if (action == GLFW_RELEASE && (key == GLFW_KEY_RIGHT || key == GLFW_KEY_D))
-		{
-			Motion &josh_motion = registry.motions.get(player_josh);
-			josh_motion.velocity.y = 0.f;
-			josh_motion.velocity.x = 0.f;
 		}
 
 		// josh jump
 		if (action == GLFW_PRESS && key == GLFW_KEY_SPACE && !jumped && registry.motions.get(player_josh).velocity.y == 0.f)
 		{
 			Motion &josh_motion = registry.motions.get(player_josh);
-			josh_motion.velocity.y = -1000.f;
+			josh_motion.velocity.y = -JOSH_JUMP;
 			jumped = true;
 		}
 		else if (action == GLFW_RELEASE && key == GLFW_KEY_SPACE)
@@ -917,9 +914,6 @@ void WorldSystem::hideJosh(RenderSystem *renderer)
 {
 	// remove josh from screen
 	Entity entity = registry.players.entities[0];
-	// registry.meshPtrs.remove(entity);
-	// registry.players.remove(entity);
-	// registry.renderRequests.remove(entity);
 	registry.remove_all_components_of(entity);
 }
 
