@@ -37,8 +37,8 @@ const int window_height_px = 700;
 const int width = window_width_px / 10;
 const int height = window_height_px / 10;
 
-// const std::string MAP_PATH = "..//..//..//data//maps//";
- const std::string MAP_PATH = "../../../data/maps/";
+ const std::string MAP_PATH = "..//..//..//data//maps//";
+//const std::string MAP_PATH = "../data/maps/";
 
 
 #ifndef M_PI

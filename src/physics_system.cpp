@@ -124,7 +124,7 @@ bool check_line_intersects(vec2 point1, vec2 point2, vec2 point3, vec2 point4)
 
 void collision_resolve(Motion& motion, vec2 prev_pos, std::vector<int> dir)
 {
-	if (motion.position.y != prev_pos.y && (dir[0] == 1 || dir[1] == 1)) {
+	if (motion.position.y != prev_pos.y ) {
 		motion.velocity.y = 0;
 		motion.position.y = prev_pos.y;
 	}
@@ -167,16 +167,10 @@ std::vector<int> collides_with_mesh(const Motion& motion, const Motion& mesh_mot
 	std::vector<int> collision_dirs = {0, 0, 0, 0, 0};
 	for (uint i = 0; i < vertices.size() - 1; i++)
 	{
-		
-		//double currX = meshPosX + vertices[i].position.x * (pscale.x) + pvel.x * step_secs;
-		//double currY = meshPosY + vertices[i].position.y * (pscale.y) + pvel.y * step_secs;
-		//double nextX = meshPosX + vertices[i + 1].position.x * (pscale.x) + pvel.x * step_secs;
-		//double nextY = meshPosY + vertices[i + 1].position.y * (pscale.y) + pvel.y * step_secs;
-	
 		double currX = meshPosX + vertices[i].position.x * (pscale.x);
-		double currY = meshPosY + vertices[i].position.y * (pscale.y) ;
+		double currY = meshPosY - vertices[i].position.y * (pscale.y) ;
 		double nextX = meshPosX + vertices[i + 1].position.x * (pscale.x);
-		double nextY = meshPosY + vertices[i + 1].position.y * (pscale.y);
+		double nextY = meshPosY - vertices[i + 1].position.y * (pscale.y);
 		
 		if (check_point_within_boundary({ currX, currY }, { left_b1, right_b1 }, { top_b1, bot_b1 }) ||
 			check_point_within_boundary({ nextX, nextY }, { left_b1, right_b1 }, { top_b1, bot_b1 }) ||
@@ -186,7 +180,7 @@ std::vector<int> collides_with_mesh(const Motion& motion, const Motion& mesh_mot
 			{
 				collision_dirs[0] = 1;
 				collision_dirs[4] = 1;
-				//std::cout << currX << ", " << currY << std::endl;
+				
 			}
 			//top
 			if (check_line_intersects(bot_left, bot_right, { currX, currY }, { nextX, nextY }))
@@ -274,11 +268,34 @@ bool collides(const Motion& motion1, const Motion& motion2, float step_secs, DIR
 
 void PhysicsSystem::step(float elapsed_ms)
 {
+
+	
+
+
 	// Get the pre movement positions of player
 	
 	vec2 prev_pos = {};
 	for (int i = 0; i < registry.players.size(); i++) {
 		prev_pos = registry.motions.get(registry.players.entities[i]).position;
+
+		//testing for mesh collision detection
+		/*auto& vertices = registry.meshPtrs.get(registry.players.entities[i])->vertices;
+		//std::cout << vertices.size() << std::endl;
+		for (uint j = 0; j < vertices.size() - 1; j++)
+		{
+
+			double currX = prev_pos.x + vertices[j].position.x * (registry.motions.get(registry.players.entities[i]).scale.x);
+			double currY = prev_pos.y - vertices[j].position.y * (registry.motions.get(registry.players.entities[i]).scale.y);
+			double nextX = prev_pos.x + vertices[j + 1].position.x * (registry.motions.get(registry.players.entities[i]).scale.x);
+			double nextY = prev_pos.y + vertices[j + 1].position.y * (registry.motions.get(registry.players.entities[i]).scale.y);
+
+			double testX = prev_pos.x + vertices[j].position.x*100;
+			double testY = prev_pos.y + vertices[j].position.y*100;
+			auto testline = createLine({ currX , currY }, { 4, 4 });
+			
+			//auto testline2 = createLine({ nextX + 150, nextY }, { 6, 6 });
+		}*/
+
 	}
 
 	// Check gravity first so we can finalize yspeed
