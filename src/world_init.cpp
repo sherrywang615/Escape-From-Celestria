@@ -18,7 +18,7 @@ Entity createJosh(RenderSystem *renderer, vec2 position)
 	registry.gravities.emplace(entity);
 	registry.renderRequests.insert(
 		entity,
-		{TEXTURE_ASSET_ID::JOSH,
+		{TEXTURE_ASSET_ID::JOSHGUN1,
 		 EFFECT_ASSET_ID::TEXTURED,
 		 GEOMETRY_BUFFER_ID::SPRITE});
 
@@ -36,7 +36,7 @@ Entity createZombie(RenderSystem *renderer, vec2 position, int state, double ran
 	// Initialize the motion of zombie to rightwards
 	auto &motion = registry.motions.emplace(entity);
 	motion.angle = 0.f;
-	motion.velocity = {30.f, 0};
+	motion.velocity = {0, 0};
 	motion.position = position;
 
 	// Setting initial values, scale is negative to make it face the opposite way
@@ -46,8 +46,8 @@ Entity createZombie(RenderSystem *renderer, vec2 position, int state, double ran
 	registry.deadlys.emplace(entity);
 	registry.zombies.emplace(entity);
 	registry.gravities.emplace(entity);
-	registry.zombies.get(entity).walking_range[0] = position.x - range;
-	registry.zombies.get(entity).walking_range[1] = position.x + range;
+	registry.zombies.get(entity).walking_bound[0] = position.x - range;
+	registry.zombies.get(entity).walking_bound[1] = position.x + range;
 	registry.renderRequests.insert(
 		entity,
 		{TEXTURE_ASSET_ID::ZOMBIE,
@@ -103,11 +103,70 @@ Entity createBullet(RenderSystem *renderer, vec2 position)
 	motion.position = position;
 
 	// Setting initial values, scale is negative to make it face the opposite way
-	motion.scale = vec2({-FOOD_BB_WIDTH, FOOD_BB_HEIGHT});
+	motion.scale = vec2({-HEART_BB_WIDTH, HEART_BB_HEIGHT});
 
 	// Create an (empty) Bug component to be able to refer to all bug
 	registry.eatables.emplace(entity);
 	registry.bullets.emplace(entity);
+	registry.renderRequests.insert(
+		entity,
+		{TEXTURE_ASSET_ID::BULLET,
+		 EFFECT_ASSET_ID::TEXTURED,
+		 GEOMETRY_BUFFER_ID::SPRITE});
+
+	return entity;
+}
+
+Entity createBulletShoot(RenderSystem *renderer, vec2 position)
+{
+	// Reserve en entity
+	auto entity = Entity();
+
+	// Store a reference to the potentially re-used mesh object
+	Mesh &mesh = renderer->getMesh(GEOMETRY_BUFFER_ID::SPRITE);
+	registry.meshPtrs.emplace(entity, &mesh);
+
+	// Initialize the position, scale, and physics components
+	auto &motion = registry.motions.emplace(entity);
+	motion.angle = 0.f;
+	motion.velocity = {0, 0};
+	motion.position = position;
+
+	// Setting initial values, scale is negative to make it face the opposite way
+	motion.scale = vec2({-HEART_BB_WIDTH, HEART_BB_HEIGHT});
+
+	// Create an (empty) Bug component to be able to refer to all bug
+	registry.shootBullets.emplace(entity);
+	registry.renderRequests.insert(
+		entity,
+		{TEXTURE_ASSET_ID::BULLET,
+		 EFFECT_ASSET_ID::TEXTURED,
+		 GEOMETRY_BUFFER_ID::SPRITE});
+
+	return entity;
+}
+
+Entity createBulletSmall(RenderSystem *renderer, vec2 position)
+{
+	// Reserve en entity
+	auto entity = Entity();
+
+	// Store a reference to the potentially re-used mesh object
+	Mesh &mesh = renderer->getMesh(GEOMETRY_BUFFER_ID::SPRITE);
+	registry.meshPtrs.emplace(entity, &mesh);
+
+	// Initialize the position, scale, and physics components
+	auto &motion = registry.motions.emplace(entity);
+	motion.angle = 2.4f; 
+	motion.velocity = {0, 0};
+	motion.position = position;
+
+	// Setting initial values, scale is negative to make it face the opposite way
+	motion.scale = vec2({-SMALL_BULLET_BB_WIDTH, SMALL_BULLET_BB_HEIGHT});
+	
+
+	// Create an (empty) Bug component to be able to refer to all bug
+	registry.smallBullets.emplace(entity);
 	registry.renderRequests.insert(
 		entity,
 		{TEXTURE_ASSET_ID::BULLET,
@@ -133,11 +192,41 @@ Entity createKey(RenderSystem *renderer, vec2 position)
 	motion.position = position;
 
 	// Setting initial values, scale is negative to make it face the opposite way
-	motion.scale = vec2({-FOOD_BB_WIDTH, FOOD_BB_HEIGHT});
+	motion.scale = vec2({-HEART_BB_WIDTH, HEART_BB_HEIGHT});
 
 	// Create an (empty) Bug component to be able to refer to all bug
 	registry.eatables.emplace(entity);
 	registry.keys.emplace(entity);
+	registry.renderRequests.insert(
+		entity,
+		{TEXTURE_ASSET_ID::KEY,
+		 EFFECT_ASSET_ID::TEXTURED,
+		 GEOMETRY_BUFFER_ID::SPRITE});
+
+	return entity;
+}
+
+Entity createSmallKey(RenderSystem *renderer, vec2 position)
+{
+	// Reserve en entity
+	auto entity = Entity();
+
+	// Store a reference to the potentially re-used mesh object
+	Mesh &mesh = renderer->getMesh(GEOMETRY_BUFFER_ID::SPRITE);
+	registry.meshPtrs.emplace(entity, &mesh);
+
+	// Initialize the position, scale, and physics components
+	auto &motion = registry.motions.emplace(entity);
+	motion.angle = 0.8f;
+	motion.velocity = {0, 0};
+	motion.position = position;
+
+	// Setting initial values, scale is negative to make it face the opposite way
+	motion.scale = vec2({-KEY_BB_WIDTH, KEY_BB_HEIGHT});
+
+	// Create an (empty) Bug component to be able to refer to all bug
+	// registry.eatables.emplace(entity);
+	// registry.keys.emplace(entity);
 	registry.renderRequests.insert(
 		entity,
 		{TEXTURE_ASSET_ID::KEY,
@@ -249,7 +338,7 @@ Entity createHeart(RenderSystem *renderer, vec2 position)
 	motion.position = position;
 
 	// Setting initial values, scale is negative to make it face the opposite way
-	motion.scale = vec2({-FOOD_BB_WIDTH, FOOD_BB_HEIGHT});
+	motion.scale = vec2({-HEART_BB_HEIGHT, HEART_BB_WIDTH});
 
 	// Create an (empty) Bug component to be able to refer to all bug
 	registry.hearts.emplace(entity);
@@ -300,7 +389,7 @@ Entity createHelpInfo(RenderSystem* renderer, vec2 position)
 	motion.position = position;
 
 	// Setting initial values, scale is negative to make it face the opposite way
-	motion.scale = vec2(400,280);
+	motion.scale = vec2(700,280);
 
 	registry.eatables.emplace(entity);
 	registry.renderRequests.insert(

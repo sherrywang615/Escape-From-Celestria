@@ -20,11 +20,14 @@ struct NormalZombie
 	//zombie state 0 = unalerted, 1 = alerted
 	int is_alerted = 0;
 	// walking range of zombie based on initial position
-	std::vector<double> walking_range = { 0, 0 };
-	float sensing_range = 500;
+	std::vector<double> walking_bound = { 0, 0 };
+	float walking_range = 100;
+	float sensing_range = 250;
 	DIRECTION face = DIRECTION::RIGHT;
 	// memory decides how long does it takes for an alerted zombie turn back into unalerted after losing the player in sight
 	float memory = 3000;
+	float alerted_speed = 100;
+	bool is_jumping = 0;
 };
 
 struct Platform
@@ -164,6 +167,14 @@ struct Cabinet{
 
 };
 
+struct SmallBullet{
+
+};
+
+struct ShootBullet{
+
+};
+
 /**
  * The following enumerators represent global identifiers refering to graphic
  * assets. For example TEXTURE_ASSET_ID are the identifiers of each texture
@@ -202,10 +213,12 @@ enum class TEXTURE_ASSET_ID
 	DOOR = BULLET + 1,
 	KEY = DOOR + 1,
 	HEART = KEY + 1,
-  	HELP_INFO = HEART + 1,
+
+  HELP_INFO = HEART + 1,
 	HELP_SIGN = HELP_INFO + 1,
 	CABINET = HELP_SIGN + 1,
 	TEXTURE_COUNT = CABINET + 1
+
 };
 const int texture_count = (int)TEXTURE_ASSET_ID::TEXTURE_COUNT;
 

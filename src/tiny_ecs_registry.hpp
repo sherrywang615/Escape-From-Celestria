@@ -36,6 +36,8 @@ public:
 	ComponentContainer<Character> characters;
 	ComponentContainer<Heart> hearts;
 	ComponentContainer<Cabinet> cabinets;
+	ComponentContainer<SmallBullet> smallBullets;
+	ComponentContainer<ShootBullet> shootBullets;
 
 	// constructor that adds all containers for looping over them
 	// IMPORTANT: Don't forget to add any newly added containers!
@@ -66,6 +68,8 @@ public:
 		registry_list.push_back(&characters);
 		registry_list.push_back(&hearts);
 		registry_list.push_back(&cabinets);
+		registry_list.push_back(&smallBullets);
+		registry_list.push_back(&shootBullets);
 	}
 
 	void clear_all_components()

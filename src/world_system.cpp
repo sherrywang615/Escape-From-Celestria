@@ -157,7 +157,7 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 	fpsCount++;
 	if (fpsTimer >= 1000.0f)
 	{
-		fpsTimer -= 1000.0f;
+		fpsTimer = 0.0f;
 		fps = fpsCount;
 		fpsCount = 0;
 		std::stringstream windowCaption;
@@ -169,8 +169,9 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 	while (registry.debugComponents.entities.size() > 0)
 		registry.remove_all_components_of(registry.debugComponents.entities.back());
 
-	if(renderInfo){
-		createHelpInfo(renderer, vec2(window_width_px - 220, window_height_px - 450));
+	if (renderInfo)
+	{
+		createHelpInfo(renderer, vec2(window_width_px - 500, window_height_px - 450));
 	}
 
 	// Removing out of screen entities
@@ -269,11 +270,20 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 		}
 	}
 
+	// for (Entity entity : registry.bullets.entities){
+	// 	if(registry.eatables.has(entity)){
+	// 		auto motion = registry.motions.get(entity);
+	// 		motion.velocity = vec2
+	// 	}
+	// }
+
 	return true;
 }
 
 bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map)
 {
+	float josh_x = 0, josh_y = 0;
+	std::vector<std::pair<float, float>> zombiePositions;
 	for (int i = 0; i < map.size(); i++)
 	{
 		for (int j = 0; j < map[i].size(); j++)
@@ -287,8 +297,8 @@ bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map)
 			}
 			else if (tok == 'J')
 			{
-				player_josh = createJosh(renderer, {x, y});
-				registry.colors.insert(player_josh, {1, 0.8f, 0.8f});
+				josh_x = x;
+				josh_y = y;
 			}
 			else if (tok == 'P')
 			{
@@ -296,7 +306,8 @@ bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map)
 			}
 			else if (tok == 'Z')
 			{
-				createZombie(renderer, {x, y}, 0, 50);
+				// createZombie(renderer, {x, y}, 0, 50);
+				zombiePositions.push_back({x, y});
 			}
 			else if (tok == 'F')
 			{
@@ -325,6 +336,16 @@ bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map)
 			}
 		}
 	}
+
+	// create zombies in front of other entities
+	for (const auto &pos : zombiePositions)
+	{
+		createZombie(renderer, {pos.first, pos.second});
+	}
+
+	// Recreate Josh so that Josh appears at the very front
+	player_josh = createJosh(renderer, {josh_x, josh_y});
+	registry.colors.insert(player_josh, {1, 0.8f, 0.8f});
 	return true;
 }
 
@@ -360,6 +381,7 @@ void WorldSystem::restart_game()
 	// createDoor(renderer, vec2(900, window_height_px - 80));
 	// createBullet(renderer, vec2(600, window_height_px - 450));
 	// createKey(renderer, vec2(400, window_height_px - 450));
+
 	createHelpSign(renderer, vec2(window_width_px - 70, window_height_px - 700));
 
 	for (int i = 0; i < hp_count; i++)
@@ -428,7 +450,7 @@ void WorldSystem::handle_collisions()
 				{
 					hp_count = fmax(0, hp_count - 1);
 					registry.deductHpTimers.emplace(entity);
-					std::cout << "hp count: " << hp_count << std::endl;
+					// std::cout << "hp count: " << hp_count << std::endl;
 
 					// update hearts
 					uint i = 0;
@@ -453,7 +475,7 @@ void WorldSystem::handle_collisions()
 					// chew, add hp if hp is not full
 					registry.remove_all_components_of(entity_other);
 					++hp_count;
-					std::cout << "hp count: " << hp_count << std::endl;
+					// std::cout << "hp count: " << hp_count << std::endl;
 
 					uint i = 0;
 					while (i < registry.hearts.components.size())
@@ -471,14 +493,23 @@ void WorldSystem::handle_collisions()
 				else if (registry.bullets.has(entity_other))
 				{
 					registry.remove_all_components_of(entity_other);
-					bullets_count = bullets_count + 10;
-					std::cout << "bullets count: " << bullets_count << std::endl;
+					bullets_count = bullets_count + 1;
+					// std::cout << "bullets count: " << bullets_count << std::endl;
+
+					removeSmallBullets(renderer);
+					for (int i = 0; i < bullets_count; i++)
+					{
+						// if (i % 10 == 0)
+						// {
+						createBulletSmall(renderer, vec2(30 + i * create_bullet_distance, 20 + HEART_BB_HEIGHT));
+						// }
+					}
 				}
 				else if (registry.keys.has(entity_other))
 				{
 					registry.remove_all_components_of(entity_other);
 					have_key = true;
-					std::cout << "have key: " << have_key << std::endl;
+					// std::cout << "have key: " << have_key << std::endl;
 					showKeyOnScreen(renderer, have_key);
 					// registry.doors.get(registry.doors.entities[0]).is_open = true;
 				}
@@ -492,22 +523,25 @@ void WorldSystem::handle_collisions()
 					door.is_open = true;
 					// remove the key from the screen
 					showKeyOnScreen(renderer, false);
-					render_new_level();
-				}
-			}
-			else if (registry.doors.has(entity_other))
-			{
-				if (have_key)
-				{
-					// open the door
-					Door &door = registry.doors.get(entity_other);
-					door.is_open = true;
-					// remove the key from the screen
-					showKeyOnScreen(renderer, false);
-					render_new_level();
+					if (isNearDoor(player_josh, entity_other, 20))
+					{
+						render_new_level();
+					}
 				}
 			}
 		}
+		// Zombie and Bullet collision
+		else if (registry.zombies.has(entity))
+		{
+			if (registry.shootBullets.has(entity_other))
+			{
+				// Remove bullet and zombie
+				registry.remove_all_components_of(entity_other);
+				NormalZombie &zombie = registry.zombies.get(entity);
+				registry.remove_all_components_of(entity);
+			}
+		}
+
 		else
 		{
 			if (registry.zombies.has(entity))
@@ -531,7 +565,7 @@ void WorldSystem::showKeyOnScreen(RenderSystem *renderer, bool have_key)
 	if (have_key)
 	{
 		// show key on screen
-		createKey(renderer, vec2(30, HEART_BB_HEIGHT + 40));
+		createSmallKey(renderer, vec2(30, SMALL_BULLET_BB_HEIGHT + HEART_BB_HEIGHT + 25));
 	}
 	else
 	{
@@ -557,9 +591,17 @@ void WorldSystem::render_new_level()
 
 	for (int i = 0; i < hp_count; i++)
 	{
-		createHeart(renderer, vec2(30 + i * create_heart_distance, 20));	
+		createHeart(renderer, vec2(30 + i * create_heart_distance, 20));
 	}
 	createHelpSign(renderer, vec2(window_width_px - 70, window_height_px - 700));
+
+	for (int i = 0; i < bullets_count; i++)
+	{
+		// if (i % 10 == 0)
+		// {
+		createBulletSmall(renderer, vec2(30 + i * create_bullet_distance, 20 + HEART_BB_HEIGHT));
+		// }
+	}
 }
 
 // Should the game be over ?
@@ -588,7 +630,8 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 	// control chicken movement
 	if (!registry.deathTimers.has(player_josh))
 	{
-		if ((action == GLFW_REPEAT || action == GLFW_PRESS) && (key == GLFW_KEY_B))
+
+		if ((action == GLFW_REPEAT || action == GLFW_PRESS) && (key == GLFW_KEY_J))
 		{
 			// JOSH holding gun
 			//  registry.renderRequests.get(player_josh) = { TEXTURE_ASSET_ID::JOSHGUN,
@@ -598,19 +641,52 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 			registry.renderRequests.get(player_josh) = {TEXTURE_ASSET_ID::JOSHGUN1,
 														EFFECT_ASSET_ID::TEXTURED,
 														GEOMETRY_BUFFER_ID::SPRITE};
+
+			vec2 josh_pos = registry.motions.get(player_josh).position;
+
+			if (bullets_count > 0)
+			{
+				if (registry.motions.get(player_josh).scale.x > 0)
+				{
+					Entity bullet = createBulletShoot(renderer, vec2(josh_pos.x + JOSH_BB_WIDTH / 2, josh_pos.y));
+					registry.eatables.remove(bullet);
+					Motion &motion = registry.motions.get(bullet);
+					motion.scale = vec2(20.0, 20.0);
+					motion.velocity.x = 500.0;
+					bullets_count--;
+				}
+				else
+				{
+					Entity bullet = createBulletShoot(renderer, vec2(josh_pos.x - JOSH_BB_WIDTH / 2, josh_pos.y));
+					registry.eatables.remove(bullet);
+					Motion &motion = registry.motions.get(bullet);
+					motion.scale = vec2(-20.0, 20.0);
+					motion.velocity.x = -500.0;
+					bullets_count--;
+				}
+			}
+
+			removeSmallBullets(renderer);
+			for (int i = 0; i < bullets_count; i++)
+			{
+				// if (i % 10 == 0)
+				// {
+				createBulletSmall(renderer, vec2(30 + i * create_bullet_distance, 20 + HEART_BB_HEIGHT));
+				// }
+			}
 		}
 		if ((action == GLFW_REPEAT || action == GLFW_PRESS) && (key == GLFW_KEY_LEFT || key == GLFW_KEY_A))
 		{
 			josh_step_counter++;
 			if (josh_step_counter % 2 == 0)
 			{
-				registry.renderRequests.get(player_josh) = {TEXTURE_ASSET_ID::JOSH1,
+				registry.renderRequests.get(player_josh) = {TEXTURE_ASSET_ID::JOSHGUN1,
 															EFFECT_ASSET_ID::TEXTURED,
 															GEOMETRY_BUFFER_ID::SPRITE};
 			}
 			else
 			{
-				registry.renderRequests.get(player_josh) = {TEXTURE_ASSET_ID::JOSH,
+				registry.renderRequests.get(player_josh) = {TEXTURE_ASSET_ID::JOSHGUN,
 															EFFECT_ASSET_ID::TEXTURED,
 															GEOMETRY_BUFFER_ID::SPRITE};
 			}
@@ -633,13 +709,13 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 			josh_step_counter++;
 			if (josh_step_counter % 2 == 0)
 			{
-				registry.renderRequests.get(player_josh) = {TEXTURE_ASSET_ID::JOSH1,
+				registry.renderRequests.get(player_josh) = {TEXTURE_ASSET_ID::JOSHGUN1,
 															EFFECT_ASSET_ID::TEXTURED,
 															GEOMETRY_BUFFER_ID::SPRITE};
 			}
 			else
 			{
-				registry.renderRequests.get(player_josh) = {TEXTURE_ASSET_ID::JOSH,
+				registry.renderRequests.get(player_josh) = {TEXTURE_ASSET_ID::JOSHGUN,
 															EFFECT_ASSET_ID::TEXTURED,
 															GEOMETRY_BUFFER_ID::SPRITE};
 			}
@@ -678,25 +754,29 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 
 	if (action == GLFW_PRESS && key == GLFW_KEY_H)
 	{
-		for (Entity entity: registry.cabinets.entities)
+		if (!isJoshHidden)
 		{
-			if (isNearCabinet(player_josh, entity, 50))
+			for (Entity entity : registry.cabinets.entities)
 			{
-				joshPosition = registry.motions.get(player_josh).position;
-				std::cout << "Josh Position: (" << joshPosition.x << ", " << joshPosition.y << ")" << std::endl;
-				// joshScale  = registry.motions.get(player_josh).scale;
-				hideJosh(renderer);
-				isJoshHidden = true;
-				break;
+				if (isNearCabinet(player_josh, entity, 50))
+				{
+					// hide josh
+					joshPosition = registry.motions.get(player_josh).position;
+					joshScale = registry.motions.get(player_josh).scale;
+					hideJosh(renderer);
+					isJoshHidden = true;
+					break;
+				}
 			}
 		}
-	}
-
-
-	if (action == GLFW_PRESS && key == GLFW_KEY_L && isJoshHidden)
-	{
-		std::cout << registry.players.components.size() << std::endl;
-		createJosh(renderer, joshPosition);
+		else
+		{
+			// show josh
+			player_josh = createJosh(renderer, joshPosition);
+			registry.motions.get(player_josh).scale = joshScale;
+			registry.colors.insert(player_josh, {1, 0.8f, 0.8f});
+			isJoshHidden = false;
+		}
 	}
 
 	// Resetting game
@@ -706,6 +786,12 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 		glfwGetWindowSize(window, &w, &h);
 
 		restart_game();
+	}
+
+	if (action == GLFW_PRESS && key == GLFW_KEY_P)
+	{
+		Motion motion = registry.motions.get(player_josh);
+		printf("Josh curr_loc: %f, %f\n", motion.position.x, motion.position.y);
 	}
 
 	// Debugging
@@ -812,23 +898,37 @@ void WorldSystem::on_mouse_move(vec2 mouse_position)
 {
 }
 
-float WorldSystem::distanceToCabinet(Entity player, Entity cabinet) {
-    vec2 playerPos = registry.motions.get(player).position;
-    vec2 cabinetPos = registry.motions.get(cabinet).position;
-    return sqrt(pow(playerPos.x - cabinetPos.x, 2) + pow(playerPos.y - cabinetPos.y, 2));
+bool WorldSystem::isNearCabinet(Entity player, Entity cabinet, float threshold)
+{
+	vec2 playerPos = registry.motions.get(player).position;
+	vec2 cabinetPos = registry.motions.get(cabinet).position;
+	return findDistanceBetween(playerPos, cabinetPos) <= threshold;
 }
 
-bool WorldSystem::isNearCabinet(Entity player, Entity cabinet, float threshold) {
-    return distanceToCabinet(player, cabinet) <= threshold;
+// check if player is near the door
+bool WorldSystem::isNearDoor(Entity player, Entity door, float threshold)
+{
+	vec2 playerPos = registry.motions.get(player).position;
+	vec2 doorPos = registry.motions.get(door).position;
+	return findDistanceBetween(playerPos, doorPos) <= threshold;
 }
-
 
 void WorldSystem::hideJosh(RenderSystem *renderer)
 {
 	// remove josh from screen
 	Entity entity = registry.players.entities[0];
-	registry.meshPtrs.remove(entity);
-	registry.players.remove(entity);
-	registry.renderRequests.remove(entity);
+	// registry.meshPtrs.remove(entity);
+	// registry.players.remove(entity);
+	// registry.renderRequests.remove(entity);
+	registry.remove_all_components_of(entity);
 }
 
+void WorldSystem::removeSmallBullets(RenderSystem *renderer)
+{
+	uint i = 0;
+	while (i < registry.smallBullets.components.size())
+	{
+		Entity entity = registry.smallBullets.entities[i];
+		registry.remove_all_components_of(entity);
+	}
+}
