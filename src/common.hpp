@@ -102,3 +102,8 @@ public:
 extern Graph graph;
 
 
+struct VecVertice {
+	Vertex* head;
+	Vertex* tail;
+};
+

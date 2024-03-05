@@ -19,6 +19,7 @@ const size_t EAGLE_DELAY_MS = 2000 * 3;
 const size_t BUG_DELAY_MS = 5000 * 3;
 const float JOSH_SPEED = 200.f;
 const float JOSH_JUMP = 800.f;
+const float KNOCKBACK_DIST = 50.f;
 
 // Key flags to track key pressed
 bool leftKeyPressed = false;
@@ -166,7 +167,6 @@ void handleMovementKeys(Entity entity) {
 		Motion& motion = registry.motions.get(entity);
 		// Handle right key
 		if (rightKeyPressed) {
-			// printf("rightKeyPressed is true\n");
 			josh_step_counter++;
 			if (josh_step_counter % 3 == 0)
 			{
@@ -506,7 +506,7 @@ void WorldSystem::restart_game()
 
 	// Reset the game speed
 	current_speed = 1.f;
-	hp_count = 3;
+	hp_count = 10;
 
 	// Remove all entities that we created
 	// All that have a motion, we could also iterate over all bug, eagles, ... but that would be more cumbersome
@@ -545,6 +545,10 @@ void WorldSystem::handle_collisions()
 			// Checking Player - Deadly collisions
 			if (registry.deadlys.has(entity_other) && !registry.deductHpTimers.has(entity))
 			{
+				Motion& motion_p = registry.motions.get(entity);
+				Motion motion_z = registry.motions.get(entity_other);
+				motion_p.position.x -= (motion_z.position.x - motion_p.position.x) / abs(motion_z.position.x - motion_p.position.x) * KNOCKBACK_DIST;
+				
 				if (hp_count == 1)
 				{
 
