@@ -623,8 +623,8 @@ void WorldSystem::handle_collisions()
 					showKeyOnScreen(renderer, false);
 					if (isNearDoor(player_josh, entity_other))
 					{
-						render_new_level();
 						currentLevel++;
+						render_new_level(currentLevel);
 						have_key = false;
 					}
 				}
@@ -682,11 +682,11 @@ void WorldSystem::showKeyOnScreen(RenderSystem *renderer, bool have_key)
 }
 
 // Render a new level
-void WorldSystem::render_new_level()
+void WorldSystem::render_new_level(int level)
 {
 	while (registry.motions.entities.size() > 0)
 		registry.remove_all_components_of(registry.motions.entities.back());
-	auto map = loadMap(MAP_PATH + "level2.txt");
+	auto map = loadMap(MAP_PATH + "level" + std::to_string(level) + ".txt");
 	createEntityBaseOnMap(map);
 
 	for (int i = 0; i < hp_count; i++)
