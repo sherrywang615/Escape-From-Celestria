@@ -170,8 +170,8 @@ void handleMovementKeys(Entity entity) {
 		Motion& motion = registry.motions.get(entity);
 		// Handle right key
 		if (rightKeyPressed) {
-			josh_step_counter++;
-			if (josh_step_counter % 3 == 0)
+			//josh_step_counter++;
+			if (josh_step_counter % 2 == 0)
 			{
 				registry.renderRequests.get(entity) = { TEXTURE_ASSET_ID::JOSHGUN1,
 															EFFECT_ASSET_ID::TEXTURED,
@@ -192,8 +192,8 @@ void handleMovementKeys(Entity entity) {
 
 		// Handle left key
 		if (leftKeyPressed) {
-			josh_step_counter++;
-			if (josh_step_counter % 3 == 0)
+			//josh_step_counter++;
+			if (josh_step_counter % 2 == 0)
 			{
 				registry.renderRequests.get(entity) = { TEXTURE_ASSET_ID::JOSHGUN1,
 															EFFECT_ASSET_ID::TEXTURED,
@@ -343,7 +343,7 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 		}
 	}
 
-	//handleMovementKeys(player_josh);
+	handleMovementKeys(player_josh);
 
 	return true;
 }
@@ -712,20 +712,24 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 
 	if (key == GLFW_KEY_LEFT || key == GLFW_KEY_A)
 	{
-		if (action == GLFW_PRESS || action == GLFW_REPEAT)
+		if (action == GLFW_PRESS || action == GLFW_REPEAT){
+			josh_step_counter++;
 			leftKeyPressed = true;
-		else if (action == GLFW_RELEASE)
+		}
+		else if (action == GLFW_RELEASE){
 			leftKeyPressed = false;
+		}
 	}
 	if (key == GLFW_KEY_RIGHT || key == GLFW_KEY_D)
 	{
-		if (action == GLFW_PRESS || action == GLFW_REPEAT)
+		if (action == GLFW_PRESS || action == GLFW_REPEAT){
+			josh_step_counter++;
 			rightKeyPressed = true;
-		else if (action == GLFW_RELEASE)
+		}else if (action == GLFW_RELEASE){
 			rightKeyPressed = false;
+		}
+			
 	}
-
-	//handleMovementKeys(player_josh);
 
 	
 
