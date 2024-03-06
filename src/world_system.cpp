@@ -694,6 +694,10 @@ void WorldSystem::render_new_level(int level)
 		createHeart(renderer, vec2(30 + i * create_heart_distance, 20));
 	}
 	createHelpSign(renderer, vec2(window_width_px - 70, window_height_px - 700));
+	if (renderInfo)
+	{
+		createHelpInfo(renderer, vec2(window_width_px - 500, window_height_px - 450));
+	}
 	for (int i = 0; i < bullets_count; i++)
 	{
 		// if (i % 10 == 0)
