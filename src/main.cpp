@@ -64,27 +64,29 @@ void createVerticesForLevel1() {
 }
 
 void createVerticesForLevel2() {
-	VecVertice vv;
-	vv = createVerticesForAPlatform({ 0, 1050 }, 644, 900, 100);
+	VecVertice vv1 = createVerticesForAPlatform({ 0, 1050 }, 644, 900, 100);
 	Vertex* first_mid_plat = new Vertex(50, 544);
 	graph.addVertex(first_mid_plat);
-	graph.addEdge(first_mid_plat, vv.tail, ACTION::WALK);
-	graph.addEdge(vv.tail, first_mid_plat, ACTION::JUMP);
-	vv = createVerticesForAPlatform({ 170, 520 }, 444, 170, 520);
-	graph.addEdge(first_mid_plat, vv.head, ACTION::JUMP);
-	graph.addEdge(vv.head, first_mid_plat, ACTION::WALK);
-	VecVertice vv2 = createVerticesForAPlatform({ 550, 650 }, 444, 550, 650);
-	graph.addEdge(vv2.head, vv.tail, ACTION::WALK);
-	graph.addEdge(vv.tail, vv.head, ACTION::WALK);
-	VecVertice vvRight = createVerticesForAPlatform({ 720, 970 }, 444, 720, 970);
-	graph.addEdge(vv2.tail, vvRight.head, ACTION::WALK);
-	graph.addEdge(vvRight.head, vv2.tail, ACTION::WALK);
+	graph.addEdge(first_mid_plat, vv1.tail, ACTION::WALK);
+	graph.addEdge(vv1.tail, first_mid_plat, ACTION::JUMP);
+	VecVertice vv2Left = createVerticesForAPlatform({ 180, 480 }, 444, 180, 480);
+	graph.addEdge(first_mid_plat, vv2Left.head, ACTION::JUMP);
+	graph.addEdge(vv2Left.head, first_mid_plat, ACTION::WALK);
+	VecVertice vv2Mid = createVerticesForAPlatform({ 550, 650 }, 444, 550, 650);
+	graph.addEdge(vv2Mid.head, vv2Left.tail, ACTION::WALK);
+	graph.addEdge(vv2Left.tail, vv2Mid.head, ACTION::WALK);
+	VecVertice vv2Right = createVerticesForAPlatform({ 720, 970 }, 444, 720, 970);
+	graph.addEdge(vv2Mid.tail, vv2Right.head, ACTION::WALK);
+	graph.addEdge(vv2Right.head, vv2Mid.tail, ACTION::WALK);
 	VecVertice vvUp = createVerticesForAPlatform({ 550, 650 }, 344, 550, 650);
-	graph.addEdge(vv.tail, vvUp.head, ACTION::JUMP);
-	graph.addEdge(vvUp.head, vv.tail, ACTION::WALK);
-	graph.addEdge(vvRight.head, vvUp.tail, ACTION::JUMP);
-	graph.addEdge(vvUp.tail, vvRight.head, ACTION::WALK);
-	Vertex* second_mid_plat = new Vertex(70, 344);
+	graph.addEdge(vv2Left.tail, vvUp.head, ACTION::JUMP);
+	graph.addEdge(vvUp.head, vv2Left.tail, ACTION::WALK);
+	graph.addEdge(vv2Right.head, vvUp.tail, ACTION::JUMP);
+	graph.addEdge(vvUp.tail, vv2Right.head, ACTION::WALK);
+	Vertex* second_mid_plat = new Vertex(50, 344);
+	graph.addVertex(second_mid_plat);
+	graph.addEdge(vv2Left.head, second_mid_plat, ACTION::JUMP);
+	graph.addEdge(second_mid_plat, vv2Left.head, ACTION::WALK);
 	VecVertice vvLeft3 = createVerticesForAPlatform({ 170, 420 }, 244, 170, 420);
 	graph.addEdge(vvUp.head, vvLeft3.tail, ACTION::JUMP);
 	graph.addEdge(vvLeft3.tail, vvUp.head, ACTION::WALK);
@@ -93,15 +95,13 @@ void createVerticesForLevel2() {
 	VecVertice vvRight3 = createVerticesForAPlatform({ 770, 970 }, 244, 770, 970);
 	graph.addEdge(vvUp.tail, vvRight3.head, ACTION::JUMP);
 	graph.addEdge(vvRight3.head, vvUp.tail, ACTION::WALK);
-	Vertex* third_mid_plat = new Vertex(70, 144);
-	VecVertice vv3 = createVerticesForAPlatform({ 170, 970 }, 44, 170, 970);
+	Vertex* third_mid_plat = new Vertex(50, 144);
+	graph.addVertex(third_mid_plat);
+	VecVertice vv4 = createVerticesForAPlatform({ 180, 1080 }, 64, 180, 980);
 	graph.addEdge(vvLeft3.head, third_mid_plat, ACTION::JUMP);
 	graph.addEdge(third_mid_plat, vvLeft3.head, ACTION::WALK);
-	graph.addEdge(third_mid_plat, vv3.head, ACTION::JUMP);
-	graph.addEdge(vv3.head, third_mid_plat, ACTION::WALK);
-
-
-	
+	graph.addEdge(third_mid_plat, vv4.head, ACTION::JUMP);
+	graph.addEdge(vv4.head, third_mid_plat, ACTION::WALK);
 }
 
 void createGraph(int level) {
