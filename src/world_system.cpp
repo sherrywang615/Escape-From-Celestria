@@ -18,7 +18,7 @@ const size_t MAX_BUG = 5;
 const size_t EAGLE_DELAY_MS = 2000 * 3;
 const size_t BUG_DELAY_MS = 5000 * 3;
 const float JOSH_SPEED = 200.f;
-const float JOSH_JUMP = 1000.f;
+const float JOSH_JUMP = 800.f;
 const float KNOCKBACK_DIST = 50.f;
 
 // Threshold to test if one thing is close enough to another
@@ -455,6 +455,9 @@ void WorldSystem::restart_game()
 	hp_count = INITIAL_HP;
 	bullets_count = 0;
 
+	// Reset current level
+	currentLevel = 1;
+
 	// Remove all entities that we created
 	// All that have a motion, we could also iterate over all bug, eagles, ... but that would be more cumbersome
 	while (registry.motions.entities.size() > 0)
@@ -619,6 +622,7 @@ void WorldSystem::handle_collisions()
 					if (isNearDoor(player_josh, entity_other))
 					{
 						render_new_level();
+						currentLevel++;
 						have_key = false;
 					}
 				}

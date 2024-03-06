@@ -63,6 +63,57 @@ void createVerticesForLevel1() {
 	graph.addEdge(second_mid_plat, vv.head, ACTION::JUMP);
 }
 
+void createVerticesForLevel2() {
+	VecVertice vv;
+	vv = createVerticesForAPlatform({ 0, 1050 }, 644, 900, 100);
+	Vertex* first_mid_plat = new Vertex(50, 544);
+	graph.addVertex(first_mid_plat);
+	graph.addEdge(first_mid_plat, vv.tail, ACTION::WALK);
+	graph.addEdge(vv.tail, first_mid_plat, ACTION::JUMP);
+	vv = createVerticesForAPlatform({ 170, 520 }, 444, 170, 520);
+	graph.addEdge(first_mid_plat, vv.head, ACTION::JUMP);
+	graph.addEdge(vv.head, first_mid_plat, ACTION::WALK);
+	VecVertice vv2 = createVerticesForAPlatform({ 550, 650 }, 444, 550, 650);
+	graph.addEdge(vv2.head, vv.tail, ACTION::WALK);
+	graph.addEdge(vv.tail, vv.head, ACTION::WALK);
+	VecVertice vvRight = createVerticesForAPlatform({ 720, 970 }, 444, 720, 970);
+	graph.addEdge(vv2.tail, vvRight.head, ACTION::WALK);
+	graph.addEdge(vvRight.head, vv2.tail, ACTION::WALK);
+	VecVertice vvUp = createVerticesForAPlatform({ 550, 650 }, 344, 550, 650);
+	graph.addEdge(vv.tail, vvUp.head, ACTION::JUMP);
+	graph.addEdge(vvUp.head, vv.tail, ACTION::WALK);
+	graph.addEdge(vvRight.head, vvUp.tail, ACTION::JUMP);
+	graph.addEdge(vvUp.tail, vvRight.head, ACTION::WALK);
+	Vertex* second_mid_plat = new Vertex(70, 344);
+	VecVertice vvLeft3 = createVerticesForAPlatform({ 170, 420 }, 244, 170, 420);
+	graph.addEdge(vvUp.head, vvLeft3.tail, ACTION::JUMP);
+	graph.addEdge(vvLeft3.tail, vvUp.head, ACTION::WALK);
+	graph.addEdge(second_mid_plat, vvLeft3.head, ACTION::JUMP);
+	graph.addEdge(vvLeft3.head, second_mid_plat, ACTION::WALK);
+	VecVertice vvRight3 = createVerticesForAPlatform({ 770, 970 }, 244, 770, 970);
+	graph.addEdge(vvUp.tail, vvRight3.head, ACTION::JUMP);
+	graph.addEdge(vvRight3.head, vvUp.tail, ACTION::WALK);
+	Vertex* third_mid_plat = new Vertex(70, 144);
+	VecVertice vv3 = createVerticesForAPlatform({ 170, 970 }, 44, 170, 970);
+	graph.addEdge(vvLeft3.head, third_mid_plat, ACTION::JUMP);
+	graph.addEdge(third_mid_plat, vvLeft3.head, ACTION::WALK);
+	graph.addEdge(third_mid_plat, vv3.head, ACTION::JUMP);
+	graph.addEdge(vv3.head, third_mid_plat, ACTION::WALK);
+
+
+	
+}
+
+void createGraph(int level) {
+	graph = Graph();
+	if (level == 1) {
+		createVerticesForLevel1();
+	}
+	else if (level == 2) {
+		createVerticesForLevel2();
+	}
+}
+
 // Entry point
 int main()
 {
@@ -85,6 +136,7 @@ int main()
 	renderer.init(window);
 	world.init(&renderer);
 
+	int level = world.currentLevel;
 	createVerticesForLevel1();
 
 
@@ -107,6 +159,11 @@ int main()
 		float elapsed_ms =
 			(float)(std::chrono::duration_cast<std::chrono::microseconds>(now - t)).count() / 1000;
 		t = now;
+		//printf("%d\n", world.currentLevel);
+		if (world.currentLevel != level) {
+			level = world.currentLevel;
+			createGraph(level);
+		}
 
 		world.step(elapsed_ms);
 		physics.step(elapsed_ms);

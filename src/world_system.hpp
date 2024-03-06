@@ -25,6 +25,8 @@ public:
 	float fpsCount;
 	float fpsTimer;
 
+	int currentLevel = 1;
+
 	// Creates a window
 	GLFWwindow *create_window();
 
