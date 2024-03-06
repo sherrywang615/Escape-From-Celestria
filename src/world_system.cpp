@@ -367,6 +367,10 @@ bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map)
             {
                 createBackground(renderer, {x, y});
             }
+			if (tok == 'Q')
+            {
+                createBackground2(renderer, {x, y});
+            }
         }
     }
 
@@ -379,7 +383,7 @@ bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map)
             float y = i * 10;
             char tok = map[i][j];
 
-            if (tok == ' ' || tok == 'O') // Skip empty spaces and background already created
+            if (tok == ' ' || tok == 'O'|| tok == 'Q') // Skip empty spaces and background already created
             {
                 continue;
             }
@@ -684,7 +688,6 @@ void WorldSystem::render_new_level()
 		createHeart(renderer, vec2(30 + i * create_heart_distance, 20));
 	}
 	createHelpSign(renderer, vec2(window_width_px - 70, window_height_px - 700));
-
 	for (int i = 0; i < bullets_count; i++)
 	{
 		// if (i % 10 == 0)
