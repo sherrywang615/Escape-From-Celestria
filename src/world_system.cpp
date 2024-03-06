@@ -416,7 +416,7 @@ bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map)
             {
                 createCabinet(renderer, {x, y});
             }
-			else if (tok == '1'){
+			else if (tok == 'E'){
 				createObject(renderer, {x, y});
 			}
             else

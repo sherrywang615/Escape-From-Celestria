@@ -49,7 +49,7 @@ class RenderSystem {
 		textures_path("cabinet.png"),
 		textures_path("background.png"),
 		textures_path("background2.png"),
-		textures_path("Barrel2.png"),
+		textures_path("exit.png"),
 			 };
 
 	std::array<GLuint, effect_count> effects;

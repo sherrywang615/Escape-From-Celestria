@@ -13,7 +13,7 @@ Entity createJosh(RenderSystem *renderer, vec2 position)
 	motion.angle = 0.f;
 	motion.velocity = {0, 0};
 	motion.position = position;
-	motion.scale = vec2({-JOSH_BB_WIDTH * 0.6, JOSH_BB_HEIGHT * 0.6});
+	motion.scale = vec2({JOSH_BB_WIDTH * 0.6, JOSH_BB_HEIGHT * 0.6});
 	registry.players.emplace(entity);
 	registry.gravities.emplace(entity);
 	registry.renderRequests.insert(
@@ -332,7 +332,7 @@ Entity createObject(RenderSystem *renderer, vec2 pos)
 	motion.angle = 0.f;
 	motion.velocity = {0.0f, 0.0f};
 	motion.position = pos;
-	motion.scale = vec2({-HEART_BB_HEIGHT, HEART_BB_WIDTH});
+	motion.scale = vec2({HEART_BB_WIDTH, HEART_BB_HEIGHT});
 
 	// registry.platforms.emplace(entity);
 	registry.renderRequests.insert(
