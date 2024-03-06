@@ -18,7 +18,7 @@ const size_t MAX_BUG = 5;
 const size_t EAGLE_DELAY_MS = 2000 * 3;
 const size_t BUG_DELAY_MS = 5000 * 3;
 const float JOSH_SPEED = 200.f;
-const float JOSH_JUMP = 600.f;
+const float JOSH_JUMP = 1000.f;
 const float KNOCKBACK_DIST = 50.f;
 
 // Threshold to test if one thing is close enough to another
@@ -173,8 +173,7 @@ void handleMovementKeys(Entity entity) {
 			Motion& motion = registry.motions.get(entity);
 			// Handle right key
 				if (rightKeyPressed) {
-					josh_step_counter++;
-					if (josh_step_counter % 3 == 0)
+					if (josh_step_counter % 2 == 0)
 					{
 						registry.renderRequests.get(entity) = { TEXTURE_ASSET_ID::JOSHGUN1,
 																	EFFECT_ASSET_ID::TEXTURED,
@@ -195,8 +194,7 @@ void handleMovementKeys(Entity entity) {
 
 			// Handle left key
 			if (leftKeyPressed) {
-				josh_step_counter++;
-				if (josh_step_counter % 3 == 0)
+				if (josh_step_counter % 2 == 0)
 				{
 					registry.renderRequests.get(entity) = { TEXTURE_ASSET_ID::JOSHGUN1,
 																EFFECT_ASSET_ID::TEXTURED,
@@ -348,7 +346,7 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 		}
 	}
 
-	//handleMovementKeys(player_josh);
+	handleMovementKeys(player_josh);
 
 	return true;
 }
@@ -451,6 +449,7 @@ void WorldSystem::restart_game()
 	// Reset the game speed
 	current_speed = 1.f;
 	hp_count = INITIAL_HP;
+	bullets_count = 0;
 
 	// Remove all entities that we created
 	// All that have a motion, we could also iterate over all bug, eagles, ... but that would be more cumbersome
@@ -606,11 +605,17 @@ void WorldSystem::handle_collisions()
 					// open the door
 					Door &door = registry.doors.get(entity_other);
 					door.is_open = true;
+					
+					registry.renderRequests.get(entity_other) = { TEXTURE_ASSET_ID::DOOR_CLOSE,
+																EFFECT_ASSET_ID::TEXTURED,
+																GEOMETRY_BUFFER_ID::SPRITE };
+					
 					// remove the key from the screen
 					showKeyOnScreen(renderer, false);
 					if (isNearDoor(player_josh, entity_other))
 					{
 						render_new_level();
+						have_key = false;
 					}
 				}
 			}
@@ -705,27 +710,38 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 	// key is of 'type' GLFW_KEY_
 	// action can be GLFW_PRESS GLFW_RELEASE GLFW_REPEAT
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	if (key == GLFW_KEY_LEFT || key == GLFW_KEY_A)
-	{
-		if (action == GLFW_PRESS || action == GLFW_REPEAT)
-			leftKeyPressed = true;
-		else if (action == GLFW_RELEASE)
-			leftKeyPressed = false;
-	}
-	if (key == GLFW_KEY_RIGHT || key == GLFW_KEY_D)
-	{
-		if (action == GLFW_PRESS || action == GLFW_REPEAT)
-			rightKeyPressed = true;
-		else if (action == GLFW_RELEASE)
-			rightKeyPressed = false;
-	}
-
-	//handleMovementKeys(player_josh);
-
 	if (action == GLFW_PRESS && key == GLFW_KEY_ESCAPE)
 	{
 		glfwSetWindowShouldClose(window, true);
 	}
+	
+	if (isJoshHidden && key != GLFW_KEY_H)
+    {
+        return;
+    }
+
+	if (key == GLFW_KEY_LEFT || key == GLFW_KEY_A)
+	{
+		if (action == GLFW_PRESS || action == GLFW_REPEAT){
+			josh_step_counter++;
+			leftKeyPressed = true;
+		}
+		else if (action == GLFW_RELEASE){
+			leftKeyPressed = false;
+		}
+	}
+	if (key == GLFW_KEY_RIGHT || key == GLFW_KEY_D)
+	{
+		if (action == GLFW_PRESS || action == GLFW_REPEAT){
+			josh_step_counter++;
+			rightKeyPressed = true;
+		}else if (action == GLFW_RELEASE){
+			rightKeyPressed = false;
+		}
+			
+	}
+
+	
 
 	if (!registry.deathTimers.has(player_josh))
 	{

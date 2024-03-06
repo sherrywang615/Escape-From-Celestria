@@ -19,6 +19,8 @@ const float SMALL_BULLET_BB_WIDTH = 0.23f * 165.f;
 const float SMALL_BULLET_BB_HEIGHT = 0.23f * 165.f;
 const float KEY_BB_WIDTH = 0.23f * 165.f;
 const float KEY_BB_HEIGHT = 0.23f * 165.f;
+const float CABINET_BB_WIDTH = 0.5f * 165.f;
+const float CABINET_BB_HEIGHT = 0.5f * 165.f;
 
 // Zombie
 const float ZOMBIE_BB_WIDTH = 0.6f * 108.f;
@@ -43,6 +45,7 @@ Entity createBulletSmall(RenderSystem *renderer, vec2 position);
 Entity createSmallKey(RenderSystem *renderer, vec2 position);
 Entity createBulletShoot(RenderSystem *renderer, vec2 position);
 Entity createBackground(RenderSystem* renderer, vec2 position);
+Entity createBackground2(RenderSystem* renderer, vec2 position);
 Entity createObject(RenderSystem *renderer, vec2 pos);
 // the enemy
 Entity createEagle(RenderSystem *renderer, vec2 position);
