@@ -6,7 +6,7 @@
 
                                  K                                                                    
                                                                                                      
-                                                                                                     
+                                                       O                                              
                                                                                                                        
                                                                                                      
                                                                                                      
@@ -38,7 +38,7 @@ PPPPPPPPPPP
                                                                                                                                                                                                           
                                                                                                      
 
-                                                                                           
+                          Z                                                                 
 PPPPPPPPPP                                                                                                     
                                                                                                      
                                                                       B                               

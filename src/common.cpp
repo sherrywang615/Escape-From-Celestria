@@ -85,3 +85,6 @@ std::vector<Vertex*> Graph::getVertices() {
 	return vertices;
 }
 
+extern std::queue<Vertex*> prev_path = {};
+
+
