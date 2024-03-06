@@ -62,9 +62,8 @@ private:
 
 	bool isJoshHidden = false;
 	void hideJosh(RenderSystem *renderer);
-	float distanceToCabinet(Entity player, Entity cabinet);
-	bool isNearCabinet(Entity player, Entity cabinet, float threshold);
-	bool isNearDoor(Entity player, Entity door, float threshold);
+	bool isNearCabinet(Entity player, Entity cabinet);
+	bool isNearDoor(Entity player, Entity door);
 	void removeSmallBullets(RenderSystem *renderer);
 	vec2 joshPosition;
 	vec2 joshScale;

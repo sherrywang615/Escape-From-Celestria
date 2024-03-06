@@ -85,6 +85,30 @@ std::vector<Vertex*> Graph::getVertices() {
 	return vertices;
 }
 
+void Graph::saveGraph(std::string path) {
+	std::fstream file;
+	file.open(path);
+
+	if (file.is_open())
+	{
+		for (Vertex* vertex : vertices)
+		{
+			file << vertex->id << " ";
+			for (std::pair<Vertex*, ACTION> adj : vertex->adjs) {
+				file << adj.first->id << " ";
+				file << static_cast<int>(adj.second) << " ";
+			}
+			file << std::to_string(vertex->x) << " ";
+			file << std::to_string(vertex->y) << "\n";
+		}
+	}
+	else
+	{
+		printf("Cannot save because cannot open saving file\n");
+	}
+	file.close();
+}
+
 extern std::queue<Vertex*> prev_path = {};
 
 

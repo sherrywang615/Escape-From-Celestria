@@ -21,6 +21,9 @@ const float JOSH_SPEED = 200.f;
 const float JOSH_JUMP = 600.f;
 const float KNOCKBACK_DIST = 50.f;
 
+// Threshold to test if one thing is close enough to another
+const float DIST_THRESHOLD = 50.f;
+
 // Key flags to track key pressed
 bool leftKeyPressed = false;
 bool rightKeyPressed = false;
@@ -603,7 +606,7 @@ void WorldSystem::handle_collisions()
 					door.is_open = true;
 					// remove the key from the screen
 					showKeyOnScreen(renderer, false);
-					if (isNearDoor(player_josh, entity_other, 20))
+					if (isNearDoor(player_josh, entity_other))
 					{
 						render_new_level();
 					}
@@ -786,7 +789,7 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 		{
 			for (Entity entity : registry.cabinets.entities)
 			{
-				if (isNearCabinet(player_josh, entity, 50))
+				if (isNearCabinet(player_josh, entity))
 				{
 					// hide josh
 					joshPosition = registry.motions.get(player_josh).position;
@@ -926,19 +929,19 @@ void WorldSystem::on_mouse_move(vec2 mouse_position)
 {
 }
 
-bool WorldSystem::isNearCabinet(Entity player, Entity cabinet, float threshold)
+bool WorldSystem::isNearCabinet(Entity player, Entity cabinet)
 {
 	vec2 playerPos = registry.motions.get(player).position;
 	vec2 cabinetPos = registry.motions.get(cabinet).position;
-	return findDistanceBetween(playerPos, cabinetPos) <= threshold;
+	return findDistanceBetween(playerPos, cabinetPos) <= DIST_THRESHOLD;
 }
 
 // check if player is near the door
-bool WorldSystem::isNearDoor(Entity player, Entity door, float threshold)
+bool WorldSystem::isNearDoor(Entity player, Entity door)
 {
 	vec2 playerPos = registry.motions.get(player).position;
 	vec2 doorPos = registry.motions.get(door).position;
-	return findDistanceBetween(playerPos, doorPos) <= threshold;
+	return findDistanceBetween(playerPos, doorPos) <= DIST_THRESHOLD;
 }
 
 void WorldSystem::hideJosh(RenderSystem *renderer)
