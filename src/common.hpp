@@ -6,6 +6,7 @@
 #include <tuple>
 #include <vector>
 #include <map>
+#include <queue>
 
 // glfw (OpenGL)
 #define NOMINMAX
@@ -107,3 +108,4 @@ struct VecVertice {
 	Vertex* tail;
 };
 
+extern std::queue<Vertex*> prev_path;
