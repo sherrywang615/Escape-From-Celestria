@@ -700,6 +700,11 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 	// key is of 'type' GLFW_KEY_
 	// action can be GLFW_PRESS GLFW_RELEASE GLFW_REPEAT
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	if (isJoshHidden && key != GLFW_KEY_H)
+    {
+        return;
+    }
+
 	if (key == GLFW_KEY_LEFT || key == GLFW_KEY_A)
 	{
 		if (action == GLFW_PRESS || action == GLFW_REPEAT)
