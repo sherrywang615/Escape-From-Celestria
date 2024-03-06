@@ -39,6 +39,30 @@ VecVertice createVerticesForAPlatform(vec2 range, float y, int head, int tail) {
 }
 
 
+void createVerticesForLevel1() {
+	VecVertice vv;
+	vv = createVerticesForAPlatform({ 0, 1050 }, 644, 900, 100);
+	Vertex* first_mid_plat = new Vertex(950, 544);
+	graph.addVertex(first_mid_plat);
+	graph.addEdge(vv.head, first_mid_plat, ACTION::JUMP);
+	graph.addEdge(first_mid_plat, vv.head, ACTION::WALK);
+
+	Vertex* second_plat = new Vertex(830, 444);
+	graph.addVertex(second_plat);
+	graph.addEdge(second_plat, first_mid_plat, ACTION::WALK);
+	graph.addEdge(first_mid_plat, second_plat, ACTION::JUMP);
+	vv = createVerticesForAPlatform({ 0, 800 }, 444, 100, 800);
+	graph.addEdge(vv.tail, second_plat, ACTION::WALK);
+	graph.addEdge(second_plat, vv.tail, ACTION::WALK);
+	Vertex* second_mid_plat = new Vertex(60, 344);
+	graph.addVertex(second_mid_plat);
+	graph.addEdge(second_mid_plat, vv.head, ACTION::WALK);
+	graph.addEdge(vv.head, second_mid_plat, ACTION::JUMP);
+	vv = createVerticesForAPlatform({ 210, 1060 }, 244, 210, 1060);
+	graph.addEdge(vv.head, second_mid_plat, ACTION::WALK);
+	graph.addEdge(second_mid_plat, vv.head, ACTION::JUMP);
+}
+
 // Entry point
 int main()
 {
@@ -61,29 +85,9 @@ int main()
 	renderer.init(window);
 	world.init(&renderer);
 
-	VecVertice vv;
-	vv = createVerticesForAPlatform({ 0, 1050 }, 644, 900, 100);
-	Vertex* first_mid_plat = new Vertex(950, 544);
-	graph.addVertex(first_mid_plat);
-	graph.addEdge(vv.head, first_mid_plat, ACTION::JUMP);
-	graph.addEdge(first_mid_plat, vv.head, ACTION::WALK);
 
-	Vertex* second_plat = new Vertex(830, 444);
-	graph.addVertex(second_plat);
-	graph.addEdge(second_plat, first_mid_plat, ACTION::WALK);
-	graph.addEdge(first_mid_plat, second_plat, ACTION::JUMP);
-	vv = createVerticesForAPlatform({ 0, 800 }, 444, 100, 800);
-	graph.addEdge(vv.tail, second_plat, ACTION::WALK);
-	graph.addEdge(second_plat, vv.tail, ACTION::WALK);
-	Vertex* second_mid_plat = new Vertex(60, 344);
-	graph.addVertex(second_mid_plat);
-	graph.addEdge(second_mid_plat, vv.head, ACTION::WALK);
-	graph.addEdge(vv.head, second_mid_plat, ACTION::JUMP);
-	vv = createVerticesForAPlatform({ 210, 1060 }, 244, 210, 1060);
-	graph.addEdge(vv.head, second_mid_plat, ACTION::WALK);
-	graph.addEdge(second_mid_plat, vv.head, ACTION::JUMP);
-	graph.saveGraph(GRAPH_PATH + "level1.txt");
-
+	//graph.saveGraph(GRAPH_PATH + "level1.txt");
+	//graph.loadFromFile(GRAPH_PATH + "level1.txt");
 	
 
 	std::string font_filename = "../data/fonts/Kenney_Pixel_Square.ttf";

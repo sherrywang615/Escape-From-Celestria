@@ -93,11 +93,12 @@ void Graph::saveGraph(std::string path) {
 	{
 		for (Vertex* vertex : vertices)
 		{
-			file << vertex->id << " ";
+			file << vertex->id << ";";
 			for (std::pair<Vertex*, ACTION> adj : vertex->adjs) {
 				file << adj.first->id << " ";
-				file << static_cast<int>(adj.second) << " ";
+				file << static_cast<int>(adj.second) << ":";
 			}
+			file << ";";
 			file << std::to_string(vertex->x) << " ";
 			file << std::to_string(vertex->y) << "\n";
 		}
@@ -108,6 +109,7 @@ void Graph::saveGraph(std::string path) {
 	}
 	file.close();
 }
+
 
 extern std::queue<Vertex*> prev_path = {};
 
