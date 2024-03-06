@@ -974,6 +974,8 @@ void WorldSystem::hideJosh(RenderSystem *renderer)
 	// remove josh from screen
 	Entity entity = registry.players.entities[0];
 	registry.remove_all_components_of(entity);
+	leftKeyPressed = false;
+	rightKeyPressed = false;
 }
 
 void WorldSystem::removeSmallBullets(RenderSystem *renderer)
