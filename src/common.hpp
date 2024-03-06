@@ -5,6 +5,8 @@
 #include <string>
 #include <tuple>
 #include <vector>
+#include <map>
+#include <queue>
 
 // glfw (OpenGL)
 #define NOMINMAX
@@ -30,12 +32,16 @@ inline std::string textures_path(const std::string& name) {return data_path() + 
 inline std::string audio_path(const std::string& name) {return data_path() + "/audio/" + std::string(name);};
 inline std::string mesh_path(const std::string& name) {return data_path() + "/meshes/" + std::string(name);};
 
-//const int window_width_px = 600;
-//const int window_height_px = 600;
-//const int window_width_px = 1920;
-//const int window_height_px = 1080;
 const int window_width_px = 1020;
 const int window_height_px = 700;
+
+const int width = window_width_px / 10;
+const int height = window_height_px / 10;
+
+const std::string MAP_PATH = "..//..//..//data//maps//";
+const std::string GRAPH_PATH = "..//..//..//data//graphs//";
+//const std::string MAP_PATH = "../data/maps/";
+
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846f
@@ -52,3 +58,57 @@ struct Transform {
 };
 
 bool gl_has_errors();
+
+enum class DIRECTION {
+	RIGHT = 0,
+	TOP = RIGHT + 1,
+	LEFT = TOP + 1,
+	BOT = LEFT + 1,
+	ALL = BOT + 1         // ALL is used to check if one object is colliding at all
+};
+
+enum class ACTION {
+	WALK = 0,
+	JUMP = WALK + 1
+};
+
+float findDistanceBetween(vec2 pos1, vec2 pos2);
+
+struct Vertex {
+	unsigned int id;
+	static unsigned int id_count;
+public:
+	float x;
+	float y;
+	std::unordered_map<Vertex*, ACTION> adjs;
+	Vertex(float _x, float _y)
+	{
+		id = id_count++;
+		x = _x;
+		y = _y;
+	}
+};
+
+
+struct Graph {
+
+private:
+	std::vector<Vertex*> vertices;
+
+public:
+	void addVertex(Vertex* v);
+	void addEdge(Vertex* v1, Vertex* v2, ACTION action);
+	std::vector<Vertex*> getVertices();
+	void saveGraph(std::string path);
+	Graph loadFromFile(std::string path);
+};
+
+extern Graph graph;
+
+
+struct VecVertice {
+	Vertex* head;
+	Vertex* tail;
+};
+
+extern std::queue<Vertex*> prev_path;

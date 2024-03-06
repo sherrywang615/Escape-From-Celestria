@@ -9,10 +9,59 @@
 #include "physics_system.hpp"
 #include "render_system.hpp"
 #include "world_system.hpp"
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
+
+#include "ai_system.hpp"
+
 
 using Clock = std::chrono::high_resolution_clock;
+
+VecVertice createVerticesForAPlatform(vec2 range, float y, int head, int tail) {
+	Vertex* latest;
+	Vertex* vHead;
+	Vertex* vTail;
+	for (int i = range[0]; i <= range[1]; i += 50) {
+		Vertex* v = new Vertex(i, y);
+		graph.addVertex(v);
+		if (i != range[0]) {
+			graph.addEdge(v, latest, ACTION::WALK);
+			graph.addEdge(latest, v, ACTION::WALK);
+		}
+		if (i == head) {
+			vHead = v;
+		}
+		if (i == tail) {
+			vTail = v;
+		}
+		latest = v;
+	}
+	VecVertice result = { vHead, vTail };
+	return result;
+}
+
+
+void createVerticesForLevel1() {
+	VecVertice vv;
+	vv = createVerticesForAPlatform({ 0, 1050 }, 644, 900, 100);
+	Vertex* first_mid_plat = new Vertex(950, 544);
+	graph.addVertex(first_mid_plat);
+	graph.addEdge(vv.head, first_mid_plat, ACTION::JUMP);
+	graph.addEdge(first_mid_plat, vv.head, ACTION::WALK);
+
+	Vertex* second_plat = new Vertex(830, 444);
+	graph.addVertex(second_plat);
+	graph.addEdge(second_plat, first_mid_plat, ACTION::WALK);
+	graph.addEdge(first_mid_plat, second_plat, ACTION::JUMP);
+	vv = createVerticesForAPlatform({ 0, 800 }, 444, 100, 800);
+	graph.addEdge(vv.tail, second_plat, ACTION::WALK);
+	graph.addEdge(second_plat, vv.tail, ACTION::WALK);
+	Vertex* second_mid_plat = new Vertex(60, 344);
+	graph.addVertex(second_mid_plat);
+	graph.addEdge(second_mid_plat, vv.head, ACTION::WALK);
+	graph.addEdge(vv.head, second_mid_plat, ACTION::JUMP);
+	vv = createVerticesForAPlatform({ 210, 1060 }, 244, 210, 1060);
+	graph.addEdge(vv.head, second_mid_plat, ACTION::WALK);
+	graph.addEdge(second_mid_plat, vv.head, ACTION::JUMP);
+}
 
 // Entry point
 int main()
@@ -21,6 +70,7 @@ int main()
 	WorldSystem world;
 	RenderSystem renderer;
 	PhysicsSystem physics;
+	AISystem ai;
 
 	// Initializing window
 	GLFWwindow* window = world.create_window();
@@ -35,10 +85,16 @@ int main()
 	renderer.init(window);
 	world.init(&renderer);
 
+	createVerticesForLevel1();
+
+
+	//graph.saveGraph(GRAPH_PATH + "level1.txt");
+	//graph.loadFromFile(GRAPH_PATH + "level1.txt");
+	
+
 	std::string font_filename = "../data/fonts/Kenney_Pixel_Square.ttf";
 	unsigned int font_default_size = 48;
 	// renderer.fontInit(*window, font_filename, font_default_size);
-
 
 	// variable timestep loop
 	auto t = Clock::now();
@@ -54,12 +110,11 @@ int main()
 
 		world.step(elapsed_ms);
 		physics.step(elapsed_ms);
+		ai.step(elapsed_ms);
 		world.handle_collisions();
 		
 		renderer.draw();
-		glm::mat4 trans = glm::mat4(1.0f);
-		trans = glm::rotate(trans, glm::radians(90.0f), glm::vec3(0.0, 0.0, 1.0));
-		trans = glm::scale(trans, glm::vec3(0.25, 0.25, 1.0));
+
 		// renderer.renderText("test", -0.6f, 0.0f, 1.0f, glm::vec3(1.0f, 1.0f, 1.0f), trans);
 
 	}
