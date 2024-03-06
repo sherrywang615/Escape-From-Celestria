@@ -18,7 +18,7 @@ const size_t MAX_BUG = 5;
 const size_t EAGLE_DELAY_MS = 2000 * 3;
 const size_t BUG_DELAY_MS = 5000 * 3;
 const float JOSH_SPEED = 200.f;
-const float JOSH_JUMP = 800.f;
+const float JOSH_JUMP = 1000.f;
 const float KNOCKBACK_DIST = 50.f;
 
 // Key flags to track key pressed
@@ -164,58 +164,56 @@ vec3 lerp(vec3 start, vec3 end, float t)
 void handleMovementKeys(Entity entity) {
 	if (!registry.deathTimers.has(entity))
 	{
-		//if (registry.motions.has(entity) {
+		if (registry.motions.has(entity)) {
+			Motion& motion = registry.motions.get(entity);
+			// Handle right key
+				if (rightKeyPressed) {
+					if (josh_step_counter % 2 == 0)
+					{
+						registry.renderRequests.get(entity) = { TEXTURE_ASSET_ID::JOSHGUN1,
+																	EFFECT_ASSET_ID::TEXTURED,
+																	GEOMETRY_BUFFER_ID::SPRITE };
+					}
+					else
+					{
+						registry.renderRequests.get(entity) = { TEXTURE_ASSET_ID::JOSHGUN,
+																	EFFECT_ASSET_ID::TEXTURED,
+																	GEOMETRY_BUFFER_ID::SPRITE };
+					}
+					if (motion.scale.x < 0)
+					{
+						motion.scale.x *= -1;
+					}
+					motion.velocity.x = JOSH_SPEED;
+				}
 
-		//}
-		Motion& motion = registry.motions.get(entity);
-		// Handle right key
-		if (rightKeyPressed) {
-			josh_step_counter++;
-			if (josh_step_counter % 3 == 0)
-			{
-				registry.renderRequests.get(entity) = { TEXTURE_ASSET_ID::JOSHGUN1,
-															EFFECT_ASSET_ID::TEXTURED,
-															GEOMETRY_BUFFER_ID::SPRITE };
+			// Handle left key
+			if (leftKeyPressed) {
+				if (josh_step_counter % 2 == 0)
+				{
+					registry.renderRequests.get(entity) = { TEXTURE_ASSET_ID::JOSHGUN1,
+																EFFECT_ASSET_ID::TEXTURED,
+																GEOMETRY_BUFFER_ID::SPRITE };
+				}
+				else
+				{
+					registry.renderRequests.get(entity) = { TEXTURE_ASSET_ID::JOSHGUN,
+																EFFECT_ASSET_ID::TEXTURED,
+																GEOMETRY_BUFFER_ID::SPRITE };
+				}
+				motion.velocity.x = -JOSH_SPEED;
+				if (motion.scale.x > 0)
+				{
+					motion.scale.x *= -1;
+				}
 			}
-			else
-			{
-				registry.renderRequests.get(entity) = { TEXTURE_ASSET_ID::JOSHGUN,
-															EFFECT_ASSET_ID::TEXTURED,
-															GEOMETRY_BUFFER_ID::SPRITE };
-			}
-			if (motion.scale.x < 0)
-			{
-				motion.scale.x *= -1;
-			}
-			motion.velocity.x = JOSH_SPEED;
-		}
 
-		// Handle left key
-		if (leftKeyPressed) {
-			josh_step_counter++;
-			if (josh_step_counter % 3 == 0)
-			{
-				registry.renderRequests.get(entity) = { TEXTURE_ASSET_ID::JOSHGUN1,
-															EFFECT_ASSET_ID::TEXTURED,
-															GEOMETRY_BUFFER_ID::SPRITE };
-			}
-			else
-			{
-				registry.renderRequests.get(entity) = { TEXTURE_ASSET_ID::JOSHGUN,
-															EFFECT_ASSET_ID::TEXTURED,
-															GEOMETRY_BUFFER_ID::SPRITE };
-			}
-			motion.velocity.x = -JOSH_SPEED;
-			if (motion.scale.x > 0)
-			{
-				motion.scale.x *= -1;
+			// Handle when both key are pressed
+			if (!leftKeyPressed ^ rightKeyPressed) {
+				motion.velocity.x = 0;
 			}
 		}
-
-		// Handle when both key are pressed
-		if (!leftKeyPressed ^ rightKeyPressed) {
-			motion.velocity.x = 0;
-		}
+		
 	}
 }
 
@@ -343,7 +341,7 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 		}
 	}
 
-	//handleMovementKeys(player_josh);
+	handleMovementKeys(player_josh);
 
 	return true;
 }
@@ -446,6 +444,7 @@ void WorldSystem::restart_game()
 	// Reset the game speed
 	current_speed = 1.f;
 	hp_count = 10;
+	bullets_count = 0;
 
 	// Remove all entities that we created
 	// All that have a motion, we could also iterate over all bug, eagles, ... but that would be more cumbersome
@@ -603,7 +602,7 @@ void WorldSystem::handle_collisions()
 					door.is_open = true;
 					// remove the key from the screen
 					showKeyOnScreen(renderer, false);
-					if (isNearDoor(player_josh, entity_other, 20))
+					if (isNearDoor(player_josh, entity_other, 50))
 					{
 						render_new_level();
 					}
@@ -712,20 +711,24 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 
 	if (key == GLFW_KEY_LEFT || key == GLFW_KEY_A)
 	{
-		if (action == GLFW_PRESS || action == GLFW_REPEAT)
+		if (action == GLFW_PRESS || action == GLFW_REPEAT){
+			josh_step_counter++;
 			leftKeyPressed = true;
-		else if (action == GLFW_RELEASE)
+		}
+		else if (action == GLFW_RELEASE){
 			leftKeyPressed = false;
+		}
 	}
 	if (key == GLFW_KEY_RIGHT || key == GLFW_KEY_D)
 	{
-		if (action == GLFW_PRESS || action == GLFW_REPEAT)
+		if (action == GLFW_PRESS || action == GLFW_REPEAT){
+			josh_step_counter++;
 			rightKeyPressed = true;
-		else if (action == GLFW_RELEASE)
+		}else if (action == GLFW_RELEASE){
 			rightKeyPressed = false;
+		}
+			
 	}
-
-	//handleMovementKeys(player_josh);
 
 	
 

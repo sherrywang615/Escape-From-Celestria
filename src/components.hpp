@@ -22,7 +22,7 @@ struct NormalZombie
 	// walking range of zombie based on initial position
 	std::vector<double> walking_bound = {0, 0};
 	float walking_range = 100;
-	vec2 sensing_range = { 300, 300 };
+	vec2 sensing_range = { 300, 100 };
 	DIRECTION face = DIRECTION::RIGHT;
 	// memory decides how long does it takes for an alerted zombie turn back into unalerted after losing the player in sight
 	float memory = 3000;
@@ -217,7 +217,8 @@ enum class TEXTURE_ASSET_ID
 	HELP_SIGN = HELP_INFO + 1,
 	CABINET = HELP_SIGN + 1,
 	BACKGROUND = CABINET + 1,
-	BARREL = BACKGROUND + 1,
+	BACKGROUND2 = BACKGROUND + 1,
+	BARREL = BACKGROUND2 + 1,
 	TEXTURE_COUNT = BARREL + 1
 
 };
