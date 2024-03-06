@@ -85,6 +85,8 @@ int main()
 	renderer.init(window);
 	world.init(&renderer);
 
+	createVerticesForLevel1();
+
 
 	//graph.saveGraph(GRAPH_PATH + "level1.txt");
 	//graph.loadFromFile(GRAPH_PATH + "level1.txt");
