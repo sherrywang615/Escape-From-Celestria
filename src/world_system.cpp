@@ -168,8 +168,7 @@ void handleMovementKeys(Entity entity) {
 			Motion& motion = registry.motions.get(entity);
 			// Handle right key
 				if (rightKeyPressed) {
-					josh_step_counter++;
-					if (josh_step_counter % 3 == 0)
+					if (josh_step_counter % 2 == 0)
 					{
 						registry.renderRequests.get(entity) = { TEXTURE_ASSET_ID::JOSHGUN1,
 																	EFFECT_ASSET_ID::TEXTURED,
@@ -190,8 +189,7 @@ void handleMovementKeys(Entity entity) {
 
 			// Handle left key
 			if (leftKeyPressed) {
-				josh_step_counter++;
-				if (josh_step_counter % 3 == 0)
+				if (josh_step_counter % 2 == 0)
 				{
 					registry.renderRequests.get(entity) = { TEXTURE_ASSET_ID::JOSHGUN1,
 																EFFECT_ASSET_ID::TEXTURED,
