@@ -18,7 +18,7 @@ const size_t MAX_BUG = 5;
 const size_t EAGLE_DELAY_MS = 2000 * 3;
 const size_t BUG_DELAY_MS = 5000 * 3;
 const float JOSH_SPEED = 200.f;
-const float JOSH_JUMP = 600.f;
+const float JOSH_JUMP = 1000.f;
 const float KNOCKBACK_DIST = 50.f;
 
 // Key flags to track key pressed
@@ -444,6 +444,7 @@ void WorldSystem::restart_game()
 	// Reset the game speed
 	current_speed = 1.f;
 	hp_count = 10;
+	bullets_count = 0;
 
 	// Remove all entities that we created
 	// All that have a motion, we could also iterate over all bug, eagles, ... but that would be more cumbersome
@@ -601,7 +602,7 @@ void WorldSystem::handle_collisions()
 					door.is_open = true;
 					// remove the key from the screen
 					showKeyOnScreen(renderer, false);
-					if (isNearDoor(player_josh, entity_other, 20))
+					if (isNearDoor(player_josh, entity_other, 50))
 					{
 						render_new_level();
 					}
