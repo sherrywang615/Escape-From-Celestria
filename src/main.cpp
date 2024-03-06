@@ -70,9 +70,11 @@ int main()
 
 	Vertex* second_plat = new Vertex(830, 444);
 	graph.addVertex(second_plat);
-	graph.addEdge(second_plat, first_mid_plat, ACTION::JUMP);
+	graph.addEdge(second_plat, first_mid_plat, ACTION::WALK);
 	graph.addEdge(first_mid_plat, second_plat, ACTION::JUMP);
 	vv = createVerticesForAPlatform({ 0, 800 }, 444, 100, 800);
+	graph.addEdge(vv.tail, second_plat, ACTION::WALK);
+	graph.addEdge(second_plat, vv.tail, ACTION::WALK);
 	Vertex* second_mid_plat = new Vertex(60, 344);
 	graph.addVertex(second_mid_plat);
 	graph.addEdge(second_mid_plat, vv.head, ACTION::WALK);
