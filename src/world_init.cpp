@@ -280,7 +280,7 @@ Entity createCabinet(RenderSystem *renderer, vec2 position)
 	motion.position = position;
 
 	// Setting initial values, scale is negative to make it face the opposite way
-	motion.scale = vec2({-DOOR_BB_WIDTH, DOOR_BB_HEIGHT});
+	motion.scale = vec2({-CABINET_BB_WIDTH, CABINET_BB_HEIGHT});
 
 	// Create an (empty) Bug component to be able to refer to all bug
 	registry.cabinets.emplace(entity);
