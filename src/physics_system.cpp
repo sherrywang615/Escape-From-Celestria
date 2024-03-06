@@ -145,12 +145,12 @@ void collision_resolve(Motion& motion, vec2 prev_pos, std::vector<int> dir, Moti
 	else if (dir[2] == 1 && (dir[1] == 1 && dir[0] == 1))
 	{
 		motion.velocity.x = 0;
-		motion.position.x += (abs(motion2.scale.x)/2) + 1;
+		motion.position.x += (abs(motion2.scale.x)/2)+2;
 	}
 	else if (dir[3] == 1 && (dir[1] == 1 && dir[0] == 1))
 	{
 		motion.velocity.x = 0;
-		motion.position.x -= (abs(motion2.scale.x)/2)+1;
+		motion.position.x -= (abs(motion2.scale.x)/2)+2;
 	}
 	
 }
