@@ -24,6 +24,8 @@ const float KNOCKBACK_DIST = 50.f;
 // Threshold to test if one thing is close enough to another
 const float DIST_THRESHOLD = 50.f;
 
+const int INITIAL_HP = 3;
+
 // Key flags to track key pressed
 bool leftKeyPressed = false;
 bool rightKeyPressed = false;
@@ -446,7 +448,7 @@ void WorldSystem::restart_game()
 
 	// Reset the game speed
 	current_speed = 1.f;
-	hp_count = 10;
+	hp_count = INITIAL_HP;
 	bullets_count = 0;
 
 	// Remove all entities that we created
