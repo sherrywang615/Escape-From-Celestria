@@ -154,7 +154,7 @@ void collision_resolve(Motion& motion, vec2 prev_pos, std::vector<int> dir, Moti
 	}
 	
 }
-// checks collision between player mesh and other objects
+// checks mesh based collision between player mesh and other objects
 std::vector<int> collides_with_mesh(const Motion& motion, const Motion& mesh_motion, float step_secs, const Mesh& meshPtrs) {
 	vec2 pos1 = motion.position;
 	vec2 scale1 = motion.scale;
