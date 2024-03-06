@@ -164,6 +164,9 @@ vec3 lerp(vec3 start, vec3 end, float t)
 void handleMovementKeys(Entity entity) {
 	if (!registry.deathTimers.has(entity))
 	{
+		//if (registry.motions.has(entity) {
+
+		//}
 		Motion& motion = registry.motions.get(entity);
 		// Handle right key
 		if (rightKeyPressed) {
@@ -221,6 +224,7 @@ void handleMovementKeys(Entity entity) {
 // Update our game world
 bool WorldSystem::step(float elapsed_ms_since_last_update)
 {
+	handleMovementKeys(player_josh);
 	// for fps counter
 	fpsTimer += elapsed_ms_since_last_update;
 	fpsCount++;
@@ -348,71 +352,6 @@ bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map)
 {
 	float josh_x = 0, josh_y = 0;
 	std::vector<std::pair<float, float>> zombiePositions;
-	// for (int i = 0; i < map.size(); i++)
-	// {
-	// 	for (int j = 0; j < map[i].size(); j++)
-	// 	{
-	// 		float x = j * 10;
-	// 		float y = i * 10;
-	// 		char tok = map[i][j];
-	// 		if (tok == ' ')
-	// 		{
-	// 			continue;
-	// 		}
-	// 		else if (tok == 'J')
-	// 		{
-	// 			josh_x = x;
-	// 			josh_y = y;
-	// 		}
-	// 		else if (tok == 'P')
-	// 		{
-	// 			createPlatform(renderer, {x, y});
-	// 		}
-	// 		else if (tok == 'Z')
-	// 		{
-	// 			zombiePositions.push_back({x, y});
-	// 		}
-	// 		else if (tok == 'F')
-	// 		{
-	// 			createFood(renderer, {x, y});
-	// 		}
-	// 		else if (tok == 'B')
-	// 		{
-	// 			createBullet(renderer, {x, y});
-	// 		}
-	// 		else if (tok == 'D')
-	// 		{
-	// 			createDoor(renderer, {x, y});
-	// 		}
-	// 		else if (tok == 'K')
-	// 		{
-	// 			createKey(renderer, {x, y});
-	// 		}
-	// 		else if (tok == 'C')
-	// 		{
-	// 			createCabinet(renderer, {x, y});
-	// 		}
-	// 		else if (tok == 'O'){
-	// 			createBackground(renderer, {x, y});
-	// 		}
-	// 		else
-	// 		{
-	// 			printf("Map contains invalid character '%c' at [%d, %d].", tok, i, j);
-	// 			return false;
-	// 		}
-	// 	}
-	// }
-
-	// // create zombies in front of other entities
-	// for (const auto &pos : zombiePositions)
-	// {
-	// 	createZombie(renderer, {pos.first, pos.second});
-	// }
-
-	// // Recreate Josh so that Josh appears at the very front
-	// player_josh = createJosh(renderer, {josh_x, josh_y});
-	// registry.colors.insert(player_josh, {1, 0.8f, 0.8f});
-	// return true;
 	// First pass: Create background entities first
     for (int i = 0; i < map.size(); i++)
     {
@@ -776,7 +715,7 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 			rightKeyPressed = false;
 	}
 
-	handleMovementKeys(player_josh);
+	//handleMovementKeys(player_josh);
 
 	if (action == GLFW_PRESS && key == GLFW_KEY_ESCAPE)
 	{
