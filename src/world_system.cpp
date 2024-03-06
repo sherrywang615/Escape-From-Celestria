@@ -600,11 +600,17 @@ void WorldSystem::handle_collisions()
 					// open the door
 					Door &door = registry.doors.get(entity_other);
 					door.is_open = true;
+					
+					registry.renderRequests.get(entity_other) = { TEXTURE_ASSET_ID::DOOR_CLOSE,
+																EFFECT_ASSET_ID::TEXTURED,
+																GEOMETRY_BUFFER_ID::SPRITE };
+					
 					// remove the key from the screen
 					showKeyOnScreen(renderer, false);
 					if (isNearDoor(player_josh, entity_other, 50))
 					{
 						render_new_level();
+						have_key = false;
 					}
 				}
 			}

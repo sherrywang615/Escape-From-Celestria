@@ -39,8 +39,9 @@ class RenderSystem {
 		textures_path("zombie1.png"), 
 		textures_path("ground.png"),
 
-    textures_path("bullet.png"),
-		textures_path("door.png"),
+   		textures_path("bullet.png"),
+		textures_path("Elevator_closed.png"),
+		textures_path("Elevator_opened.png"),
 		textures_path("key.png"),
 		textures_path("heart.png"),
 		textures_path("help_info.png"),
