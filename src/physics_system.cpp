@@ -3,6 +3,8 @@
 #include "world_init.hpp"
 #include <iostream>
 
+vec2 previous_position = {};
+
 // Returns the local bounding coordinates scaled by the current size of the entity
 vec2 get_bounding_box(const Motion& motion)
 {
@@ -122,8 +124,9 @@ bool check_line_intersects(vec2 point1, vec2 point2, vec2 point3, vec2 point4)
 	return false;
 }
 
-void collision_resolve(Motion& motion, vec2 prev_pos, std::vector<int> dir)
+void collision_resolve(Motion& motion, vec2 prev_pos, std::vector<int> dir, Motion& motion2)
 {
+	// dirs bot > top > right > left
 	if (motion.position.y != prev_pos.y ) {
 		motion.velocity.y = 0;
 		motion.position.y = prev_pos.y;
@@ -133,9 +136,21 @@ void collision_resolve(Motion& motion, vec2 prev_pos, std::vector<int> dir)
 		motion.position.y = prev_pos.y;
 	}
 
-	if (motion.position.x != prev_pos.x && (dir[2] == 1 || dir[3] == 1)) {
+	if (motion.position.x != prev_pos.x ) {
+		if ((dir[2] == 1 || dir[3] == 1)) {
+			motion.velocity.x = 0;
+			motion.position.x = prev_pos.x;
+		}
+	}
+	else if (dir[2] == 1 && (dir[1] == 1 && dir[0] == 1))
+	{
 		motion.velocity.x = 0;
-		motion.position.x = prev_pos.x;
+		motion.position.x += (abs(motion2.scale.x)/2) + 1;
+	}
+	else if (dir[3] == 1 && (dir[1] == 1 && dir[0] == 1))
+	{
+		motion.velocity.x = 0;
+		motion.position.x -= (abs(motion2.scale.x)/2)+1;
 	}
 	
 }
@@ -274,12 +289,12 @@ void PhysicsSystem::step(float elapsed_ms)
 
 	// Get the pre movement positions of player
 	
-	vec2 prev_pos = {};
+	/*vec2 prev_pos = {};
 	for (int i = 0; i < registry.players.size(); i++) {
 		prev_pos = registry.motions.get(registry.players.entities[i]).position;
 
 		//testing for mesh collision detection
-		/*auto& vertices = registry.meshPtrs.get(registry.players.entities[i])->vertices;
+		auto& vertices = registry.meshPtrs.get(registry.players.entities[i])->vertices;
 		//std::cout << vertices.size() << std::endl;
 		for (uint j = 0; j < vertices.size() - 1; j++)
 		{
@@ -294,9 +309,9 @@ void PhysicsSystem::step(float elapsed_ms)
 			auto testline = createLine({ currX , currY }, { 4, 4 });
 			
 			//auto testline2 = createLine({ nextX + 150, nextY }, { 6, 6 });
-		}*/
+		}
 
-	}
+	}*/
 
 	// Check gravity first so we can finalize yspeed
 	float gravity = 30;
@@ -356,7 +371,8 @@ void PhysicsSystem::step(float elapsed_ms)
 				if (registry.players.has(motion_container.entities[i])) {
 					std::vector<int> collide_dir = collides_with_mesh(motion_p, motion, step_seconds, *registry.meshPtrs.get(motion_container.entities[i]));
 					if (collide_dir[4] == 1) {
-						collision_resolve(motion, prev_pos, collide_dir);
+						//collision_resolve(motion, prev_pos, collide_dir);
+						collision_resolve(motion, previous_position, collide_dir, motion_p);
 					}
 				}
 				else {
@@ -467,15 +483,17 @@ void PhysicsSystem::step(float elapsed_ms)
 		}
 
 
-	
+		
 	}
 
 
 	
 
-
-
-
+	auto& players = registry.players;
+	for (uint i = 0; i < players.size(); i++) {
+		previous_position = registry.motions.get(players.entities[i]).position;
+	}
+	
 
 
 }
