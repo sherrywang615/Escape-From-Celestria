@@ -700,6 +700,11 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 	// key is of 'type' GLFW_KEY_
 	// action can be GLFW_PRESS GLFW_RELEASE GLFW_REPEAT
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	if (action == GLFW_PRESS && key == GLFW_KEY_ESCAPE)
+	{
+		glfwSetWindowShouldClose(window, true);
+	}
+	
 	if (isJoshHidden && key != GLFW_KEY_H)
     {
         return;
@@ -722,10 +727,7 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 
 	//handleMovementKeys(player_josh);
 
-	if (action == GLFW_PRESS && key == GLFW_KEY_ESCAPE)
-	{
-		glfwSetWindowShouldClose(window, true);
-	}
+	
 
 	if (!registry.deathTimers.has(player_josh))
 	{
