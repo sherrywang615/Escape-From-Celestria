@@ -177,6 +177,7 @@ void updateZombiePath(float elapsed_ms)
 					zombie.memory = memory;
 					Vertex* start = findNearestVertex(motion_z.position);
 					Vertex* end = findNearestVertex(motion_p.position);
+					//printf("player is at {%f, %f}", end->x, end->y);
 					auto path = findPathAStar(start, end);
 					prev_path = path;
 					followPath(motion_z, path, ACTION::WALK, zombie.alerted_speed, zombie.is_jumping);

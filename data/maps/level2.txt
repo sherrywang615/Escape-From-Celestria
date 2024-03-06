@@ -32,7 +32,7 @@ PPPPPPPP
 
 
 
-
+                  Q
 
 
 
@@ -42,7 +42,7 @@ PPPPPPPP
 PPPPPPPP                                                                                                                                       
                                                                                                      
                                                                                    B                                
-                                   C        Z                                                          
+                                   C                         Z                                                          
                                                                                                      
                                                                                                      
                                                                                                     
@@ -60,13 +60,11 @@ PPPPPPPP
                           J                                                                           
 PPPPPPPP                                                                                                                    
 
-                                                                              
-                                                                                                     
-                                                                                                     
                                                                                        Z                                          
                                                                                                      
-                                               B            B                                                                                     
+                                               B            B                                                                                            
                                                                                                      
-
-                            
+                                                                                                     
+                                                                       
+                                                                                                     
 PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP 

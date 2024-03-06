@@ -6,3 +6,5 @@ Bullet: https://www.flaticon.com/free-icons/bullet
 Trashcan: https://www.flaticon.com/free-icons/trash
 Exit Sign: https://www.flaticon.com/free-icons/emergency-exit
 Door: https://netherzapdos.itch.io/pixel-spaces
+Background level 1: https://free-game-assets.itch.io/free-industrial-zone-tileset-pixel-art
+Background level 2: https://guilemus.itch.io/post-apocalyptic-backgrounds
