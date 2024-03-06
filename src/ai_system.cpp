@@ -145,7 +145,7 @@ void updateZombiePath(float elapsed_ms)
 			if (player_pos_x >= sense_min.x && player_pos_x <= sense_max.x && motion_p.position.y >= sense_min.y && motion_p.position.y <= sense_y_min) {
 				// sense the player to the right
 				if (zombie.face == DIRECTION::RIGHT && (motion_p.position.x > motion_z.position.x)) {
-					printf("zombie is alerted\n");
+					//printf("zombie is alerted\n");
 					zombie.is_alerted = true;
 					zombie.memory = memory;
 					Vertex* start = findNearestVertex(motion_z.position);
@@ -155,7 +155,7 @@ void updateZombiePath(float elapsed_ms)
 				}
 				// sense the player to the left
 				if (zombie.face == DIRECTION::LEFT && (motion_p.position.x < motion_z.position.x)) {
-					printf("zombie is alerted\n");
+					//printf("zombie is alerted\n");
 					zombie.is_alerted = true;
 					zombie.memory = memory;
 					Vertex* start = findNearestVertex(motion_z.position);
