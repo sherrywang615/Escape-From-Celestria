@@ -38,7 +38,8 @@ const int window_height_px = 700;
 const int width = window_width_px / 10;
 const int height = window_height_px / 10;
 
- const std::string MAP_PATH = "..//..//..//data//maps//";
+const std::string MAP_PATH = "..//..//..//data//maps//";
+const std::string GRAPH_PATH = "..//..//..//data//graphs//";
 //const std::string MAP_PATH = "../data/maps/";
 
 
@@ -98,6 +99,8 @@ public:
 	void addVertex(Vertex* v);
 	void addEdge(Vertex* v1, Vertex* v2, ACTION action);
 	std::vector<Vertex*> getVertices();
+	void saveGraph(std::string path);
+	Graph loadFromFile(std::string path);
 };
 
 extern Graph graph;

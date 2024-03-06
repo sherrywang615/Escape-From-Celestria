@@ -82,7 +82,9 @@ int main()
 	vv = createVerticesForAPlatform({ 210, 1060 }, 244, 210, 1060);
 	graph.addEdge(vv.head, second_mid_plat, ACTION::WALK);
 	graph.addEdge(second_mid_plat, vv.head, ACTION::JUMP);
+	graph.saveGraph(GRAPH_PATH + "level1.txt");
 
+	
 
 	std::string font_filename = "../data/fonts/Kenney_Pixel_Square.ttf";
 	unsigned int font_default_size = 48;

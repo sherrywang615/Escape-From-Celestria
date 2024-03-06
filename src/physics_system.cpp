@@ -313,15 +313,8 @@ void PhysicsSystem::step(float elapsed_ms)
 			}
 		
 	}
-	// zombie unalerted turning 
-	auto& zombie_registry = registry.zombies;
-	for (int i = (int)zombie_registry.components.size() - 1; i >= 0; --i)
-	{
-		NormalZombie& zombie = zombie_registry.components[i];
-		Entity entity = zombie_registry.entities[i];
-		Motion& motion = registry.motions.get(entity);
-	}
-	
+
+
 	// Check for collisions
 	ComponentContainer<Motion>& motion_container = registry.motions;
 	ComponentContainer<Platform>& plat_container = registry.platforms;
