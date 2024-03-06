@@ -343,7 +343,7 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 		}
 	}
 
-	//handleMovementKeys(player_josh);
+	handleMovementKeys(player_josh);
 
 	return true;
 }
@@ -700,27 +700,38 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 	// key is of 'type' GLFW_KEY_
 	// action can be GLFW_PRESS GLFW_RELEASE GLFW_REPEAT
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	if (key == GLFW_KEY_LEFT || key == GLFW_KEY_A)
-	{
-		if (action == GLFW_PRESS || action == GLFW_REPEAT)
-			leftKeyPressed = true;
-		else if (action == GLFW_RELEASE)
-			leftKeyPressed = false;
-	}
-	if (key == GLFW_KEY_RIGHT || key == GLFW_KEY_D)
-	{
-		if (action == GLFW_PRESS || action == GLFW_REPEAT)
-			rightKeyPressed = true;
-		else if (action == GLFW_RELEASE)
-			rightKeyPressed = false;
-	}
-
-	//handleMovementKeys(player_josh);
-
 	if (action == GLFW_PRESS && key == GLFW_KEY_ESCAPE)
 	{
 		glfwSetWindowShouldClose(window, true);
 	}
+	
+	if (isJoshHidden && key != GLFW_KEY_H)
+    {
+        return;
+    }
+
+	if (key == GLFW_KEY_LEFT || key == GLFW_KEY_A)
+	{
+		if (action == GLFW_PRESS || action == GLFW_REPEAT){
+			josh_step_counter++;
+			leftKeyPressed = true;
+		}
+		else if (action == GLFW_RELEASE){
+			leftKeyPressed = false;
+		}
+	}
+	if (key == GLFW_KEY_RIGHT || key == GLFW_KEY_D)
+	{
+		if (action == GLFW_PRESS || action == GLFW_REPEAT){
+			josh_step_counter++;
+			rightKeyPressed = true;
+		}else if (action == GLFW_RELEASE){
+			rightKeyPressed = false;
+		}
+			
+	}
+
+	
 
 	if (!registry.deathTimers.has(player_josh))
 	{
