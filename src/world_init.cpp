@@ -6,9 +6,9 @@ Entity createJosh(RenderSystem *renderer, vec2 position)
 {
 	auto entity = Entity();
 
-    Mesh& mesh = renderer->getMesh(GEOMETRY_BUFFER_ID::JOSH);
-    registry.meshPtrs.emplace(entity, &mesh);
-    auto& motion = registry.motions.emplace(entity);
+	Mesh &mesh = renderer->getMesh(GEOMETRY_BUFFER_ID::JOSH);
+	registry.meshPtrs.emplace(entity, &mesh);
+	auto &motion = registry.motions.emplace(entity);
 
 	motion.angle = 0.f;
 	motion.velocity = {0, 0};
@@ -157,13 +157,12 @@ Entity createBulletSmall(RenderSystem *renderer, vec2 position)
 
 	// Initialize the position, scale, and physics components
 	auto &motion = registry.motions.emplace(entity);
-	motion.angle = 2.4f; 
+	motion.angle = 2.4f;
 	motion.velocity = {0, 0};
 	motion.position = position;
 
 	// Setting initial values, scale is negative to make it face the opposite way
 	motion.scale = vec2({-SMALL_BULLET_BB_WIDTH, SMALL_BULLET_BB_HEIGHT});
-	
 
 	// Create an (empty) Bug component to be able to refer to all bug
 	registry.smallBullets.emplace(entity);
@@ -235,7 +234,6 @@ Entity createSmallKey(RenderSystem *renderer, vec2 position)
 
 	return entity;
 }
-
 
 Entity createDoor(RenderSystem *renderer, vec2 position)
 {
@@ -322,6 +320,30 @@ Entity createPlatform(RenderSystem *renderer, vec2 pos)
 	return entity;
 }
 
+Entity createObject(RenderSystem *renderer, vec2 pos)
+{
+	auto entity = Entity();
+
+	Mesh &mesh = renderer->getMesh(GEOMETRY_BUFFER_ID::SPRITE);
+	registry.meshPtrs.emplace(entity, &mesh);
+
+
+	auto &motion = registry.motions.emplace(entity);
+	motion.angle = 0.f;
+	motion.velocity = {0.0f, 0.0f};
+	motion.position = pos;
+	motion.scale = vec2({-HEART_BB_HEIGHT, HEART_BB_WIDTH});
+
+	// registry.platforms.emplace(entity);
+	registry.renderRequests.insert(
+		entity,
+		{TEXTURE_ASSET_ID::BARREL,
+		 EFFECT_ASSET_ID::TEXTURED,
+		 GEOMETRY_BUFFER_ID::SPRITE});
+
+	return entity;
+}
+
 Entity createHeart(RenderSystem *renderer, vec2 position)
 {
 	// Reserve en entity
@@ -373,59 +395,83 @@ Entity createLine(vec2 position, vec2 scale)
 	return entity;
 }
 
-Entity createHelpInfo(RenderSystem* renderer, vec2 position)
+Entity createHelpInfo(RenderSystem *renderer, vec2 position)
 {
 	// Reserve en entity
 	auto entity = Entity();
 
 	// Store a reference to the potentially re-used mesh object
-	Mesh& mesh = renderer->getMesh(GEOMETRY_BUFFER_ID::SPRITE);
+	Mesh &mesh = renderer->getMesh(GEOMETRY_BUFFER_ID::SPRITE);
 	registry.meshPtrs.emplace(entity, &mesh);
 
 	// Initialize the position, scale, and physics components
-	auto& motion = registry.motions.emplace(entity);
+	auto &motion = registry.motions.emplace(entity);
 	motion.angle = 0.f;
-	motion.velocity = { 0, 0 };
+	motion.velocity = {0, 0};
 	motion.position = position;
 
 	// Setting initial values, scale is negative to make it face the opposite way
-	motion.scale = vec2(700,280);
+	motion.scale = vec2(700, 280);
 
 	registry.eatables.emplace(entity);
 	registry.renderRequests.insert(
 		entity,
-		{ TEXTURE_ASSET_ID::HELP_INFO,
-			EFFECT_ASSET_ID::TEXTURED,
-			GEOMETRY_BUFFER_ID::SPRITE });
+		{TEXTURE_ASSET_ID::HELP_INFO,
+		 EFFECT_ASSET_ID::TEXTURED,
+		 GEOMETRY_BUFFER_ID::SPRITE});
 
 	registry.debugComponents.emplace(entity);
 	return entity;
 }
 
-Entity createHelpSign(RenderSystem* renderer, vec2 position)
+Entity createHelpSign(RenderSystem *renderer, vec2 position)
 {
 	// Reserve en entity
 	auto entity = Entity();
 
 	// Store a reference to the potentially re-used mesh object
-	Mesh& mesh = renderer->getMesh(GEOMETRY_BUFFER_ID::SPRITE);
+	Mesh &mesh = renderer->getMesh(GEOMETRY_BUFFER_ID::SPRITE);
 	registry.meshPtrs.emplace(entity, &mesh);
 
 	// Initialize the position, scale, and physics components
-	auto& motion = registry.motions.emplace(entity);
+	auto &motion = registry.motions.emplace(entity);
 	motion.angle = 0.f;
-	motion.velocity = { 0, 0 };
+	motion.velocity = {0, 0};
 	motion.position = position;
 
 	// Setting initial values, scale is negative to make it face the opposite way
-	motion.scale = vec2(90,85);
+	motion.scale = vec2(90, 85);
 
 	registry.eatables.emplace(entity);
 	registry.renderRequests.insert(
 		entity,
-		{ TEXTURE_ASSET_ID::HELP_SIGN,
-			EFFECT_ASSET_ID::TEXTURED,
-			GEOMETRY_BUFFER_ID::SPRITE });
+		{TEXTURE_ASSET_ID::HELP_SIGN,
+		 EFFECT_ASSET_ID::TEXTURED,
+		 GEOMETRY_BUFFER_ID::SPRITE});
+
+	return entity;
+}
+
+Entity createBackground(RenderSystem *renderer, vec2 position)
+{
+	// Reserve an entity
+	auto entity = Entity();
+
+	// Store a reference to the potentially re-used mesh object
+	Mesh &mesh = renderer->getMesh(GEOMETRY_BUFFER_ID::SPRITE);
+	registry.meshPtrs.emplace(entity, &mesh);
+
+	// Initialize the position, scale, and physics components
+	auto &motion = registry.motions.emplace(entity);
+	motion.angle = 0.f;
+	motion.position = vec2({window_height_px / 2, window_width_px / 2});
+	motion.scale = vec2({-window_width_px, window_height_px});
+
+	registry.renderRequests.insert(
+		entity,
+		{TEXTURE_ASSET_ID::BACKGROUND,
+		 EFFECT_ASSET_ID::TEXTURED,
+		 GEOMETRY_BUFFER_ID::SPRITE});
 
 	return entity;
 }
@@ -452,31 +498,35 @@ Entity createEgg(vec2 pos, vec2 size)
 	return entity;
 }
 
-
-std::vector<std::vector<char>> loadMap(std::string path) {
+std::vector<std::vector<char>> loadMap(std::string path)
+{
 	std::fstream file;
 	file.open(path);
 	std::vector<std::vector<char>> map;
 
-	if (file.is_open()) {
+	if (file.is_open())
+	{
 		std::string line;
 		int i = 0;
-		while (getline(file, line)) {
-			if (line[0] == '1') {
+		while (getline(file, line))
+		{
+			if (line[0] == '1')
+			{
 				continue;
 			}
 			map.push_back(std::vector<char>());
-			for (int j = 0; j < line.length(); j++) {
+			for (int j = 0; j < line.length(); j++)
+			{
 				map[i].push_back(line[j]);
 			}
 			i++;
 		}
 	}
-	else {
+	else
+	{
 		printf("Cannot load map. Check file path!\n");
 	}
 	file.close();
 
 	return map;
 }
-
