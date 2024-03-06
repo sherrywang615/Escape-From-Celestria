@@ -51,7 +51,6 @@ std::queue<Vertex*> findPathAStar(Vertex* start, Vertex* end) {
 	while (!open.empty()) {
 		auto best = open.top().first;
 		open.pop();
-		//parent[best] = start;
 
 		if (best == end) {
 			std::queue<Vertex*> reversedPath;
@@ -76,6 +75,9 @@ std::queue<Vertex*> findPathAStar(Vertex* start, Vertex* end) {
 			}
 		}
 	}
+	
+	// return empty queue if cannot find a path
+	printf("Cannot find a path from {%f, %f} to {%f, %f}\n", start->x, start->y, end->x, end->y);
 	return std::queue<Vertex*>();
 }
 
@@ -85,11 +87,10 @@ void followPath(Motion& motion, std::queue<Vertex*> path,ACTION action, Vertex* 
 	// precision controls how close between the target point and where the zombie stops
 	float precision = 20.f;
 	if (!path.empty()) {
-		 printf("Current location: {%f, %f}\n", motion.position.x, motion.position.y);
+		//printf("Current location: {%f, %f}\n", motion.position.x, motion.position.y);
 		Vertex* v = path.front();
-		 printf("Target vertex {%f, %f} with id {%d}\n", v->x, v->y, v->id);
-		 printf("Current Action {%d}\n", action);
-		float dp = v->x - motion.position.x;
+		//printf("Target vertex {%f, %f} with id {%d}\n", v->x, v->y, v->id);
+		//printf("Current Action {%d}\n", action);
 		float current_h = findDistanceBetween(motion.position, { end->x, end->y });
 		float potential_h = findDistanceBetween({ v->x, v->y }, { end->x, end->y });
 
@@ -98,18 +99,22 @@ void followPath(Motion& motion, std::queue<Vertex*> path,ACTION action, Vertex* 
 			motion.velocity = { 0, 0 };
 			return;
 		}
-		if (current_h < potential_h) {
-			printf("current h: %f\n", current_h);
-			printf("potential h: %f\n", potential_h);
-			printf("Go to next point\n");
-			path.pop();
-			Vertex* next = path.front();
-			ACTION action = v->adjs[next];
-			printf("Reached vertex {%f}\n", v->x);
-			followPath(motion, path, action, end, speed, is_jumping);
+		path.pop();
+		if (path.empty()) {
 			return;
 		}
-
+		Vertex* next = path.front();
+		float dist_to_next = findDistanceBetween(motion.position, { next->x, next->y });
+		float curr_to_next = findDistanceBetween({ v->x, v->y }, { next->x, next->y });
+		//printf("dist to next: %f\n", dist_to_next);
+		// Go to next vertex if motion is between curr and next vertices
+		if (dist_to_next <= curr_to_next) {
+			action = v->adjs[next];
+			v = next;
+			//printf("Reached vertex {%f}\n", v->x);
+			//printf("Go to next point\n");
+		}
+		float dp = v->x - motion.position.x;
 		float dir = dp / abs(dp);
 		// printf("%f\n", dir);
 		if (action == ACTION::WALK) {
@@ -134,10 +139,11 @@ void updateZombiePath(float elapsed_ms)
 			float sense_y_min = motion_z.position.y + abs(motion_z.scale.y)/2;
 			vec2 sense_min = motion_z.position - zombie.sensing_range;
 			vec2 sense_max = motion_z.position + zombie.sensing_range;
+
 			// chase player if player is within sensing range and zombie is facing the player
 			float player_pos_x = motion_p.position.x;
 			if (player_pos_x >= sense_min.x && player_pos_x <= sense_max.x && motion_p.position.y >= sense_min.y && motion_p.position.y <= sense_y_min) {
-
+				// sense the player to the right
 				if (zombie.face == DIRECTION::RIGHT && (motion_p.position.x > motion_z.position.x)) {
 					printf("zombie is alerted\n");
 					zombie.is_alerted = true;
@@ -147,6 +153,7 @@ void updateZombiePath(float elapsed_ms)
 					auto path = findPathAStar(start, end);
 					followPath(motion_z, path, ACTION::WALK, end, zombie.alerted_speed, zombie.is_jumping);
 				}
+				// sense the player to the left
 				if (zombie.face == DIRECTION::LEFT && (motion_p.position.x < motion_z.position.x)) {
 					printf("zombie is alerted\n");
 					zombie.is_alerted = true;

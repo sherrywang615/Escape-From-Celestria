@@ -40,7 +40,7 @@ Entity createZombie(RenderSystem *renderer, vec2 position, int state, double ran
 	motion.position = position;
 
 	// Setting initial values, scale is negative to make it face the opposite way
-	motion.scale = vec2({-ZOMBIE_BB_WIDTH * 0.9, ZOMBIE_BB_HEIGHT * 0.6});
+	motion.scale = vec2({ZOMBIE_BB_WIDTH * 0.6, ZOMBIE_BB_HEIGHT * 0.6});
 
 	// Create and (empty) Eagle component to be able to refer to all eagles
 	registry.deadlys.emplace(entity);
