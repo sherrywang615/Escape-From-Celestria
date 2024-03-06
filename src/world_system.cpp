@@ -173,8 +173,7 @@ void handleMovementKeys(Entity entity) {
 			Motion& motion = registry.motions.get(entity);
 			// Handle right key
 				if (rightKeyPressed) {
-					josh_step_counter++;
-					if (josh_step_counter % 3 == 0)
+					if (josh_step_counter % 2 == 0)
 					{
 						registry.renderRequests.get(entity) = { TEXTURE_ASSET_ID::JOSHGUN1,
 																	EFFECT_ASSET_ID::TEXTURED,
@@ -195,8 +194,7 @@ void handleMovementKeys(Entity entity) {
 
 			// Handle left key
 			if (leftKeyPressed) {
-				josh_step_counter++;
-				if (josh_step_counter % 3 == 0)
+				if (josh_step_counter % 2 == 0)
 				{
 					registry.renderRequests.get(entity) = { TEXTURE_ASSET_ID::JOSHGUN1,
 																EFFECT_ASSET_ID::TEXTURED,
@@ -348,7 +346,7 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 		}
 	}
 
-	//handleMovementKeys(player_josh);
+	handleMovementKeys(player_josh);
 
 	return true;
 }
@@ -369,6 +367,10 @@ bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map)
             {
                 createBackground(renderer, {x, y});
             }
+			if (tok == 'Q')
+            {
+                createBackground2(renderer, {x, y});
+            }
         }
     }
 
@@ -381,7 +383,7 @@ bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map)
             float y = i * 10;
             char tok = map[i][j];
 
-            if (tok == ' ' || tok == 'O') // Skip empty spaces and background already created
+            if (tok == ' ' || tok == 'O'|| tok == 'Q') // Skip empty spaces and background already created
             {
                 continue;
             }
@@ -418,7 +420,7 @@ bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map)
             {
                 createCabinet(renderer, {x, y});
             }
-			else if (tok == '1'){
+			else if (tok == 'E'){
 				createObject(renderer, {x, y});
 			}
             else
@@ -451,6 +453,7 @@ void WorldSystem::restart_game()
 	// Reset the game speed
 	current_speed = 1.f;
 	hp_count = INITIAL_HP;
+	bullets_count = 0;
 
 	// Reset current level
 	currentLevel = 1;
@@ -609,12 +612,18 @@ void WorldSystem::handle_collisions()
 					// open the door
 					Door &door = registry.doors.get(entity_other);
 					door.is_open = true;
+					
+					registry.renderRequests.get(entity_other) = { TEXTURE_ASSET_ID::DOOR_CLOSE,
+																EFFECT_ASSET_ID::TEXTURED,
+																GEOMETRY_BUFFER_ID::SPRITE };
+					
 					// remove the key from the screen
 					showKeyOnScreen(renderer, false);
 					if (isNearDoor(player_josh, entity_other))
 					{
 						render_new_level();
 						currentLevel++;
+						have_key = false;
 					}
 				}
 			}
@@ -683,7 +692,6 @@ void WorldSystem::render_new_level()
 		createHeart(renderer, vec2(30 + i * create_heart_distance, 20));
 	}
 	createHelpSign(renderer, vec2(window_width_px - 70, window_height_px - 700));
-
 	for (int i = 0; i < bullets_count; i++)
 	{
 		// if (i % 10 == 0)
@@ -709,27 +717,38 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 	// key is of 'type' GLFW_KEY_
 	// action can be GLFW_PRESS GLFW_RELEASE GLFW_REPEAT
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	if (key == GLFW_KEY_LEFT || key == GLFW_KEY_A)
-	{
-		if (action == GLFW_PRESS || action == GLFW_REPEAT)
-			leftKeyPressed = true;
-		else if (action == GLFW_RELEASE)
-			leftKeyPressed = false;
-	}
-	if (key == GLFW_KEY_RIGHT || key == GLFW_KEY_D)
-	{
-		if (action == GLFW_PRESS || action == GLFW_REPEAT)
-			rightKeyPressed = true;
-		else if (action == GLFW_RELEASE)
-			rightKeyPressed = false;
-	}
-
-	//handleMovementKeys(player_josh);
-
 	if (action == GLFW_PRESS && key == GLFW_KEY_ESCAPE)
 	{
 		glfwSetWindowShouldClose(window, true);
 	}
+	
+	if (isJoshHidden && key != GLFW_KEY_H)
+    {
+        return;
+    }
+
+	if (key == GLFW_KEY_LEFT || key == GLFW_KEY_A)
+	{
+		if (action == GLFW_PRESS || action == GLFW_REPEAT){
+			josh_step_counter++;
+			leftKeyPressed = true;
+		}
+		else if (action == GLFW_RELEASE){
+			leftKeyPressed = false;
+		}
+	}
+	if (key == GLFW_KEY_RIGHT || key == GLFW_KEY_D)
+	{
+		if (action == GLFW_PRESS || action == GLFW_REPEAT){
+			josh_step_counter++;
+			rightKeyPressed = true;
+		}else if (action == GLFW_RELEASE){
+			rightKeyPressed = false;
+		}
+			
+	}
+
+	
 
 	if (!registry.deathTimers.has(player_josh))
 	{

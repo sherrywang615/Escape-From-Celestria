@@ -13,7 +13,7 @@ Entity createJosh(RenderSystem *renderer, vec2 position)
 	motion.angle = 0.f;
 	motion.velocity = {0, 0};
 	motion.position = position;
-	motion.scale = vec2({-JOSH_BB_WIDTH * 0.6, JOSH_BB_HEIGHT * 0.6});
+	motion.scale = vec2({JOSH_BB_WIDTH * 0.6, JOSH_BB_HEIGHT * 0.6});
 	registry.players.emplace(entity);
 	registry.gravities.emplace(entity);
 	registry.renderRequests.insert(
@@ -280,7 +280,7 @@ Entity createCabinet(RenderSystem *renderer, vec2 position)
 	motion.position = position;
 
 	// Setting initial values, scale is negative to make it face the opposite way
-	motion.scale = vec2({-DOOR_BB_WIDTH, DOOR_BB_HEIGHT});
+	motion.scale = vec2({-CABINET_BB_WIDTH, CABINET_BB_HEIGHT});
 
 	// Create an (empty) Bug component to be able to refer to all bug
 	registry.cabinets.emplace(entity);
@@ -332,7 +332,7 @@ Entity createObject(RenderSystem *renderer, vec2 pos)
 	motion.angle = 0.f;
 	motion.velocity = {0.0f, 0.0f};
 	motion.position = pos;
-	motion.scale = vec2({-HEART_BB_HEIGHT, HEART_BB_WIDTH});
+	motion.scale = vec2({HEART_BB_WIDTH, HEART_BB_HEIGHT});
 
 	// registry.platforms.emplace(entity);
 	registry.renderRequests.insert(
@@ -470,6 +470,30 @@ Entity createBackground(RenderSystem *renderer, vec2 position)
 	registry.renderRequests.insert(
 		entity,
 		{TEXTURE_ASSET_ID::BACKGROUND,
+		 EFFECT_ASSET_ID::TEXTURED,
+		 GEOMETRY_BUFFER_ID::SPRITE});
+
+	return entity;
+}
+
+Entity createBackground2(RenderSystem *renderer, vec2 position)
+{
+	// Reserve an entity
+	auto entity = Entity();
+
+	// Store a reference to the potentially re-used mesh object
+	Mesh &mesh = renderer->getMesh(GEOMETRY_BUFFER_ID::SPRITE);
+	registry.meshPtrs.emplace(entity, &mesh);
+
+	// Initialize the position, scale, and physics components
+	auto &motion = registry.motions.emplace(entity);
+	motion.angle = 0.f;
+	motion.position = vec2({window_height_px / 2, window_width_px / 2});
+	motion.scale = vec2({-window_width_px, window_height_px});
+
+	registry.renderRequests.insert(
+		entity,
+		{TEXTURE_ASSET_ID::BACKGROUND2,
 		 EFFECT_ASSET_ID::TEXTURED,
 		 GEOMETRY_BUFFER_ID::SPRITE});
 
