@@ -164,47 +164,50 @@ vec3 lerp(vec3 start, vec3 end, float t)
 	return start * (1 - t) + end * t;
 }
 
-
 // Handle movement related key events
-void handleMovementKeys(Entity entity) {
+void handleMovementKeys(Entity entity)
+{
 	if (!registry.deathTimers.has(entity))
 	{
-		if (registry.motions.has(entity)) {
-			Motion& motion = registry.motions.get(entity);
+		if (registry.motions.has(entity))
+		{
+			Motion &motion = registry.motions.get(entity);
 			// Handle right key
-				if (rightKeyPressed) {
-					if (josh_step_counter % 2 == 0)
-					{
-						registry.renderRequests.get(entity) = { TEXTURE_ASSET_ID::JOSHGUN1,
-																	EFFECT_ASSET_ID::TEXTURED,
-																	GEOMETRY_BUFFER_ID::SPRITE };
-					}
-					else
-					{
-						registry.renderRequests.get(entity) = { TEXTURE_ASSET_ID::JOSHGUN,
-																	EFFECT_ASSET_ID::TEXTURED,
-																	GEOMETRY_BUFFER_ID::SPRITE };
-					}
-					if (motion.scale.x < 0)
-					{
-						motion.scale.x *= -1;
-					}
-					motion.velocity.x = JOSH_SPEED;
-				}
-
-			// Handle left key
-			if (leftKeyPressed) {
+			if (rightKeyPressed)
+			{
 				if (josh_step_counter % 2 == 0)
 				{
-					registry.renderRequests.get(entity) = { TEXTURE_ASSET_ID::JOSHGUN1,
-																EFFECT_ASSET_ID::TEXTURED,
-																GEOMETRY_BUFFER_ID::SPRITE };
+					registry.renderRequests.get(entity) = {TEXTURE_ASSET_ID::JOSHGUN1,
+														   EFFECT_ASSET_ID::TEXTURED,
+														   GEOMETRY_BUFFER_ID::SPRITE};
 				}
 				else
 				{
-					registry.renderRequests.get(entity) = { TEXTURE_ASSET_ID::JOSHGUN,
-																EFFECT_ASSET_ID::TEXTURED,
-																GEOMETRY_BUFFER_ID::SPRITE };
+					registry.renderRequests.get(entity) = {TEXTURE_ASSET_ID::JOSHGUN,
+														   EFFECT_ASSET_ID::TEXTURED,
+														   GEOMETRY_BUFFER_ID::SPRITE};
+				}
+				if (motion.scale.x < 0)
+				{
+					motion.scale.x *= -1;
+				}
+				motion.velocity.x = JOSH_SPEED;
+			}
+
+			// Handle left key
+			if (leftKeyPressed)
+			{
+				if (josh_step_counter % 2 == 0)
+				{
+					registry.renderRequests.get(entity) = {TEXTURE_ASSET_ID::JOSHGUN1,
+														   EFFECT_ASSET_ID::TEXTURED,
+														   GEOMETRY_BUFFER_ID::SPRITE};
+				}
+				else
+				{
+					registry.renderRequests.get(entity) = {TEXTURE_ASSET_ID::JOSHGUN,
+														   EFFECT_ASSET_ID::TEXTURED,
+														   GEOMETRY_BUFFER_ID::SPRITE};
 				}
 				motion.velocity.x = -JOSH_SPEED;
 				if (motion.scale.x > 0)
@@ -214,15 +217,13 @@ void handleMovementKeys(Entity entity) {
 			}
 
 			// Handle when both key are pressed
-			if (!leftKeyPressed ^ rightKeyPressed) {
+			if (!leftKeyPressed ^ rightKeyPressed)
+			{
 				motion.velocity.x = 0;
 			}
 		}
-		
 	}
 }
-
-
 
 // Update our game world
 bool WorldSystem::step(float elapsed_ms_since_last_update)
@@ -356,92 +357,93 @@ bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map)
 	float josh_x = 0, josh_y = 0;
 	std::vector<std::pair<float, float>> zombiePositions;
 	// First pass: Create background entities first
-    for (int i = 0; i < map.size(); i++)
-    {
-        for (int j = 0; j < map[i].size(); j++)
-        {
-            float x = j * 10;
-            float y = i * 10;
-            char tok = map[i][j];
-            if (tok == 'O')
-            {
-                createBackground(renderer, {x, y});
-            }
+	for (int i = 0; i < map.size(); i++)
+	{
+		for (int j = 0; j < map[i].size(); j++)
+		{
+			float x = j * 10;
+			float y = i * 10;
+			char tok = map[i][j];
+			if (tok == 'O')
+			{
+				createBackground(renderer, {x, y});
+			}
 			if (tok == 'Q')
-            {
-                createBackground2(renderer, {x, y});
-            }
-        }
-    }
+			{
+				createBackground2(renderer, {x, y});
+			}
+		}
+	}
 
-    // Second pass: Create all other entities except for background
-    for (int i = 0; i < map.size(); i++)
-    {
-        for (int j = 0; j < map[i].size(); j++)
-        {
-            float x = j * 10;
-            float y = i * 10;
-            char tok = map[i][j];
+	// Second pass: Create all other entities except for background
+	for (int i = 0; i < map.size(); i++)
+	{
+		for (int j = 0; j < map[i].size(); j++)
+		{
+			float x = j * 10;
+			float y = i * 10;
+			char tok = map[i][j];
 
-            if (tok == ' ' || tok == 'O'|| tok == 'Q') // Skip empty spaces and background already created
-            {
-                continue;
-            }
-            else if (tok == 'J')
-            {
-                josh_x = x;
-                josh_y = y;
-            }
-            else if (tok == 'P')
-            {
-                createPlatform(renderer, {x, y});
-            }
-            else if (tok == 'Z')
-            {
-                zombiePositions.push_back({x, y});
-            }
-            else if (tok == 'F')
-            {
-                createFood(renderer, {x, y});
-            }
-            else if (tok == 'B')
-            {
-                createBullet(renderer, {x, y});
-            }
-            else if (tok == 'D')
-            {
-                createDoor(renderer, {x, y});
-            }
-            else if (tok == 'K')
-            {
-                createKey(renderer, {x, y});
-            }
-            else if (tok == 'C')
-            {
-                createCabinet(renderer, {x, y});
-            }
-			else if (tok == 'E'){
+			if (tok == ' ' || tok == 'O' || tok == 'Q') // Skip empty spaces and background already created
+			{
+				continue;
+			}
+			else if (tok == 'J')
+			{
+				josh_x = x;
+				josh_y = y;
+			}
+			else if (tok == 'P')
+			{
+				createPlatform(renderer, {x, y});
+			}
+			else if (tok == 'Z')
+			{
+				zombiePositions.push_back({x, y});
+			}
+			else if (tok == 'F')
+			{
+				createFood(renderer, {x, y});
+			}
+			else if (tok == 'B')
+			{
+				createBullet(renderer, {x, y});
+			}
+			else if (tok == 'D')
+			{
+				createDoor(renderer, {x, y});
+			}
+			else if (tok == 'K')
+			{
+				createKey(renderer, {x, y});
+			}
+			else if (tok == 'C')
+			{
+				createCabinet(renderer, {x, y});
+			}
+			else if (tok == 'E')
+			{
 				createObject(renderer, {x, y});
 			}
-            else
-            {
-                printf("Map contains invalid character '%c' at [%d, %d].", tok, i, j);
-                return false;
-            }
-        }
-    }
+			else
+			{
+				printf("Map contains invalid character '%c' at [%d, %d].", tok, i, j);
+				return false;
+			}
+		}
+	}
 
-    // Create zombies in front of other entities
-    for (const auto &pos : zombiePositions)
-    {
-        createZombie(renderer, {pos.first, pos.second});
-    }
+	// Create zombies in front of other entities
+	for (const auto &pos : zombiePositions)
+	{
+		createZombie(renderer, {pos.first, pos.second});
+	}
 
-    // Recreate Josh so that Josh appears at the very front
-    player_josh = createJosh(renderer, {josh_x, josh_y});
-    registry.colors.insert(player_josh, {1, 0.8f, 0.8f});
+	// Recreate Josh so that Josh appears at the very front
+	player_josh = createJosh(renderer, {josh_x, josh_y});
+	registry.colors.insert(player_josh, {1, 0.8f, 0.8f});
 
-    return true;
+	return true;
 }
 
 // Reset the world state to its initial state
@@ -495,10 +497,10 @@ void WorldSystem::handle_collisions()
 			// Checking Player - Deadly collisions
 			if (registry.deadlys.has(entity_other) && !registry.deductHpTimers.has(entity))
 			{
-				Motion& motion_p = registry.motions.get(entity);
+				Motion &motion_p = registry.motions.get(entity);
 				Motion motion_z = registry.motions.get(entity_other);
 				motion_p.position.x -= (motion_z.position.x - motion_p.position.x) / abs(motion_z.position.x - motion_p.position.x) * KNOCKBACK_DIST;
-				
+
 				if (hp_count == 1)
 				{
 
@@ -612,11 +614,11 @@ void WorldSystem::handle_collisions()
 					// open the door
 					Door &door = registry.doors.get(entity_other);
 					door.is_open = true;
-					
-					registry.renderRequests.get(entity_other) = { TEXTURE_ASSET_ID::DOOR_CLOSE,
-																EFFECT_ASSET_ID::TEXTURED,
-																GEOMETRY_BUFFER_ID::SPRITE };
-					
+
+					registry.renderRequests.get(entity_other) = {TEXTURE_ASSET_ID::DOOR_CLOSE,
+																 EFFECT_ASSET_ID::TEXTURED,
+																 GEOMETRY_BUFFER_ID::SPRITE};
+
 					// remove the key from the screen
 					showKeyOnScreen(renderer, false);
 					if (isNearDoor(player_josh, entity_other))
@@ -707,7 +709,6 @@ bool WorldSystem::is_over() const
 	return bool(glfwWindowShouldClose(window));
 }
 
-
 // On key callback
 void WorldSystem::on_key(int key, int, int action, int mod)
 {
@@ -721,34 +722,36 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 	{
 		glfwSetWindowShouldClose(window, true);
 	}
-	
+
 	if (isJoshHidden && key != GLFW_KEY_H)
-    {
-        return;
-    }
+	{
+		return;
+	}
 
 	if (key == GLFW_KEY_LEFT || key == GLFW_KEY_A)
 	{
-		if (action == GLFW_PRESS || action == GLFW_REPEAT){
+		if (action == GLFW_PRESS || action == GLFW_REPEAT)
+		{
 			josh_step_counter++;
 			leftKeyPressed = true;
 		}
-		else if (action == GLFW_RELEASE){
+		else if (action == GLFW_RELEASE)
+		{
 			leftKeyPressed = false;
 		}
 	}
 	if (key == GLFW_KEY_RIGHT || key == GLFW_KEY_D)
 	{
-		if (action == GLFW_PRESS || action == GLFW_REPEAT){
+		if (action == GLFW_PRESS || action == GLFW_REPEAT)
+		{
 			josh_step_counter++;
 			rightKeyPressed = true;
-		}else if (action == GLFW_RELEASE){
+		}
+		else if (action == GLFW_RELEASE)
+		{
 			rightKeyPressed = false;
 		}
-			
 	}
-
-	
 
 	if (!registry.deathTimers.has(player_josh))
 	{
@@ -832,6 +835,19 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 			registry.motions.get(player_josh).scale = joshScale;
 			registry.colors.insert(player_josh, {1, 0.8f, 0.8f});
 			isJoshHidden = false;
+
+			uint i = 0;
+			while (i < registry.hearts.components.size())
+			{
+				Entity entity = registry.hearts.entities[i];
+				registry.meshPtrs.remove(entity);
+				registry.hearts.remove(entity);
+				registry.renderRequests.remove(entity);
+			}
+			for (int i = 0; i < hp_count ; i++)
+			{
+				createHeart(renderer, vec2(30 + i * create_heart_distance, 20));
+			}
 		}
 	}
 
