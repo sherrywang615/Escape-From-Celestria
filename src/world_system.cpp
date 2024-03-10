@@ -187,7 +187,7 @@ void handleMovementKeys(Entity entity)
 														   EFFECT_ASSET_ID::TEXTURED,
 														   GEOMETRY_BUFFER_ID::SPRITE};
 				}
-				if (motion.scale.x < 0)
+				if (motion.scale.x < 0 && !registry.players.get(entity).against_wall)
 				{
 					motion.scale.x *= -1;
 				}
@@ -210,7 +210,7 @@ void handleMovementKeys(Entity entity)
 														   GEOMETRY_BUFFER_ID::SPRITE};
 				}
 				motion.velocity.x = -JOSH_SPEED;
-				if (motion.scale.x > 0)
+				if (motion.scale.x > 0 && !registry.players.get(entity).against_wall)
 				{
 					motion.scale.x *= -1;
 				}
@@ -803,6 +803,7 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 			Motion &josh_motion = registry.motions.get(player_josh);
 			josh_motion.velocity.y = -JOSH_JUMP;
 			jumped = true;
+			//registry.players.get(player_josh).standing = false;
 		}
 		else if (action == GLFW_RELEASE && key == GLFW_KEY_SPACE)
 		{

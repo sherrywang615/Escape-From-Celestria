@@ -7,6 +7,8 @@
 // Player component
 struct Player
 {
+	bool standing = 0;
+	bool against_wall = 0;
 };
 
 struct Deadly
