@@ -11,7 +11,8 @@
 #include "world_system.hpp"
 
 #include "ai_system.hpp"
-
+#include <windows.h>
+#include <iostream>
 
 using Clock = std::chrono::high_resolution_clock;
 
@@ -171,7 +172,12 @@ int main()
 		world.handle_collisions();
 		
 		renderer.draw();
-
+		float ms_to_sleep = 1000 /60 - elapsed_ms;
+		//std::cout << ms_to_sleep << std::endl;
+		if (ms_to_sleep > 0) {
+			Sleep((ms_to_sleep));
+		}
+		
 		// renderer.renderText("test", -0.6f, 0.0f, 1.0f, glm::vec3(1.0f, 1.0f, 1.0f), trans);
 
 	}
