@@ -136,26 +136,11 @@ void collision_resolve(Motion& motion, vec2 prev_pos, std::vector<int> dir, Moti
 		motion.position.y = prev_pos.y;
 	}
 
-	if (motion.position.x != prev_pos.x ) {
-		if ((dir[2] == 1 || dir[3] == 1)) {
-			motion.velocity.x = 0;
-			motion.position.x = prev_pos.x;
-		}
+	if ((dir[2] == 1 || dir[3] == 1)) {
+		motion.velocity.x = 0;
+		motion.position.x = prev_pos.x;
 	}
-	/*else if (dir[2] == 1) // if right
-	{
-		
-			motion.velocity.x = 0;
-			motion.position.x =  motion2.position.x + (abs(motion2.scale.x)) + 1;
-		
-	}
-	else if (dir[3] == 1 ) 
-	{
-		
-			motion.velocity.x = 0;
-			motion.position.x = motion2.position.x - (abs(motion2.scale.x)) - 1;
-		
-	}*/
+
 	
 }
 // checks mesh based collision between player mesh and other objects
@@ -198,8 +183,6 @@ std::vector<int> collides_with_mesh(const Motion& motion, const Motion& mesh_mot
 			{
 				collision_dirs[0] = 1;
 				collision_dirs[4] = 1;
-				
-				
 			}
 			//top
 			if (check_line_intersects(bot_left, bot_right, { currX, currY }, { nextX, nextY }))
@@ -287,37 +270,40 @@ bool collides(const Motion& motion1, const Motion& motion2, float step_secs, DIR
 
 void PhysicsSystem::step(float elapsed_ms)
 {
+	//previous position before moving
+	auto& players = registry.players;
+	for (uint i = 0; i < players.size(); i++) {
+		previous_position = registry.motions.get(players.entities[i]).position;
+	}
 
+	// ------------------- Gravity system -------------------------------------
 	// Check gravity first so we can finalize yspeed
 	float gravity = 30;
 	float step_seconds = elapsed_ms / 1000.f;
-	
 	ComponentContainer<Gravity>& gravity_container = registry.gravities;
 	for (uint i = 0; i < gravity_container.size(); i++)
 	{
-			
-			Entity entity = gravity_container.entities[i];
-			if (!registry.players.has(entity)) {
-				if (registry.motions.has(entity)) {
-					Motion& motion = registry.motions.get(entity);
-					motion.velocity[1] += gravity;
-				}
+		Entity entity = gravity_container.entities[i];
+		if (!registry.players.has(entity)) {
+			if (registry.motions.has(entity)) {
+				Motion& motion = registry.motions.get(entity);
+				motion.velocity[1] += gravity;
 			}
-			else {
-				
-				if (registry.players.get(entity).standing == false) {
-					Motion& motion = registry.motions.get(entity);
-					motion.velocity[1] += gravity;
-				}
+		}
+		else {
+			if (registry.players.get(entity).standing == false) {
+				Motion& motion = registry.motions.get(entity);
+				motion.velocity[1] += gravity;
 			}
-		
+		}
+
 	}
 
-
-	// Check for collisions
+	
 	ComponentContainer<Motion>& motion_container = registry.motions;
 	ComponentContainer<Platform>& plat_container = registry.platforms;
 
+	// -------------------------- Step motion objects --------------------------
 	// having entities move at different speed based on the machine.
 	for (uint i = 0; i < motion_container.size(); i++)
 	{
@@ -328,68 +314,59 @@ void PhysicsSystem::step(float elapsed_ms)
 
 
 		//remove bullet
-		if(registry.bullets.has(entity) && !registry.eatables.has(entity)){
-			
+		if (registry.bullets.has(entity) && !registry.eatables.has(entity)) {
+
 			//registry.collisions.emplace_with_duplicates(entity, entity);
 		}
 
 	}
 
-	// Get the pre movement positions of player
+	// ------------------------------- Debugging ---------------------------------
+	
+	if (debugging.in_debug_mode == true) {
+		vec2 player_pos = {};
+		// debugging box for player
+		for (int i = 0; i < registry.players.size(); i++) {
+			player_pos = registry.motions.get(registry.players.entities[i]).position;
 
-	vec2 prev_pos = {};
-	for (int i = 0; i < registry.players.size(); i++) {
-		prev_pos = registry.motions.get(registry.players.entities[i]).position;
+			//testing for mesh collision detection
+			auto& vertices = registry.meshPtrs.get(registry.players.entities[i])->vertices;
+			for (uint j = 0; j < vertices.size() - 3; j++)
+			{
+				double currX = player_pos.x - vertices[j].position.x * (registry.motions.get(registry.players.entities[i]).scale.x);
+				double currY = player_pos.y - vertices[j].position.y * (registry.motions.get(registry.players.entities[i]).scale.y);
+				double nextX = player_pos.x - vertices[j + 1].position.x * (registry.motions.get(registry.players.entities[i]).scale.x);
+				double nextY = player_pos.y - vertices[j + 1].position.y * (registry.motions.get(registry.players.entities[i]).scale.y);
 
-		//testing for mesh collision detection
-		auto& vertices = registry.meshPtrs.get(registry.players.entities[i])->vertices;
-		//std::cout << vertices.size() << std::endl;
-		for (uint j = 0; j < vertices.size() - 1; j++)
+				auto newline = createLine({ currX , currY }, { 3, 3 });
+
+			}
+
+		}
+		// debugging box for zombies
+		auto& zombies = registry.zombies;
+		for (int i = 0; i < zombies.size(); i++)
 		{
+			if (registry.motions.has(zombies.entities[i])) {
+				Motion& motion = registry.motions.get(zombies.entities[i]);
+				float xScale1 = abs(motion.scale.x);
+				float yScale1 = abs(motion.scale.y);
 
-			double currX = prev_pos.x - vertices[j].position.x * (registry.motions.get(registry.players.entities[i]).scale.x);
-			double currY = prev_pos.y - vertices[j].position.y * (registry.motions.get(registry.players.entities[i]).scale.y);
-			double nextX = prev_pos.x - vertices[j + 1].position.x * (registry.motions.get(registry.players.entities[i]).scale.x);
-			double nextY = prev_pos.y - vertices[j + 1].position.y * (registry.motions.get(registry.players.entities[i]).scale.y);
+				vec2 topmid1 = { motion.position.x, motion.position.y - yScale1 / 2 };
+				vec2 leftmid1 = { motion.position.x - xScale1 / 2 , motion.position.y };
+				vec2 rightmid1 = { motion.position.x + xScale1 / 2 ,motion.position.y };
+				vec2 botmid1 = { motion.position.x, motion.position.y + yScale1 / 2 };
 
-			double testX = 0;
-			double testY = 0;
-			double finalX = 0;
-			double finalY = 0;
-
-			if ((nextX - currX) - (currX - nextX) >= 1) {
-				testX = (nextX - currX);
-				finalX = currX + (testX / 2);
+				auto lineTop = createLine(topmid1, { xScale1, 2 });
+				auto lineLeft = createLine(leftmid1, { 2, yScale1 });
+				auto lineRight = createLine(rightmid1, { 2,yScale1 });
+				auto lineBottom = createLine(botmid1, { xScale1, 2 });
 			}
-			else if ((currX - nextX) - (nextX - currX) >= 1) {
-				testX = (currX - nextX);
-				finalX = currX - (testX / 2);
-			}
-			else {
-				testX = 2;
-				finalX = currX;
-			}
-
-			if ((nextY - currY) - (currY - nextY) >= 1) {
-				testY = (nextY - currY);
-				finalY = currY + (testY / 2);
-			}
-			else if ((currY - nextY) - (nextY - currY) >= 1) {
-				testY = (currY - nextY);
-				finalY = currY - (testY / 2);
-			}
-			else {
-				testY = 2;
-				finalY = currY;
-			}
-
-			auto newline = createLine({ currX , currY }, { 3, 3 });
-
 		}
 
 	}
 
-
+	// ---------------------------------- Collision checking ----------------------------------
 	// Check for collisions between all moving entities and platforms
 	for (uint i = 0; i < motion_container.size(); i++)
 	{
@@ -402,112 +379,105 @@ void PhysicsSystem::step(float elapsed_ms)
 			{
 				Platform& plat = plat_container.components[p];
 				Motion motion_p = { plat.position, 0, {0,0}, plat.scale };
-				if (registry.players.has(entity)) {
-					Player& player = registry.players.get(entity);
-					std::vector<int> collide_dir = collides_with_mesh(motion_p, motion, step_seconds, *registry.meshPtrs.get(motion_container.entities[i]));
-					if (collide_dir[4] == 1) { 
-						collide = true;
-						collision_resolve(motion, previous_position, collide_dir, motion_p);
-						//collision_resolve(motion, prev_pos, collide_dir);
-						if (collide_dir[0] == 1) {
-							player.standing = 1;
+
+				if (abs(motion_p.position.x - motion.position.x) < 200 && abs(motion_p.position.y - motion.position.y) < 200) {
+					// make collision checking more efficient, only check close platforms
+					// mesh collision
+					if (registry.players.has(entity)) {
+						Player& player = registry.players.get(entity);
+						std::vector<int> collide_dir = collides_with_mesh(motion_p, motion, step_seconds, *registry.meshPtrs.get(motion_container.entities[i]));
+						if (collide_dir[4] == 1) {
+							collide = true;
+							collision_resolve(motion, previous_position, collide_dir, motion_p);
+
+							if (collide_dir[0] == 1) {
+								player.standing = 1;
+							}
+							else {
+								player.standing = 0;
+							}
+							if (collide_dir[2] || collide_dir[3]) {
+								player.against_wall = 1;
+							}
+							else {
+								player.against_wall = 0;
+							}
+
 						}
-						else {
-							player.standing = 0;
+					} // non mesh collisions
+					else
+					{
+						if (collides(motion, motion_p, step_seconds, DIRECTION::TOP)) {
+							motion.velocity.y = 0;
+							motion.position.y = motion_p.position.y + abs(motion_p.scale.y) / 2 + abs(motion.scale.y) / 2;
 						}
-						if (collide_dir[2] || collide_dir[3]) {
-							player.against_wall = 1;
+						if (collides(motion, motion_p, step_seconds, DIRECTION::BOT)) {
+							motion.velocity.y = 0;
+							motion.position.y = motion_p.position.y - abs(motion_p.scale.y) / 2 - abs(motion.scale.y) / 2;
 						}
-						else  {
-							player.against_wall = 0;
+						if (collides(motion, motion_p, step_seconds, DIRECTION::LEFT)) {
+
+							motion.velocity.x = 0;
+							motion.position.x = motion_p.position.x + abs(motion_p.scale.x) / 2 + abs(motion.scale.x) / 2;
 						}
-						
-						
+						if (collides(motion, motion_p, step_seconds, DIRECTION::RIGHT)) {
+							motion.velocity.x = 0;
+							motion.position.x = motion_p.position.x - abs(motion_p.scale.x) / 2 - abs(motion.scale.x) / 2;
+						}
 					}
-					
 				}
-				else {
-
-					if (collides(motion, motion_p, step_seconds, DIRECTION::TOP)) {
-						motion.velocity.y = 0;
-						motion.position.y = motion_p.position.y + abs(motion_p.scale.y) / 2 + abs(motion.scale.y) / 2;
-					}
-					if (collides(motion, motion_p, step_seconds, DIRECTION::BOT)) {
-						motion.velocity.y = 0;
-						motion.position.y = motion_p.position.y - abs(motion_p.scale.y) / 2 - abs(motion.scale.y) / 2;
-					}
-					if (collides(motion, motion_p, step_seconds, DIRECTION::LEFT)) {
-
-						motion.velocity.x = 0;
-						motion.position.x = motion_p.position.x + abs(motion_p.scale.x) / 2 + abs(motion.scale.x) / 2;
-					}
-					if (collides(motion, motion_p, step_seconds, DIRECTION::RIGHT)) {
-						motion.velocity.x = 0;
-						motion.position.x = motion_p.position.x - abs(motion_p.scale.x) / 2 - abs(motion.scale.x) / 2;
-					}
-				}
-				
 			}
-			if (registry.players.has(entity) && (collide == false)) {
-				
-				registry.players.get(entity).standing = 0;
-				
-			}
-			
-		}
-	}
-
-
-	// Check for collisions between all moving entities
-
-	for (uint i = 0; i < motion_container.components.size(); i++)
-	{
-		if (!registry.platforms.has(motion_container.entities[i])) {
-		Motion& motion_i = motion_container.components[i];
-		Entity entity_i = motion_container.entities[i];
-	
-
+			// ----------------------------- motion vs non platform collision checking ---------------------------------------
 			// note starting j at i+1 to compare all (i,j) pairs only once (and to not compare with itself)
 			for (uint j = i + 1; j < motion_container.components.size(); j++)
 			{
 				if (!registry.platforms.has(motion_container.entities[j])) {
 					Motion& motion_j = motion_container.components[j];
-					if (registry.players.has(entity_i))
+					if (registry.players.has(entity))
 					{
-						if (collides_with_mesh(motion_j, motion_i, step_seconds, *registry.meshPtrs.get(motion_container.entities[i]))[4] == 1) {
+						if (collides_with_mesh(motion_j, motion, step_seconds, *registry.meshPtrs.get(motion_container.entities[i]))[4] == 1) {
 							Entity entity_j = motion_container.entities[j];
-							registry.collisions.emplace_with_duplicates(entity_i, entity_j);
-							registry.collisions.emplace_with_duplicates(entity_j, entity_i);
+							if ((!registry.collisions.has(entity) || !registry.collisions.has(entity_j))) {
+								registry.collisions.emplace_with_duplicates(entity, entity_j);
+								registry.collisions.emplace_with_duplicates(entity_j, entity);
+							}
 						}
 					}
 					else if (registry.players.has(motion_container.entities[j]))
 					{
-						if (collides_with_mesh(motion_i, motion_j, step_seconds, *registry.meshPtrs.get(motion_container.entities[j]))[4] == 1) {
+						if (collides_with_mesh(motion, motion_j, step_seconds, *registry.meshPtrs.get(motion_container.entities[j]))[4] == 1) {
 							Entity entity_j = motion_container.entities[j];
-							registry.collisions.emplace_with_duplicates(entity_i, entity_j);
-							registry.collisions.emplace_with_duplicates(entity_j, entity_i);
+							if ((!registry.collisions.has(entity) || !registry.collisions.has(entity_j))) {
+								registry.collisions.emplace_with_duplicates(entity, entity_j);
+								registry.collisions.emplace_with_duplicates(entity_j, entity);
+							}
 						}
 					}
 					else {
-						if (collides(motion_i, motion_j, step_seconds))
+						if (collides(motion, motion_j, step_seconds))
 						{
 							Entity entity_j = motion_container.entities[j];
-							//if ((registry.players.has(entity_i) && registry.platforms.has(entity_j))||
-							//	(registry.players.has(entity_j) && registry.platforms.has(entity_i))) {
-							//	motion_i.velocity[1] = 0;
-							//}
 							// Create a collisions event
 							// We are abusing the ECS system a bit in that we potentially insert muliple collisions for the same entity
-							registry.collisions.emplace_with_duplicates(entity_i, entity_j);
-							registry.collisions.emplace_with_duplicates(entity_j, entity_i);
+							if ((!registry.collisions.has(entity) || !registry.collisions.has(entity_j))) {
+								registry.collisions.emplace_with_duplicates(entity, entity_j);
+								registry.collisions.emplace_with_duplicates(entity_j, entity);
+							}
 						}
 					}
 				}
 			}
+
+			if (registry.players.has(entity) && (collide == false)) {
+
+				registry.players.get(entity).standing = 0;
+
+			}
+
 		}
 	}
-	
-	
+
+	// ------------------------------------- Boundary checking -------------------------------------
 	// Check boundaries
 	auto& motion_registry = registry.motions;
 	for (uint i = 0; i < motion_registry.size(); i++) {
@@ -517,7 +487,7 @@ void PhysicsSystem::step(float elapsed_ms)
 			motion.velocity.x = 0;
 			motion.position.x = abs(motion.scale.x) / 2;
 
-			if(registry.shootBullets.has(entity) && !registry.eatables.has(entity)){
+			if (registry.shootBullets.has(entity) && !registry.eatables.has(entity)) {
 				registry.meshPtrs.remove(entity);
 				registry.hearts.remove(entity);
 				registry.renderRequests.remove(entity);
@@ -527,7 +497,7 @@ void PhysicsSystem::step(float elapsed_ms)
 			motion.velocity.x = 0;
 			motion.position.x = window_width_px - abs(motion.scale.x) / 2;
 
-			if(registry.shootBullets.has(entity) && !registry.eatables.has(entity)){
+			if (registry.shootBullets.has(entity) && !registry.eatables.has(entity)) {
 				registry.meshPtrs.remove(entity);
 				registry.hearts.remove(entity);
 				registry.renderRequests.remove(entity);
@@ -543,17 +513,7 @@ void PhysicsSystem::step(float elapsed_ms)
 		}
 
 
-		
-	}
-
-
 	
-
-	auto& players = registry.players;
-	for (uint i = 0; i < players.size(); i++) {
-		previous_position = registry.motions.get(players.entities[i]).position;
 	}
-	
-
 
 }
