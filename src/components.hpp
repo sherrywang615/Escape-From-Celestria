@@ -62,6 +62,15 @@ struct Key
 {
 };
 
+struct Text {
+	std::string text = "";
+	vec3 color = { 0.0f, 0.0f, 255.0f };
+};
+
+struct MenuElement {
+	MENU_FUNC func = MENU_FUNC::ALL;
+};
+
 // All data relevant to the shape and motion of entities
 struct Motion
 {
@@ -204,25 +213,26 @@ struct ShootBullet
 enum class TEXTURE_ASSET_ID
 {
 	FOOD = 0,
-	JOSH = FOOD + 1,
-	JOSH1 = JOSH + 1,
-	JOSHGUN = JOSH1 + 1,
-	JOSHGUN1 = JOSHGUN + 1,
-	ZOMBIE = JOSHGUN1 + 1,
-	PLATFORM = ZOMBIE + 1,
-	BULLET = PLATFORM + 1,
-	DOOR = BULLET + 1,
-	DOOR_CLOSE = DOOR + 1,
-	KEY = DOOR_CLOSE + 1,
-	HEART = KEY + 1,
+	JOSH,
+	JOSH1,
+	JOSHGUN,
+	JOSHGUN1,
+	ZOMBIE,
+	PLATFORM,
+	BULLET,
+	DOOR,
+	DOOR_CLOSE,
+	KEY,
+	HEART,
 
-	HELP_INFO = HEART + 1,
-	HELP_SIGN = HELP_INFO + 1,
-	CABINET = HELP_SIGN + 1,
-	BACKGROUND = CABINET + 1,
-	BACKGROUND2 = BACKGROUND + 1,
-	BARREL = BACKGROUND2 + 1,
-	TEXTURE_COUNT = BARREL + 1
+	HELP_INFO,
+	HELP_SIGN,
+	CABINET,
+	BACKGROUND,
+	BACKGROUND2,
+	BARREL,
+	MENU,
+	TEXTURE_COUNT
 
 };
 const int texture_count = (int)TEXTURE_ASSET_ID::TEXTURE_COUNT;

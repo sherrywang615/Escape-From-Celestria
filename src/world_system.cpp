@@ -1,6 +1,7 @@
 // Header
 #include "world_system.hpp"
 #include "world_init.hpp"
+#include "world_helper.cpp"
 
 // stlib
 #include <cassert>
@@ -33,6 +34,13 @@ bool spacePressed = false;
 
 // Animation controls
 int josh_step_counter = 0;
+
+// flag to check if the game is paused
+bool paused = false;
+
+// track Menu
+std::vector<Entity> buttons = {};
+int current_button = 0;
 
 // Create the bug world
 WorldSystem::WorldSystem()
@@ -228,6 +236,25 @@ void handleMovementKeys(Entity entity)
 // Update our game world
 bool WorldSystem::step(float elapsed_ms_since_last_update)
 {
+	if (paused) {
+		for (int i = 0; i < buttons.size(); i++) {
+
+			if (!registry.texts.has(buttons[i])) {
+				continue;
+			}
+			Text& text = registry.texts.get(buttons[i]);
+			if (i != current_button) {
+				text.color = { 1, 1, 1 };
+			}
+			else
+			{
+				text.color = { 1, 1, 0 };
+			}
+		}
+
+		return true;
+	}
+	buttons.clear();
 	handleMovementKeys(player_josh);
 	// for fps counter
 	fpsTimer += elapsed_ms_since_last_update;
@@ -724,7 +751,24 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	if (action == GLFW_PRESS && key == GLFW_KEY_ESCAPE)
 	{
-		glfwSetWindowShouldClose(window, true);
+		//glfwSetWindowShouldClose(window, true);
+		paused = !paused;
+		if (paused) {
+			renderPauseMenu();
+			for (Entity entity : registry.menus.entities) {
+				auto& me = registry.menus.get(entity);
+				if (me.func != MENU_FUNC::ALL) {
+					buttons.push_back(entity);
+				}
+			}
+		}
+		else {
+			for (Entity entity : registry.menus.entities) {
+				registry.remove_all_components_of(entity);
+			}
+			buttons.clear();
+		}
+
 	}
 
 	if (isJoshHidden && key != GLFW_KEY_H)
@@ -871,6 +915,33 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 		printf("Josh curr_loc: %f, %f\n", motion.position.x, motion.position.y);
 	}
 
+	// Handle Menu
+	if (paused) {
+
+		if (action == GLFW_RELEASE && key == GLFW_KEY_DOWN) {
+			if (current_button == buttons.size() - 1) {
+				current_button = 0;
+			}
+			else {
+				current_button++;
+			}
+		}
+		if (action == GLFW_RELEASE && key == GLFW_KEY_UP) {
+			if (current_button == 0) {
+				current_button = buttons.size() - 1;
+			}
+			else {
+				current_button--;
+			}
+		}
+		if (action == GLFW_RELEASE && key == GLFW_KEY_ENTER) {
+			paused = handleButtonEvents(buttons[current_button], renderer, window);
+			for (Entity entity : registry.players.entities) {
+				player_josh = entity;
+			}
+		}
+	}
+
 	// Debugging
 	if (key == GLFW_KEY_D)
 	{
@@ -878,83 +949,6 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 			debugging.in_debug_mode = false;
 		else
 			debugging.in_debug_mode = true;
-	}
-
-	if (action == GLFW_PRESS && key == GLFW_KEY_B)
-	{
-		std::fstream file;
-		file.open("..\\..\\..\\data\\saving\\save.txt");
-
-		if (file.is_open())
-		{
-			for (Entity player : registry.players.entities)
-			{
-				Motion motion = registry.motions.get(player);
-				file << "Josh ";
-				file << std::to_string(motion.position.x) << " ";
-				file << std::to_string(motion.position.y) << "\n";
-			}
-			for (Entity zombie : registry.zombies.entities)
-			{
-				Motion motion = registry.motions.get(zombie);
-				file << "Zombie ";
-				file << std::to_string(motion.position.x) << " ";
-				file << std::to_string(motion.position.y) << "\n";
-			}
-		}
-		else
-		{
-			printf("Cannot save because cannot open saving file\n");
-		}
-		file.close();
-	}
-
-	if (action == GLFW_PRESS && key == GLFW_KEY_N)
-	{
-		std::fstream file;
-		file.open("..\\..\\..\\data\\saving\\save.txt");
-		bool readingJosh = false;
-		bool readingZombie = false;
-
-		if (file.is_open())
-		{
-			std::string line;
-			while (getline(file, line))
-			{
-				std::vector<std::string> toks;
-				std::string delimiter = " ";
-				while (line.find(delimiter) != std::string::npos)
-				{
-					int delim_loc = line.find(delimiter);
-					std::string token = line.substr(0, delim_loc);
-					toks.push_back(token);
-					line = line.substr(delim_loc + 1, line.size());
-				}
-				toks.push_back(line);
-
-				if (toks[0] == "Josh")
-				{
-					for (Entity player : registry.players.entities)
-					{
-						Motion &motion = registry.motions.get(player);
-						motion.position.x = std::stof(toks[1]);
-						motion.position.y = std::stof(toks[2]);
-					}
-				}
-				else if (toks[0] == "Zombie")
-					for (Entity zombie : registry.zombies.entities)
-					{
-						Motion &motion = registry.motions.get(zombie);
-						motion.position.x = std::stof(toks[1]);
-						motion.position.y = std::stof(toks[2]);
-					}
-			}
-		}
-		else
-		{
-			printf("Cannot save because cannot open saving file\n");
-		}
-		file.close();
 	}
 
 	// Control the current speed with `<` `>`
@@ -1007,4 +1001,8 @@ void WorldSystem::removeSmallBullets(RenderSystem *renderer)
 		Entity entity = registry.smallBullets.entities[i];
 		registry.remove_all_components_of(entity);
 	}
+}
+
+bool WorldSystem::is_paused() const {
+	return paused;
 }

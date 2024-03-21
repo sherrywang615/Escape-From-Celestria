@@ -57,7 +57,9 @@ Entity createPlatform(RenderSystem* renderer, vec2 pos);
 Entity createHelpSign(RenderSystem* renderer, vec2 position);
 //help help_info
 Entity createHelpInfo(RenderSystem* renderer, vec2 position);
-
+// Text
+Entity createText(vec2 pos, float scale, vec3 color, std::string content);
+Entity createMenuBackground(vec2 pos, vec2 scale);
 
 // a red line for debugging purposes
 Entity createLine(vec2 position, vec2 size);

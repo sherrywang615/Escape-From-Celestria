@@ -554,3 +554,41 @@ std::vector<std::vector<char>> loadMap(std::string path)
 
 	return map;
 }
+
+Entity createText(vec2 pos, float scale, vec3 color, std::string content)
+{
+	Entity entity = Entity();
+
+	Text& text = registry.texts.emplace(entity);
+	text.color = color;
+	text.text = content;
+
+	Motion& motion = registry.motions.emplace(entity);
+	motion.position = pos;
+	motion.scale = { scale, scale };
+
+	registry.renderRequests.insert(
+		entity,
+		{ TEXTURE_ASSET_ID::TEXTURE_COUNT, // TEXTURE_COUNT indicates that no txture is needed
+			EFFECT_ASSET_ID::EFFECT_COUNT,
+			GEOMETRY_BUFFER_ID::EGG });
+	return entity;
+}
+
+Entity createMenuBackground(vec2 pos, vec2 scale) {
+	Entity entity = Entity();
+
+	auto& motion = registry.motions.emplace(entity);
+	motion.angle = 0.f;
+	motion.velocity = { 0, 0 };
+	motion.position = pos;
+	motion.scale = scale;
+
+	registry.renderRequests.insert(
+		entity,
+		{ TEXTURE_ASSET_ID::MENU,
+		 EFFECT_ASSET_ID::TEXTURED,
+		 GEOMETRY_BUFFER_ID::SPRITE });
+
+	return entity;
+}
