@@ -648,9 +648,22 @@ void WorldSystem::handle_collisions()
 			if (registry.shootBullets.has(entity_other))
 			{
 				// Remove bullet and zombie
+
+				//zombie_died = true;
+				//zombie_die_start = std::chrono::system_clock::now();
+
+				// registry.renderRequests.get(entity) = {TEXTURE_ASSET_ID::ZOMBIE_DIE1,
+				// 										EFFECT_ASSET_ID::TEXTURED,
+				// 										GEOMETRY_BUFFER_ID::SPRITE};
+
+
+	
+				
 				registry.remove_all_components_of(entity_other);
+				registry.renderRequests.remove(entity_other);
 				NormalZombie &zombie = registry.zombies.get(entity);
 				registry.remove_all_components_of(entity);
+				//zombie_died = false;
 			}
 		}
 
