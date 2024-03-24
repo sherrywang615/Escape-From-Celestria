@@ -21,7 +21,7 @@ Vertex* findNearestVertex(vec2 pos) {
 			point->adjs = vertex->adjs;
 		}
 	}
-	return point;
+ 	return point;
 }
 
 void updateZombieMemory(Entity entity, float elapsed_ms) {
