@@ -1,7 +1,7 @@
 // Header
 #include "world_system.hpp"
 #include "world_init.hpp"
-#include "world_helper.cpp"
+#include "world_helper.hpp"
 
 // stlib
 #include <cassert>

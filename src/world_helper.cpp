@@ -1,7 +1,9 @@
 #pragma once
-#include "world_init.hpp"
-#include "common.hpp"
-#include "tiny_ecs_registry.hpp"
+//#include "world_init.hpp"
+//#include "common.hpp"
+//#include "tiny_ecs_registry.hpp"
+#include "world_helper.hpp"
+
 
 const float LINE_SPACE = 130;
 const vec2 RESUME_POS = { window_width_px / 2 - 80, window_height_px / 2 + 200 };
