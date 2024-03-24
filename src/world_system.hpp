@@ -46,6 +46,8 @@ public:
 	bool is_over() const;
 
 private:
+	//start time
+	std::chrono::system_clock::time_point start;
 	// Input callback functions
 	bool renderInfo;
 	void on_key(int key, int, int action, int mod);

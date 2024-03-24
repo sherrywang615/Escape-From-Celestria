@@ -143,6 +143,9 @@ void updateZombiePath(float elapsed_ms)
 {
 	float memory = 2000.f;
 	for (Entity entity_z : registry.zombies.entities) {
+
+		
+
 		NormalZombie& zombie = registry.zombies.get(entity_z);
 		Motion& motion_z = registry.motions.get(entity_z);
 		if (registry.players.entities.empty() && zombie.is_alerted) {
@@ -230,4 +233,5 @@ void updateZombiePath(float elapsed_ms)
 void AISystem::step(float elapsed_ms)
 {
 	updateZombiePath(elapsed_ms);
+
 }

@@ -18,7 +18,7 @@ const size_t MAX_BUG = 5;
 const size_t EAGLE_DELAY_MS = 2000 * 3;
 const size_t BUG_DELAY_MS = 5000 * 3;
 const float JOSH_SPEED = 200.f;
-const float JOSH_JUMP = 800.f;
+const float JOSH_JUMP = 1000.f;
 const float KNOCKBACK_DIST = 50.f;
 
 // Threshold to test if one thing is close enough to another
@@ -32,6 +32,7 @@ bool rightKeyPressed = false;
 bool spacePressed = false;
 
 // Animation controls
+bool is_josh_moving = false;
 int josh_step_counter = 0;
 
 // Create the bug world
@@ -39,6 +40,7 @@ WorldSystem::WorldSystem()
 	: hp_count(0), next_eagle_spawn(0.f), next_bug_spawn(0.f), bullets_count(0), have_key(false), fps(0.f), fpsCount(0.f), fpsTimer(0.f)
 {
 	// Seeding rng with random device
+	start = std::chrono::system_clock::now();
 	renderInfo = false;
 	rng = std::default_random_engine(std::random_device()());
 }
@@ -228,7 +230,17 @@ void handleMovementKeys(Entity entity)
 // Update our game world
 bool WorldSystem::step(float elapsed_ms_since_last_update)
 {
+	
+	auto end = std::chrono::system_clock::now();
+
+	if(is_josh_moving){
+    	auto elasped = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
+		josh_step_counter = int(round(elasped)/100000);
+		//std::cout<< josh_step_counter<<std::endl;
+	}
 	handleMovementKeys(player_josh);
+		
+	
 	// for fps counter
 	fpsTimer += elapsed_ms_since_last_update;
 	fpsCount++;
@@ -347,7 +359,7 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 		}
 	}
 
-	handleMovementKeys(player_josh);
+
 
 	return true;
 }
@@ -736,11 +748,13 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 	{
 		if (action == GLFW_PRESS || action == GLFW_REPEAT)
 		{
-			josh_step_counter++;
+			is_josh_moving = true;
+			//josh_step_counter++;
 			leftKeyPressed = true;
 		}
 		else if (action == GLFW_RELEASE)
 		{
+			is_josh_moving = false;
 			leftKeyPressed = false;
 		}
 	}
@@ -748,11 +762,13 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 	{
 		if (action == GLFW_PRESS || action == GLFW_REPEAT)
 		{
-			josh_step_counter++;
+			is_josh_moving = true;
+			//josh_step_counter++;
 			rightKeyPressed = true;
 		}
 		else if (action == GLFW_RELEASE)
 		{
+			is_josh_moving = false;
 			rightKeyPressed = false;
 		}
 	}
