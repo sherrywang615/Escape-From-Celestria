@@ -198,11 +198,11 @@ GLFWwindow *WorldSystem::create_window()
 				audio_path("doorOpen.wav").c_str());
 		return nullptr;
 	}
-	eat_music = Mix_LoadWAV(audio_path("eat.mp3").c_str());
+	eat_music = Mix_LoadWAV(audio_path("eat.wav").c_str());
 	if (eat_music == nullptr)
 	{
 		fprintf(stderr, "Failed to load sounds %s make sure the data directory is present",
-				audio_path("eat.mp3").c_str());
+				audio_path("eat.wav").c_str());
 		return nullptr;
 	}
 	shoot_music = Mix_LoadWAV(audio_path("shoot.wav").c_str());
