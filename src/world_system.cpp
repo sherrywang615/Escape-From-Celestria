@@ -1,7 +1,7 @@
 // Header
 #include "world_system.hpp"
 #include "world_init.hpp"
-#include "menu.cpp"
+#include "menu.hpp"
 #include "world_helper.hpp"
 
 // stlib
@@ -163,7 +163,7 @@ GLFWwindow *WorldSystem::create_window()
 	}
 
 	bg1_music = Mix_LoadMUS(audio_path("bg1.mp3").c_str());
-	bg1_music = Mix_LoadMUS("E:\\CPSC427\\M3\\Team7\\data\\audio\\bg1.mp3");
+
 	if (bg1_music == nullptr)
 	{
 		fprintf(stderr, "Failed to load sounds %s make sure the data directory is present",
