@@ -11,3 +11,4 @@ Background level 2: https://guilemus.itch.io/post-apocalyptic-backgrounds
 npc1,2: https://craftpix.net/freebies/free-raider-sprite-sheets-pixel-art/
 npc3: https://craftpix.net/freebies/free-fantasy-chibi-female-sprites-pixel-art/
 npc4: https://craftpix.net/freebies/free-soldier-sprite-sheets-pixel-art/
+audios: https://freesound.org/?feedbackRegistration=1
