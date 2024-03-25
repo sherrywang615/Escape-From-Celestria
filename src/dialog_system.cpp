@@ -125,4 +125,5 @@ Entity DialogSystem::findEntityById(int id)
 			return entity;
 		}
 	}
+	return Entity();
 }
