@@ -1,7 +1,7 @@
 // Header
 #include "world_system.hpp"
 #include "world_init.hpp"
-#include "menu.hpp"
+#include "menu.cpp"
 #include "world_helper.hpp"
 
 // stlib
@@ -162,33 +162,33 @@ GLFWwindow *WorldSystem::create_window()
 		return nullptr;
 	}
 
-	bg1_music = Mix_LoadMUS(audio_path("bg1.mp3").c_str());
+	bg1_music = Mix_LoadMUS(audio_path("bg1.wav").c_str());
 
 	if (bg1_music == nullptr)
 	{
 		fprintf(stderr, "Failed to load sounds %s make sure the data directory is present",
-				audio_path("bg1.mp3").c_str());
+				audio_path("bg1.wav").c_str());
 		return nullptr;
 	}
-	bg2_music = Mix_LoadMUS(audio_path("bg2.mp3").c_str());
+	bg2_music = Mix_LoadMUS(audio_path("bg2.wav").c_str());
 	if (bg2_music == nullptr)
 	{
 		fprintf(stderr, "Failed to load sounds %s make sure the data directory is present",
-				audio_path("bg2.mp3").c_str());
+				audio_path("bg2.wav").c_str());
 		return nullptr;
 	}
-	bg3_music = Mix_LoadMUS(audio_path("bg3.mp3").c_str());
+	bg3_music = Mix_LoadMUS(audio_path("bg3.wav").c_str());
 	if (bg3_music == nullptr)
 	{
 		fprintf(stderr, "Failed to load sounds %s make sure the data directory is present",
-				audio_path("bg3.mp3").c_str());
+				audio_path("bg3.wav").c_str());
 		return nullptr;
 	}
-	bg4_music = Mix_LoadMUS(audio_path("bg4.mp3").c_str());
+	bg4_music = Mix_LoadMUS(audio_path("bg4.wav").c_str());
 	if (bg4_music == nullptr)
 	{
 		fprintf(stderr, "Failed to load sounds %s make sure the data directory is present",
-				audio_path("bg4.mp3").c_str());
+				audio_path("bg4.wav").c_str());
 		return nullptr;
 	}
 	doorOpen_music = Mix_LoadWAV(audio_path("doorOpen.wav").c_str());
@@ -198,11 +198,11 @@ GLFWwindow *WorldSystem::create_window()
 				audio_path("doorOpen.wav").c_str());
 		return nullptr;
 	}
-	eat_music = Mix_LoadWAV(audio_path("eat.mp3").c_str());
+	eat_music = Mix_LoadWAV(audio_path("eat.wav").c_str());
 	if (eat_music == nullptr)
 	{
 		fprintf(stderr, "Failed to load sounds %s make sure the data directory is present",
-				audio_path("eat.mp3").c_str());
+				audio_path("eat.wav").c_str());
 		return nullptr;
 	}
 	shoot_music = Mix_LoadWAV(audio_path("shoot.wav").c_str());
