@@ -28,6 +28,9 @@ struct NormalZombie
 	float memory = 3000;
 	float alerted_speed = 100;
 	bool is_jumping = 0;
+	bool is_dead = false;
+	float death_counter = 3000.0;
+
 };
 
 struct Platform

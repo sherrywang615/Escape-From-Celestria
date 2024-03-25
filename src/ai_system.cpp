@@ -1,8 +1,11 @@
 // internal
 #include "ai_system.hpp"
 
+
 #include <queue>
 #include <unordered_map>
+#include <iostream>
+
 
 int X_frame = 1;
 
@@ -153,7 +156,13 @@ void updateZombiePath(float elapsed_ms, int elapsed)
 	float memory = 2000.f;
 	for (Entity entity_z : registry.zombies.entities) {
 
-		
+		NormalZombie& zombie = registry.zombies.get(entity_z);
+		Motion& motion_z = registry.motions.get(entity_z);
+
+		if(zombie.is_dead){
+			motion_z.velocity = vec2(0,0);
+			continue;
+		}
 		if (elapsed % 3 == 0)
 		{
 			registry.renderRequests.get(entity_z) = {TEXTURE_ASSET_ID::ZOMBIE,
@@ -170,9 +179,10 @@ void updateZombiePath(float elapsed_ms, int elapsed)
 														EFFECT_ASSET_ID::TEXTURED,
 														GEOMETRY_BUFFER_ID::SPRITE};
 		}
+		
 
-		NormalZombie& zombie = registry.zombies.get(entity_z);
-		Motion& motion_z = registry.motions.get(entity_z);
+		
+		
 		if (registry.players.entities.empty() && zombie.is_alerted) {
 			followPath(motion_z, prev_path, ACTION::WALK, zombie.alerted_speed, zombie.is_jumping);
 			updateZombieMemory(entity_z, elapsed_ms);
@@ -254,6 +264,8 @@ void updateZombiePath(float elapsed_ms, int elapsed)
 		}
 	}
 }
+
+
 
 void AISystem::step(float elapsed_ms)
 {

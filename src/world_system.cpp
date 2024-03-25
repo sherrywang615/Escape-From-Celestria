@@ -359,6 +359,24 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 		}
 	}
 
+	for (Entity entity : registry.zombies.entities){
+		NormalZombie &zombie = registry.zombies.get(entity);
+		if(zombie.is_dead){
+			zombie.death_counter -=elapsed_ms_since_last_update;
+			if(zombie.death_counter>=1000.0){
+					registry.renderRequests.get(entity) = {TEXTURE_ASSET_ID::ZOMBIE_DIE1,
+										EFFECT_ASSET_ID::TEXTURED,
+										GEOMETRY_BUFFER_ID::SPRITE};
+					
+			}
+			if(zombie.death_counter<1.0){
+				registry.renderRequests.remove(entity);
+				registry.remove_all_components_of(entity);
+				
+			}
+		}
+	}
+
 
 
 	return true;
@@ -645,26 +663,20 @@ void WorldSystem::handle_collisions()
 		// Zombie and Bullet collision
 		else if (registry.zombies.has(entity))
 		{
-			if (registry.shootBullets.has(entity_other))
+			NormalZombie &zombie = registry.zombies.get(entity);
+			if (registry.shootBullets.has(entity_other)&&!zombie.is_dead)
 			{
-				// Remove bullet and zombie
-
-				//zombie_died = true;
-				//zombie_die_start = std::chrono::system_clock::now();
-
-				// registry.renderRequests.get(entity) = {TEXTURE_ASSET_ID::ZOMBIE_DIE1,
-				// 										EFFECT_ASSET_ID::TEXTURED,
-				// 										GEOMETRY_BUFFER_ID::SPRITE};
-
-
-	
-				
-				registry.remove_all_components_of(entity_other);
-				registry.renderRequests.remove(entity_other);
-				NormalZombie &zombie = registry.zombies.get(entity);
-				registry.remove_all_components_of(entity);
-				//zombie_died = false;
+					//remove bullet render effect, enter 2 frames zombie death animation 
+				    // zombie_die_start = std::chrono::system_clock::now();
+					registry.renderRequests.get(entity) = {TEXTURE_ASSET_ID::ZOMBIE_DIE,
+														EFFECT_ASSET_ID::TEXTURED,
+														GEOMETRY_BUFFER_ID::SPRITE};
+					registry.remove_all_components_of(entity_other);
+					registry.renderRequests.remove(entity_other);
+					registry.deadlys.remove(entity);
+					zombie.is_dead = true;
 			}
+
 		}
 
 		else
