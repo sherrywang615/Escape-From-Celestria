@@ -38,6 +38,8 @@ public:
 	ComponentContainer<Cabinet> cabinets;
 	ComponentContainer<SmallBullet> smallBullets;
 	ComponentContainer<ShootBullet> shootBullets;
+	ComponentContainer<Text> texts;
+	ComponentContainer<MenuElement> menus;
 
 	// constructor that adds all containers for looping over them
 	// IMPORTANT: Don't forget to add any newly added containers!
@@ -70,6 +72,8 @@ public:
 		registry_list.push_back(&cabinets);
 		registry_list.push_back(&smallBullets);
 		registry_list.push_back(&shootBullets);
+		registry_list.push_back(&texts);
+		registry_list.push_back(&menus);
 	}
 
 	void clear_all_components()

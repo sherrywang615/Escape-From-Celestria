@@ -47,6 +47,9 @@ public:
 	// Should the game be over ?
 	bool is_over() const;
 
+	// Is the game paused?
+	bool is_paused() const;
+
 private:
 	//start time
 	std::chrono::system_clock::time_point start;
@@ -68,6 +71,7 @@ private:
 
 	// render new level
 	void render_new_level(int level);
+
 
 	bool isJoshHidden = false;
 	void hideJosh(RenderSystem *renderer);

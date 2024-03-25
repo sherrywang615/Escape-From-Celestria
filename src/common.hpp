@@ -39,9 +39,11 @@ const int window_height_px = 700;
 const int width = window_width_px / 10;
 const int height = window_height_px / 10;
 
-const std::string MAP_PATH = "/Users/ellenzhang/Desktop/Team7-main/team7/data/maps/";
 
-const std::string GRAPH_PATH = "..//..//..//data//graphs//";
+const std::string MAP_PATH = "..//..//..//data//maps//";
+//const std::string GRAPH_PATH = "..//..//..//data//graphs//";
+const std::string SAVE_PATH = "..\\..\\..\\data\\saving\\save.txt";
+
 //const std::string MAP_PATH = "../data/maps/";
 
 
@@ -72,6 +74,14 @@ enum class DIRECTION {
 enum class ACTION {
 	WALK = 0,
 	JUMP = WALK + 1
+};
+
+enum class MENU_FUNC {
+	RESUME = 0,
+	SAVE,
+	LOAD,
+	QUIT,
+	ALL
 };
 
 float findDistanceBetween(vec2 pos1, vec2 pos2);

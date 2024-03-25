@@ -53,7 +53,10 @@ class RenderSystem {
 		textures_path("background.png"),
 		textures_path("background2.png"),
 		textures_path("exit.png"),
-	};
+
+		textures_path("menu_bg.png"),
+			 };
+
 
 	std::array<GLuint, effect_count> effects;
 	// Make sure these paths remain in sync with the associated enumerators.
@@ -71,6 +74,13 @@ class RenderSystem {
 	std::array<GLuint, geometry_count> vertex_buffers;
 	std::array<GLuint, geometry_count> index_buffers;
 	std::array<Mesh, geometry_count> meshes;
+
+	GLuint vao;
+
+	std::map<char, Character> m_ftCharacters;
+	GLuint m_font_shaderProgram;
+	GLuint m_font_VAO;
+	GLuint m_font_VBO;
 
 public:
 	// Initialize the window
@@ -100,8 +110,9 @@ public:
 
 	mat3 createProjectionMatrix();
 
-	void renderText(const std::string& text, float x, float y, float scale, const glm::vec3& color, const glm::mat4& trans);
-	bool fontInit(GLFWwindow& window, const std::string& font_filename, unsigned int font_default_size);
+	bool fontInit(GLFWwindow* window, const std::string& font_filename, unsigned int font_default_size);
+	void renderText(const std::string& text, float x, float y, float scale, const glm::vec3& color,
+		const glm::mat4& trans);
 private:
 	// Internal drawing functions for each entity type
 	void drawTexturedMesh(Entity entity, const mat3& projection);
@@ -115,12 +126,6 @@ private:
 	GLuint frame_buffer;
 	GLuint off_screen_render_buffer_color;
 	GLuint off_screen_render_buffer_depth;
-
-	// fonts
-	std::map<char, Character> m_ftCharacters;
-	GLuint m_font_shaderProgram;
-	GLuint m_font_VAO;
-	GLuint m_font_VBO;
 
 	Entity screen_state_entity;
 };

@@ -7,6 +7,8 @@
 // Player component
 struct Player
 {
+	bool standing = 0;
+	bool against_wall = 0;
 };
 
 struct Deadly
@@ -61,6 +63,15 @@ struct Bullet
 
 struct Key
 {
+};
+
+struct Text {
+	std::string text = "";
+	vec3 color = { 0.0f, 0.0f, 255.0f };
+};
+
+struct MenuElement {
+	MENU_FUNC func = MENU_FUNC::ALL;
 };
 
 // All data relevant to the shape and motion of entities
@@ -227,7 +238,8 @@ enum class TEXTURE_ASSET_ID
 	BACKGROUND = CABINET + 1,
 	BACKGROUND2 = BACKGROUND + 1,
 	BARREL = BACKGROUND2 + 1,
-	TEXTURE_COUNT = BARREL + 1
+  MENU = BARREL + 1,
+	TEXTURE_COUNT = MENU + 1
 
 };
 const int texture_count = (int)TEXTURE_ASSET_ID::TEXTURE_COUNT;

@@ -11,7 +11,8 @@
 #include "world_system.hpp"
 
 #include "ai_system.hpp"
-
+#include <windows.h>
+#include <iostream>
 
 using Clock = std::chrono::high_resolution_clock;
 
@@ -134,6 +135,11 @@ int main()
 
 	// initialize the main systems
 	renderer.init(window);
+
+	// initialize font
+	std::string font_filename = "..//..//..//data/fonts/Kenney_Future.ttf";
+	unsigned int font_default_size = 48;
+	renderer.fontInit(window, font_filename, font_default_size);
 	world.init(&renderer);
 
 	int level = world.currentLevel;
@@ -143,10 +149,6 @@ int main()
 	//graph.saveGraph(GRAPH_PATH + "level1.txt");
 	//graph.loadFromFile(GRAPH_PATH + "level1.txt");
 	
-
-	std::string font_filename = "../data/fonts/Kenney_Pixel_Square.ttf";
-	unsigned int font_default_size = 48;
-	// renderer.fontInit(*window, font_filename, font_default_size);
 
 	// variable timestep loop
 	auto t = Clock::now();
@@ -165,13 +167,21 @@ int main()
 			createGraph(level);
 		}
 
+
 		world.step(elapsed_ms);
-		physics.step(elapsed_ms);
-		ai.step(elapsed_ms);
+		if (!world.is_paused()) {
+			physics.step(elapsed_ms);
+			ai.step(elapsed_ms);
+		}
 		world.handle_collisions();
 		
 		renderer.draw();
-
+		float ms_to_sleep = 1000 /60 - elapsed_ms;
+		//std::cout << ms_to_sleep << std::endl;
+		if (ms_to_sleep > 0) {
+			Sleep((ms_to_sleep));
+		}
+		
 		// renderer.renderText("test", -0.6f, 0.0f, 1.0f, glm::vec3(1.0f, 1.0f, 1.0f), trans);
 
 	}
