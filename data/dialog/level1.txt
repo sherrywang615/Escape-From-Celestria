@@ -1,8 +1,9 @@
 :1
 @J
 What happened?
-Where's my daughter?
-I need to find her.
+OMG!!!  Zombies!
+Where's my daughter？
+I need to find her！
 
 :2
 @1
@@ -11,6 +12,7 @@ Hello
 What happened?
 @1
 Zombies are coming!
-Go to safe zone!
+They have escaped from the lab
+Go to the safe zone!
 @J
 Thanks

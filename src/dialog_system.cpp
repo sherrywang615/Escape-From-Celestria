@@ -83,7 +83,7 @@ void DialogSystem::createSpeechPoint(unsigned int speech_point)
 	std::vector<std::pair<int, std::string>> dialog = dialog_data[speech_point];
 	for (std::pair<int, std::string> sentence : dialog)
 	{
-		createSpeech(findEntityById(sentence.first), sentence.second, 1500.0f);
+		createSpeech(findEntityById(sentence.first), sentence.second, 2000.0f);
 	}
 }
 
@@ -106,6 +106,7 @@ void DialogSystem::createSpeech(Entity speaker, std::string text, float time) {
 		sentence.second = text;
 		dialog.texts.push(sentence);
 		dialog.timer.push(time);
+		dialog.counter_ms = time;
 	}
 }
 

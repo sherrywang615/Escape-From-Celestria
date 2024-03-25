@@ -24,7 +24,7 @@ PPPPPPPPPPPPPPPPPPPPPP
    
    
                                                                                                      
-                                           C                                                         
+                                           C                                S2   N1                      
        L                                                                                              
                                                                                                    
                                                                                                      
@@ -51,8 +51,8 @@ PPPPPPPPPPPPP                                                          F
                                                                                                      
                                                                                                            
                                                                                                         
-                                                                 
-                                                                                                     
+                                                                 N3
+                                                             S1                                        
                                                                                                      
                                                                                                        
                                          PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP                                                            
@@ -63,7 +63,7 @@ PPPPPPPPPPPPP                                                          F
                                                                                                      
        J                                                                                              
                                                                              Z            B                            
-                                             C                                                        
+           S3                                  C                                                        
                                                                                                                               
                                                                                                      
                           
