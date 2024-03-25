@@ -590,9 +590,9 @@ Entity createNPC(RenderSystem *renderer, vec2 position, unsigned int index)
 	
 
 	// Create an (empty) Bug component to be able to refer to all bug
-	NonPlayerCharacter npc = registry.nonPlayerCharacter.emplace(entity);
-	registry.gravities.emplace(entity);
+	NonPlayerCharacter& npc = registry.nonPlayerCharacter.emplace(entity);
 	npc.id = index;
+	registry.gravities.emplace(entity);
 	if (index == 1)
 	{
 		registry.renderRequests.insert(
@@ -617,7 +617,7 @@ Entity createNPC(RenderSystem *renderer, vec2 position, unsigned int index)
 		 EFFECT_ASSET_ID::TEXTURED,
 		 GEOMETRY_BUFFER_ID::SPRITE});
 	}
-	else
+	else if (index == 4)
 	{
 		registry.renderRequests.insert(
 		entity,
