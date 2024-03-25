@@ -81,6 +81,37 @@ void createVerticesForLevel3() {
 	graph.addJumpEdge(fourth_floor_right, fifth_floor_rl);
 }
 
+void createVerticesForLevel4() {
+	Vertex* first_floor_jump = graph.getVertex(170, (int)700 - offset);
+	Vertex* second_floor_left = graph.getVertex(250, (int)570 - offset);
+	graph.addJumpEdge(first_floor_jump, second_floor_left);
+	Vertex* second_floor_right = graph.getVertex(800, (int)570 - offset);
+	Vertex* first_floor_right = graph.getVertex(870, (int)700 - offset);
+	graph.addJumpEdge(first_floor_right, second_floor_right);
+	Vertex* second_plat_left = graph.getVertex(140, (int)480 - offset);
+	graph.addJumpEdge(second_floor_left, second_plat_left);
+	Vertex* second_plat_right = graph.getVertex(900, (int)480 - offset);
+	graph.addJumpEdge(second_floor_right, second_plat_right);
+	Vertex* third_floor_right = graph.getVertex(790, (int)380 - offset);
+	graph.addJumpEdge(second_plat_right, third_floor_right);
+	Vertex* third_floor_right_left = graph.getVertex(660, (int)380 - offset);
+	Vertex* fourth_floor_right = graph.getVertex(600, (int)300 - offset);
+	graph.addJumpEdge(third_floor_right_left, fourth_floor_right);
+	Vertex* third_floor_left_right = graph.getVertex(390, (int)380 - offset);
+	Vertex* fourth_floor_left = graph.getVertex(420, (int)400 - offset);
+	graph.addJumpEdge(third_floor_left_right, fourth_floor_left);
+	Vertex* third_floor_left_left = graph.getVertex(230, (int)380 - offset);
+	Vertex* fifth_floor_left = graph.getVertex(140, (int)270 - offset);
+	graph.addJumpEdge(third_floor_left_left, fifth_floor_left);
+	Vertex* fifth_floor_right = graph.getVertex(890, (int)270 - offset);
+	graph.addJumpEdge(third_floor_right, fifth_floor_right);
+	Vertex* sixth_floor_left = graph.getVertex(250, (int)170 - offset);
+	graph.addJumpEdge(fifth_floor_left, sixth_floor_left);
+	Vertex* sixth_floor_right = graph.getVertex(760, (int)170 - offset);
+	graph.addJumpEdge(fifth_floor_right, sixth_floor_right);
+
+}
+
 void createGraph(int level) {
 	//graph = Graph();
 	if (level == 1) {
@@ -91,5 +122,8 @@ void createGraph(int level) {
 	}
 	else if (level == 3) {
 		createVerticesForLevel3();
+	}
+	else if (level == 4) {
+		//createVerticesForLevel4();
 	}
 }
