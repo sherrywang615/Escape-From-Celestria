@@ -1,7 +1,7 @@
 // Header
 #include "world_system.hpp"
 #include "world_init.hpp"
-#include "menu.cpp"
+#include "menu.hpp"
 #include "world_helper.hpp"
 
 // stlib
@@ -57,7 +57,7 @@ WorldSystem::WorldSystem()
 WorldSystem::~WorldSystem()
 {
 	// Destroy music components
-	/*if (bg1_music != nullptr)
+	if (bg1_music != nullptr)
 		Mix_FreeMusic(bg1_music);
 	if (bg2_music != nullptr)
 		Mix_FreeMusic(bg2_music);
@@ -73,7 +73,7 @@ WorldSystem::~WorldSystem()
 		Mix_FreeChunk(shoot_music);
 	if (trush_music != nullptr)
 		Mix_FreeChunk(trush_music);
-	Mix_CloseAudio();*/
+	Mix_CloseAudio();
 
 	// Destroy all created components
 	registry.clear_all_components();
@@ -151,74 +151,73 @@ GLFWwindow *WorldSystem::create_window()
 	//	return nullptr;
 	//}
 
-	//if (SDL_Init(SDL_INIT_AUDIO) < 0)
-	//{
-	//	fprintf(stderr, "Failed to initialize SDL Audio");
-	//	return nullptr;
-	//}
-	//if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) == -1)
-	//{
-	//	fprintf(stderr, "Failed to open audio device");
-	//	return nullptr;
-	//}
+	if (SDL_Init(SDL_INIT_AUDIO) < 0)
+	{
+		fprintf(stderr, "Failed to initialize SDL Audio");
+		return nullptr;
+	}
+	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) == -1)
+	{
+		fprintf(stderr, "Failed to open audio device");
+		return nullptr;
+	}
 
-	//bg1_music = Mix_LoadMUS(audio_path("bg1.mp3").c_str());
-	//bg1_music = Mix_LoadMUS("E:\\CPSC427\\M3\\Team7\\data\\audio\\bg1.mp3");
-	//if (bg1_music == nullptr)
-	//{
-	//	fprintf(stderr, "Failed to load sounds %s make sure the data directory is present",
-	//			audio_path("bg1.mp3").c_str());
-	//	return nullptr;
-	//}
-	//bg2_music = Mix_LoadMUS(audio_path("bg2.mp3").c_str());
-	//if (bg2_music == nullptr)
-	//{
-	//	fprintf(stderr, "Failed to load sounds %s make sure the data directory is present",
-	//			audio_path("bg2.mp3").c_str());
-	//	return nullptr;
-	//}
-	//bg3_music = Mix_LoadMUS(audio_path("bg3.mp3").c_str());
-	//if (bg3_music == nullptr)
-	//{
-	//	fprintf(stderr, "Failed to load sounds %s make sure the data directory is present",
-	//			audio_path("bg3.mp3").c_str());
-	//	return nullptr;
-	//}
-	//bg4_music = Mix_LoadMUS(audio_path("bg4.mp3").c_str());
-	//if (bg4_music == nullptr)
-	//{
-	//	fprintf(stderr, "Failed to load sounds %s make sure the data directory is present",
-	//			audio_path("bg4.mp3").c_str());
-	//	return nullptr;
-	//}
-	//doorOpen_music = Mix_LoadWAV(audio_path("doorOpen.wav").c_str());
-	//if (doorOpen_music == nullptr)
-	//{
-	//	fprintf(stderr, "Failed to load sounds %s make sure the data directory is present",
-	//			audio_path("doorOpen.wav").c_str());
-	//	return nullptr;
-	//}
-	//eat_music = Mix_LoadWAV(audio_path("eat.mp3").c_str());
-	//if (eat_music == nullptr)
-	//{
-	//	fprintf(stderr, "Failed to load sounds %s make sure the data directory is present",
-	//			audio_path("eat.mp3").c_str());
-	//	return nullptr;
-	//}
-	//shoot_music = Mix_LoadWAV(audio_path("shoot.wav").c_str());
-	//if (shoot_music == nullptr)
-	//{
-	//	fprintf(stderr, "Failed to load sounds %s make sure the data directory is present",
-	//			audio_path("shoot.wav").c_str());
-	//	return nullptr;
-	//}
-	//trush_music = Mix_LoadWAV(audio_path("trush.wav").c_str());
-	//if (trush_music == nullptr)
-	//{
-	//	fprintf(stderr, "Failed to load sounds %s make sure the data directory is present",
-	//			audio_path("trush.wav").c_str());
-	//	return nullptr;
-	//}
+	bg1_music = Mix_LoadMUS(audio_path("bg1.mp3").c_str());
+	if (bg1_music == nullptr)
+	{
+		fprintf(stderr, "Failed to load sounds %s make sure the data directory is present",
+				audio_path("bg1.mp3").c_str());
+		return nullptr;
+	}
+	bg2_music = Mix_LoadMUS(audio_path("bg2.mp3").c_str());
+	if (bg2_music == nullptr)
+	{
+		fprintf(stderr, "Failed to load sounds %s make sure the data directory is present",
+				audio_path("bg2.mp3").c_str());
+		return nullptr;
+	}
+	bg3_music = Mix_LoadMUS(audio_path("bg3.mp3").c_str());
+	if (bg3_music == nullptr)
+	{
+		fprintf(stderr, "Failed to load sounds %s make sure the data directory is present",
+				audio_path("bg3.mp3").c_str());
+		return nullptr;
+	}
+	bg4_music = Mix_LoadMUS(audio_path("bg4.mp3").c_str());
+	if (bg4_music == nullptr)
+	{
+		fprintf(stderr, "Failed to load sounds %s make sure the data directory is present",
+				audio_path("bg4.mp3").c_str());
+		return nullptr;
+	}
+	doorOpen_music = Mix_LoadWAV(audio_path("doorOpen.wav").c_str());
+	if (doorOpen_music == nullptr)
+	{
+		fprintf(stderr, "Failed to load sounds %s make sure the data directory is present",
+				audio_path("doorOpen.wav").c_str());
+		return nullptr;
+	}
+	eat_music = Mix_LoadWAV(audio_path("eat.mp3").c_str());
+	if (eat_music == nullptr)
+	{
+		fprintf(stderr, "Failed to load sounds %s make sure the data directory is present",
+				audio_path("eat.mp3").c_str());
+		return nullptr;
+	}
+	shoot_music = Mix_LoadWAV(audio_path("shoot.wav").c_str());
+	if (shoot_music == nullptr)
+	{
+		fprintf(stderr, "Failed to load sounds %s make sure the data directory is present",
+				audio_path("shoot.wav").c_str());
+		return nullptr;
+	}
+	trush_music = Mix_LoadWAV(audio_path("trush.wav").c_str());
+	if (trush_music == nullptr)
+	{
+		fprintf(stderr, "Failed to load sounds %s make sure the data directory is present",
+				audio_path("trush.wav").c_str());
+		return nullptr;
+	}
 
 	return window;
 }
