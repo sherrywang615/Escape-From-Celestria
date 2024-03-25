@@ -85,31 +85,22 @@ std::vector<Vertex*> Graph::getVertices() {
 	return vertices;
 }
 
-void Graph::saveGraph(std::string path) {
-	std::fstream file;
-	file.open(path);
-
-	if (file.is_open())
-	{
-		for (Vertex* vertex : vertices)
-		{
-			file << vertex->id << ";";
-			for (std::pair<Vertex*, ACTION> adj : vertex->adjs) {
-				file << adj.first->id << " ";
-				file << static_cast<int>(adj.second) << ":";
-			}
-			file << ";";
-			file << std::to_string(vertex->x) << " ";
-			file << std::to_string(vertex->y) << "\n";
+Vertex* Graph::getVertex(int vx, int vy) {
+	for (Vertex* vertex : vertices) {
+		// we use int to simplify
+		int estimated_x = vertex->x;
+		int estimated_y = vertex->y;
+		if (estimated_x == vx && estimated_y == vy) {
+			return vertex;
 		}
 	}
-	else
-	{
-		printf("Cannot save because cannot open saving file\n");
-	}
-	file.close();
+	return nullptr;
 }
 
+void Graph::addJumpEdge(Vertex* jump, Vertex* land) {
+	graph.addEdge(jump, land, ACTION::JUMP);
+	graph.addEdge(land, jump, ACTION::WALK);
+}
 
 extern std::queue<Vertex*> prev_path = {};
 

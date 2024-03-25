@@ -1,6 +1,7 @@
 // Header
 #include "world_system.hpp"
 #include "world_init.hpp"
+#include "menu.cpp"
 #include "world_helper.hpp"
 
 // stlib
@@ -56,7 +57,7 @@ WorldSystem::WorldSystem()
 WorldSystem::~WorldSystem()
 {
 	// Destroy music components
-	if (bg1_music != nullptr)
+	/*if (bg1_music != nullptr)
 		Mix_FreeMusic(bg1_music);
 	if (bg2_music != nullptr)
 		Mix_FreeMusic(bg2_music);
@@ -72,7 +73,7 @@ WorldSystem::~WorldSystem()
 		Mix_FreeChunk(shoot_music);
 	if (trush_music != nullptr)
 		Mix_FreeChunk(trush_music);
-	Mix_CloseAudio();
+	Mix_CloseAudio();*/
 
 	// Destroy all created components
 	registry.clear_all_components();
@@ -150,73 +151,74 @@ GLFWwindow *WorldSystem::create_window()
 	//	return nullptr;
 	//}
 
-	if (SDL_Init(SDL_INIT_AUDIO) < 0)
-	{
-		fprintf(stderr, "Failed to initialize SDL Audio");
-		return nullptr;
-	}
-	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) == -1)
-	{
-		fprintf(stderr, "Failed to open audio device");
-		return nullptr;
-	}
+	//if (SDL_Init(SDL_INIT_AUDIO) < 0)
+	//{
+	//	fprintf(stderr, "Failed to initialize SDL Audio");
+	//	return nullptr;
+	//}
+	//if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) == -1)
+	//{
+	//	fprintf(stderr, "Failed to open audio device");
+	//	return nullptr;
+	//}
 
-	bg1_music = Mix_LoadMUS(audio_path("bg1.mp3").c_str());
-	if (bg1_music == nullptr)
-	{
-		fprintf(stderr, "Failed to load sounds %s make sure the data directory is present",
-				audio_path("bg1.mp3").c_str());
-		return nullptr;
-	}
-	bg2_music = Mix_LoadMUS(audio_path("bg2.mp3").c_str());
-	if (bg2_music == nullptr)
-	{
-		fprintf(stderr, "Failed to load sounds %s make sure the data directory is present",
-				audio_path("bg2.mp3").c_str());
-		return nullptr;
-	}
-	bg3_music = Mix_LoadMUS(audio_path("bg3.mp3").c_str());
-	if (bg3_music == nullptr)
-	{
-		fprintf(stderr, "Failed to load sounds %s make sure the data directory is present",
-				audio_path("bg3.mp3").c_str());
-		return nullptr;
-	}
-	bg4_music = Mix_LoadMUS(audio_path("bg4.mp3").c_str());
-	if (bg4_music == nullptr)
-	{
-		fprintf(stderr, "Failed to load sounds %s make sure the data directory is present",
-				audio_path("bg4.mp3").c_str());
-		return nullptr;
-	}
-	doorOpen_music = Mix_LoadWAV(audio_path("doorOpen.wav").c_str());
-	if (doorOpen_music == nullptr)
-	{
-		fprintf(stderr, "Failed to load sounds %s make sure the data directory is present",
-				audio_path("doorOpen.wav").c_str());
-		return nullptr;
-	}
-	eat_music = Mix_LoadWAV(audio_path("eat.mp3").c_str());
-	if (eat_music == nullptr)
-	{
-		fprintf(stderr, "Failed to load sounds %s make sure the data directory is present",
-				audio_path("eat.mp3").c_str());
-		return nullptr;
-	}
-	shoot_music = Mix_LoadWAV(audio_path("shoot.wav").c_str());
-	if (shoot_music == nullptr)
-	{
-		fprintf(stderr, "Failed to load sounds %s make sure the data directory is present",
-				audio_path("shoot.wav").c_str());
-		return nullptr;
-	}
-	trush_music = Mix_LoadWAV(audio_path("trush.wav").c_str());
-	if (trush_music == nullptr)
-	{
-		fprintf(stderr, "Failed to load sounds %s make sure the data directory is present",
-				audio_path("trush.wav").c_str());
-		return nullptr;
-	}
+	//bg1_music = Mix_LoadMUS(audio_path("bg1.mp3").c_str());
+	//bg1_music = Mix_LoadMUS("E:\\CPSC427\\M3\\Team7\\data\\audio\\bg1.mp3");
+	//if (bg1_music == nullptr)
+	//{
+	//	fprintf(stderr, "Failed to load sounds %s make sure the data directory is present",
+	//			audio_path("bg1.mp3").c_str());
+	//	return nullptr;
+	//}
+	//bg2_music = Mix_LoadMUS(audio_path("bg2.mp3").c_str());
+	//if (bg2_music == nullptr)
+	//{
+	//	fprintf(stderr, "Failed to load sounds %s make sure the data directory is present",
+	//			audio_path("bg2.mp3").c_str());
+	//	return nullptr;
+	//}
+	//bg3_music = Mix_LoadMUS(audio_path("bg3.mp3").c_str());
+	//if (bg3_music == nullptr)
+	//{
+	//	fprintf(stderr, "Failed to load sounds %s make sure the data directory is present",
+	//			audio_path("bg3.mp3").c_str());
+	//	return nullptr;
+	//}
+	//bg4_music = Mix_LoadMUS(audio_path("bg4.mp3").c_str());
+	//if (bg4_music == nullptr)
+	//{
+	//	fprintf(stderr, "Failed to load sounds %s make sure the data directory is present",
+	//			audio_path("bg4.mp3").c_str());
+	//	return nullptr;
+	//}
+	//doorOpen_music = Mix_LoadWAV(audio_path("doorOpen.wav").c_str());
+	//if (doorOpen_music == nullptr)
+	//{
+	//	fprintf(stderr, "Failed to load sounds %s make sure the data directory is present",
+	//			audio_path("doorOpen.wav").c_str());
+	//	return nullptr;
+	//}
+	//eat_music = Mix_LoadWAV(audio_path("eat.mp3").c_str());
+	//if (eat_music == nullptr)
+	//{
+	//	fprintf(stderr, "Failed to load sounds %s make sure the data directory is present",
+	//			audio_path("eat.mp3").c_str());
+	//	return nullptr;
+	//}
+	//shoot_music = Mix_LoadWAV(audio_path("shoot.wav").c_str());
+	//if (shoot_music == nullptr)
+	//{
+	//	fprintf(stderr, "Failed to load sounds %s make sure the data directory is present",
+	//			audio_path("shoot.wav").c_str());
+	//	return nullptr;
+	//}
+	//trush_music = Mix_LoadWAV(audio_path("trush.wav").c_str());
+	//if (trush_music == nullptr)
+	//{
+	//	fprintf(stderr, "Failed to load sounds %s make sure the data directory is present",
+	//			audio_path("trush.wav").c_str());
+	//	return nullptr;
+	//}
 
 	return window;
 }
@@ -533,6 +535,7 @@ bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map)
 	//Create all other entities except for background
 	for (int i = 0; i < map.size(); i++)
 	{
+		Vertex* latest = new Vertex(0, 0);
 		for (int j = 0; j < map[i].size(); j++)
 		{
 			float x = j * 10;
@@ -550,6 +553,15 @@ bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map)
 			}
 			else if (tok == 'P')
 			{
+				//Vertex* newV = new Vertex(x, y - (ZOMBIE_BB_HEIGHT * 0.6)/2);
+				Vertex* newV = new Vertex(x, y - PLATFORM_HEIGHT / 2 - (ZOMBIE_BB_HEIGHT * 0.6)/2);
+
+				graph.addVertex(newV);
+				if (findDistanceBetween({ newV->x, newV->y }, { latest->x, latest->y }) <= 10) {
+					graph.addEdge(newV, latest, ACTION::WALK);
+					graph.addEdge(latest, newV, ACTION::WALK);
+				}
+				latest = newV;
 				createPlatform(renderer, {x, y});
 			}
 			else if (tok == 'Z')
@@ -611,7 +623,7 @@ bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map)
 	// Recreate Josh so that Josh appears at the very front
 	player_josh = createJosh(renderer, {josh_x, josh_y});
 	registry.colors.insert(player_josh, {1, 0.8f, 0.8f});
-
+	createGraph(currentLevel);
 	return true;
 }
 
@@ -627,7 +639,7 @@ void WorldSystem::restart_game()
 	bullets_count = 0;
 
 	// Reset current level
-	currentLevel = 1;
+	//currentLevel = 1;
 
 	// Remove all entities that we created
 	// All that have a motion, we could also iterate over all bug, eagles, ... but that would be more cumbersome
@@ -643,7 +655,7 @@ void WorldSystem::restart_game()
 
 	Mix_PlayMusic(bg1_music, -1);
 
-	auto map = loadMap(map_path() + "level1.txt");
+	auto map = loadMap(map_path() + "level" + std::to_string(currentLevel) + ".txt");
 	createEntityBaseOnMap(map);
 
 	createHelpSign(renderer, vec2(window_width_px - 70, window_height_px - 700));
@@ -743,7 +755,7 @@ void WorldSystem::handle_collisions()
 				if (registry.foods.has(entity_other))
 				{
 					// chew, add hp if hp is not full
-					Mix_PlayChannel(-1, eat_music, 0);
+					//Mix_PlayChannel(-1, eat_music, 0);
 					registry.remove_all_components_of(entity_other);
 					++hp_count;
 					// std::cout << "hp count: " << hp_count << std::endl;
@@ -1133,7 +1145,7 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 	}
 
 	// Debugging
-	if (key == GLFW_KEY_D)
+	if (key == GLFW_KEY_K)
 	{
 		if (action == GLFW_RELEASE)
 			debugging.in_debug_mode = false;
