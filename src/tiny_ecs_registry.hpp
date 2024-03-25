@@ -40,6 +40,10 @@ public:
 	ComponentContainer<ShootBullet> shootBullets;
 	ComponentContainer<Text> texts;
 	ComponentContainer<MenuElement> menus;
+	ComponentContainer<NonPlayerCharacter> nonPlayerCharacter;
+	ComponentContainer<Speech> speech;
+	ComponentContainer<Timer> timer;
+	ComponentContainer<SpeechPoint> speechPoint;
 
 	// constructor that adds all containers for looping over them
 	// IMPORTANT: Don't forget to add any newly added containers!
@@ -74,6 +78,10 @@ public:
 		registry_list.push_back(&shootBullets);
 		registry_list.push_back(&texts);
 		registry_list.push_back(&menus);
+		registry_list.push_back(&nonPlayerCharacter);
+		registry_list.push_back(&speech);
+		registry_list.push_back(&timer);
+		registry_list.push_back(&speechPoint);
 	}
 
 	void clear_all_components()

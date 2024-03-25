@@ -12,6 +12,7 @@
 #include <SDL_mixer.h>
 
 #include "render_system.hpp"
+#include "dialog_system.hpp"
 
 // Container for all our entities and game logic. Individual rendering / update is
 // deferred to the relative update() methods
@@ -31,7 +32,7 @@ public:
 	GLFWwindow *create_window();
 
 	// starts the game
-	void init(RenderSystem *renderer);
+	void init(RenderSystem *renderer, DialogSystem *dialog);
 
 	// Releases all associated resources
 	~WorldSystem();
@@ -84,6 +85,7 @@ private:
 	
 	// Game state
 	RenderSystem *renderer;
+	DialogSystem *dialog;
 	float current_speed;
 	float next_eagle_spawn;
 	float next_bug_spawn;
@@ -94,9 +96,14 @@ private:
 	unsigned int create_bullet_distance = 30;
 
 	// music references
-	Mix_Music *background_music;
-	Mix_Chunk *chicken_dead_sound;
-	Mix_Chunk *chicken_eat_sound;
+	Mix_Music *bg1_music;
+	Mix_Music *bg2_music;
+	Mix_Music *bg3_music;
+	Mix_Music *bg4_music;
+	Mix_Chunk *doorOpen_music;
+	Mix_Chunk *eat_music;
+	Mix_Chunk *shoot_music;
+	Mix_Chunk *trush_music;
 
 	// C++ random number generator
 	std::default_random_engine rng;

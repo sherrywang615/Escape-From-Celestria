@@ -178,6 +178,23 @@ void RenderSystem::drawToScreen()
 	gl_has_errors();
 }
 
+void RenderSystem::renderDialog(Speech dialog) {
+	std::pair<Entity, std::string>& text= dialog.texts.front();
+	Motion& motion = registry.motions.get(text.first);
+	float total_length = 0;
+
+	for (std::string::const_iterator it = text.second.begin(); it != text.second.end(); it++)
+	{
+		Character ch = m_ftCharacters[*it];
+		total_length += (ch.Advance >> 6) * 0.4f + ch.Bearing.x * 0.4f;
+	}
+
+	float x = motion.position.x - total_length / 2;
+	float y = window_height_px - motion.position.y + 40;
+
+	renderText(text.second, x, y, 0.4f, vec3(255, 0, 0), mat4(1.0f));
+}
+
 void RenderSystem::renderText(const std::string& text, float x, float y,
 	float scale, const glm::vec3& color,
 	const glm::mat4& trans) {
@@ -272,9 +289,8 @@ void RenderSystem::draw()
 							  // sprites back to front
 	gl_has_errors();
 	mat3 projection_2D = createProjectionMatrix();
+
 	// Draw all textured meshes that have a position and size component
-	glGenVertexArrays(1, &vao);
-	glBindVertexArray(vao);
 	for (Entity entity : registry.renderRequests.entities)
 	{
 
@@ -301,6 +317,12 @@ void RenderSystem::draw()
 
 	// Truely render to the screen
 	drawToScreen();
+
+	for (Entity entity: registry.speech.entities)
+	{
+		Speech& dialog = registry.speech.get(entity);
+		renderDialog(dialog);
+	}
 
 	// flicker-free display with a double buffer
 	glfwSwapBuffers(window);

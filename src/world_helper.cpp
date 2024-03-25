@@ -1,7 +1,5 @@
 #pragma once
-#include "world_init.hpp"
-#include "common.hpp"
-#include "tiny_ecs_registry.hpp"
+#include "world_helper.hpp"
 
 const float LINE_SPACE = 130;
 const vec2 RESUME_POS = { window_width_px / 2 - 80, window_height_px / 2 + 200 };
@@ -9,9 +7,8 @@ const vec2 SAVE_POS = { window_width_px / 2 - 80, RESUME_POS.y - LINE_SPACE };
 const vec2 LOAD_POS = { window_width_px / 2 - 80, SAVE_POS.y - LINE_SPACE };
 const vec2 QUIT_POS = { window_width_px / 2 - 80, LOAD_POS.y - LINE_SPACE };
 
-Entity resume, save, load, quit;
-
 void renderPauseMenu() {
+	Entity resume, save, load, quit;
 	std::vector<Entity> elements = {};
 	Entity background = createMenuBackground({ window_width_px / 2, window_height_px / 2 }, { 300, 600 });
 	auto& menu1  = registry.menus.emplace(background);
@@ -156,7 +153,7 @@ bool handleButtonEvents(Entity entity, RenderSystem* renderer, GLFWwindow* windo
 	}
 	else if (me.func == MENU_FUNC::SAVE) {
 		saveGame();
-		printf("Game saved to %s\n", SAVE_PATH);
+		printf("Game saved to %s\n", SAVE_PATH.c_str());
 		return true;
 	}
 	else if (me.func == MENU_FUNC::LOAD) {

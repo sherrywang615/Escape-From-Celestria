@@ -22,8 +22,8 @@ PPPPPPPP
 
 
 
-                            B                                                                  Z
-
+                        B       N2                                                        Z
+                                S2
 
 
 
@@ -33,10 +33,10 @@ PPPPPPPP
 
 
                   Q
+                                                        
 
-
-
-
+                                                        
+  
                                                       PPPPPPPPPPPP                                     
 
 PPPPPPPP                                                                                                                                       
@@ -62,7 +62,7 @@ PPPPPPPP
 
                                                                                        Z                                          
                                                                                                      
-                                               B            B                                                                                            
+                            S1                   B            B                                                                                            
                                                                                                      
                                                                                                      
                                                                        

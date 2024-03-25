@@ -1,7 +1,7 @@
 // Header
 #include "world_system.hpp"
 #include "world_init.hpp"
-#include "world_helper.cpp"
+#include "world_helper.hpp"
 
 // stlib
 #include <cassert>
@@ -54,12 +54,22 @@ WorldSystem::WorldSystem()
 WorldSystem::~WorldSystem()
 {
 	// Destroy music components
-	// if (background_music != nullptr)
-	//	Mix_FreeMusic(background_music);
-	// if (chicken_dead_sound != nullptr)
-	//	Mix_FreeChunk(chicken_dead_sound);
-	// if (chicken_eat_sound != nullptr)
-	//	Mix_FreeChunk(chicken_eat_sound);
+	if (bg1_music != nullptr)
+		Mix_FreeMusic(bg1_music);
+	if (bg2_music != nullptr)
+		Mix_FreeMusic(bg2_music);
+	if (bg3_music != nullptr)
+		Mix_FreeMusic(bg3_music);
+	if (bg4_music != nullptr)
+		Mix_FreeMusic(bg4_music);
+	if (doorOpen_music != nullptr)
+		Mix_FreeChunk(doorOpen_music);
+	if (eat_music != nullptr)
+		Mix_FreeChunk(eat_music);
+	if (shoot_music != nullptr)
+		Mix_FreeChunk(shoot_music);
+	if (trush_music != nullptr)
+		Mix_FreeChunk(trush_music);
 	Mix_CloseAudio();
 
 	// Destroy all created components
@@ -138,25 +148,81 @@ GLFWwindow *WorldSystem::create_window()
 	//	return nullptr;
 	//}
 
-	// background_music = Mix_LoadMUS(audio_path("music.wav").c_str());
-	// chicken_dead_sound = Mix_LoadWAV(audio_path("chicken_dead.wav").c_str());
-	// chicken_eat_sound = Mix_LoadWAV(audio_path("chicken_eat.wav").c_str());
+	if (SDL_Init(SDL_INIT_AUDIO) < 0)
+	{
+		fprintf(stderr, "Failed to initialize SDL Audio");
+		return nullptr;
+	}
+	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) == -1)
+	{
+		fprintf(stderr, "Failed to open audio device");
+		return nullptr;
+	}
 
-	// if (background_music == nullptr || chicken_dead_sound == nullptr || chicken_eat_sound == nullptr)
-	//{
-	//	fprintf(stderr, "Failed to load sounds\n %s\n %s\n %s\n make sure the data directory is present",
-	//			audio_path("music.wav").c_str(),
-	//			audio_path("chicken_dead.wav").c_str(),
-	//			audio_path("chicken_eat.wav").c_str());
-	//	return nullptr;
-	// }
+	bg1_music = Mix_LoadMUS(audio_path("bg1.mp3").c_str());
+	if (bg1_music == nullptr)
+	{
+		fprintf(stderr, "Failed to load sounds %s make sure the data directory is present",
+				audio_path("bg1.mp3").c_str());
+		return nullptr;
+	}
+	bg2_music = Mix_LoadMUS(audio_path("bg2.mp3").c_str());
+	if (bg2_music == nullptr)
+	{
+		fprintf(stderr, "Failed to load sounds %s make sure the data directory is present",
+				audio_path("bg2.mp3").c_str());
+		return nullptr;
+	}
+	bg3_music = Mix_LoadMUS(audio_path("bg3.mp3").c_str());
+	if (bg3_music == nullptr)
+	{
+		fprintf(stderr, "Failed to load sounds %s make sure the data directory is present",
+				audio_path("bg3.mp3").c_str());
+		return nullptr;
+	}
+	bg4_music = Mix_LoadMUS(audio_path("bg4.mp3").c_str());
+	if (bg4_music == nullptr)
+	{
+		fprintf(stderr, "Failed to load sounds %s make sure the data directory is present",
+				audio_path("bg4.mp3").c_str());
+		return nullptr;
+	}
+	doorOpen_music = Mix_LoadWAV(audio_path("doorOpen.wav").c_str());
+	if (doorOpen_music == nullptr)
+	{
+		fprintf(stderr, "Failed to load sounds %s make sure the data directory is present",
+				audio_path("doorOpen.wav").c_str());
+		return nullptr;
+	}
+	eat_music = Mix_LoadWAV(audio_path("eat.mp3").c_str());
+	if (eat_music == nullptr)
+	{
+		fprintf(stderr, "Failed to load sounds %s make sure the data directory is present",
+				audio_path("eat.mp3").c_str());
+		return nullptr;
+	}
+	shoot_music = Mix_LoadWAV(audio_path("shoot.wav").c_str());
+	if (shoot_music == nullptr)
+	{
+		fprintf(stderr, "Failed to load sounds %s make sure the data directory is present",
+				audio_path("shoot.wav").c_str());
+		return nullptr;
+	}
+	trush_music = Mix_LoadWAV(audio_path("trush.wav").c_str());
+	if (trush_music == nullptr)
+	{
+		fprintf(stderr, "Failed to load sounds %s make sure the data directory is present",
+				audio_path("trush.wav").c_str());
+		return nullptr;
+	}
 
 	return window;
 }
 
-void WorldSystem::init(RenderSystem *renderer_arg)
+void WorldSystem::init(RenderSystem *renderer_arg, DialogSystem *dialog_arg)
 {
 	this->renderer = renderer_arg;
+	this->dialog = dialog_arg;
 	// Playing background music indefinitely
 	// !!! TODO: Bring this back in M4
 	// Mix_PlayMusic(background_music, -1);
@@ -272,6 +338,28 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 	// Remove debug info from the last step
 	while (registry.debugComponents.entities.size() > 0)
 		registry.remove_all_components_of(registry.debugComponents.entities.back());
+
+	// Remove all time up entity
+	for (Entity entity : registry.speech.entities)
+	{
+		// progress timer
+		Speech& speech = registry.speech.get(entity);
+		speech.counter_ms -= elapsed_ms_since_last_update;
+		// remove entity if timer expired
+		if (speech.counter_ms < 0)
+		{
+			speech.texts.pop();
+			speech.timer.pop();
+			if (speech.texts.size() > 0) 
+			{
+				speech.counter_ms = speech.timer.front();
+			}
+			else
+			{
+				registry.speech.remove(entity);
+			}
+		}
+	}
 
 	if (renderInfo)
 	{
@@ -452,6 +540,20 @@ bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map)
 			{
 				createObject(renderer, {x, y});
 			}
+			else if (tok == 'N')
+			{
+				unsigned int id = 0;
+				if (map[i][++j] != ' ')
+				{
+					id = map[i][j] - '0';
+				}
+				createNPC(renderer, {x, y}, id);
+			}
+			else if (tok == 'S')
+			{
+				int index = map[i][++j] - '0';
+				createSpeechPoint(renderer, {x, y}, index);
+			}
 			else
 			{
 				printf("Map contains invalid character '%c' at [%d, %d].", tok, i, j);
@@ -491,11 +593,17 @@ void WorldSystem::restart_game()
 	// All that have a motion, we could also iterate over all bug, eagles, ... but that would be more cumbersome
 	while (registry.motions.entities.size() > 0)
 		registry.remove_all_components_of(registry.motions.entities.back());
+	
+	while (registry.speechPoint.entities.size() > 0)
+		registry.remove_all_components_of(registry.speechPoint.entities.back());
+	
 
 	// Debugging for memory/component leaks
 	registry.list_all_components();
 
-	auto map = loadMap(MAP_PATH + "level1.txt");
+	Mix_PlayMusic(bg1_music, -1);
+
+	auto map = loadMap(map_path() + "level1.txt");
 	createEntityBaseOnMap(map);
 
 	createHelpSign(renderer, vec2(window_width_px - 70, window_height_px - 700));
@@ -504,6 +612,8 @@ void WorldSystem::restart_game()
 	{
 		createHeart(renderer, vec2(30 + i * create_heart_distance, 20));
 	}
+
+	dialog->initializeDialog(dialog_path("level1.txt"));
 }
 
 // Compute collisions between entities
@@ -593,6 +703,7 @@ void WorldSystem::handle_collisions()
 				if (registry.foods.has(entity_other))
 				{
 					// chew, add hp if hp is not full
+					Mix_PlayChannel(-1, eat_music, 0);
 					registry.remove_all_components_of(entity_other);
 					++hp_count;
 					// std::cout << "hp count: " << hp_count << std::endl;
@@ -650,10 +761,21 @@ void WorldSystem::handle_collisions()
 					showKeyOnScreen(renderer, false);
 					if (isNearDoor(player_josh, entity_other))
 					{
+						Mix_PlayChannel(-1, doorOpen_music, 0);
 						currentLevel++;
 						render_new_level(currentLevel);
 						have_key = false;
 					}
+				}
+			}
+			else if (registry.speechPoint.has(entity_other))
+			{
+				SpeechPoint& speechPoint = registry.speechPoint.get(entity_other);
+				if (!speechPoint.isDone)
+				{
+					printf("speechPoint: %i\n", speechPoint.index);
+					dialog->createSpeechPoint(speechPoint.index);
+					speechPoint.isDone = true;
 				}
 			}
 		}
@@ -713,8 +835,21 @@ void WorldSystem::render_new_level(int level)
 {
 	while (registry.motions.entities.size() > 0)
 		registry.remove_all_components_of(registry.motions.entities.back());
-	auto map = loadMap(MAP_PATH + "level" + std::to_string(level) + ".txt");
+	auto map = loadMap(map_path() + "level" + std::to_string(level) + ".txt");
 	createEntityBaseOnMap(map);
+
+	if (level == 2)
+	{
+		Mix_PlayMusic(bg2_music, -1);
+	}
+	else if (level == 3)
+	{
+		Mix_PlayMusic(bg3_music, -1);
+	} 
+	else if (level == 4)
+	{
+		Mix_PlayMusic(bg4_music, -1);
+	}
 
 	for (int i = 0; i < hp_count; i++)
 	{
@@ -732,6 +867,9 @@ void WorldSystem::render_new_level(int level)
 		createBulletSmall(renderer, vec2(30 + i * create_bullet_distance, 20 + HEART_BB_HEIGHT));
 		// }
 	}
+
+	std::string dialog_file = dialog_path("level" + std::to_string(level) + ".txt");
+	dialog->initializeDialog(dialog_file);
 }
 
 // Should the game be over ?
@@ -814,6 +952,7 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 
 			if (bullets_count > 0)
 			{
+				Mix_PlayChannel(-1, shoot_music, 0);
 				if (registry.motions.get(player_josh).scale.x > 0)
 				{
 					Entity bullet = createBulletShoot(renderer, vec2(josh_pos.x + JOSH_BB_WIDTH / 2, josh_pos.y));
@@ -987,6 +1126,7 @@ bool WorldSystem::isNearDoor(Entity player, Entity door)
 void WorldSystem::hideJosh(RenderSystem *renderer)
 {
 	// remove josh from screen
+	Mix_PlayChannel(-1, trush_music, 0);
 	Entity entity = registry.players.entities[0];
 	registry.remove_all_components_of(entity);
 	leftKeyPressed = false;
