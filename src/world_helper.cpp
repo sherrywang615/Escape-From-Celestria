@@ -124,6 +124,6 @@ void createGraph(int level) {
 		createVerticesForLevel3();
 	}
 	else if (level == 4) {
-		//createVerticesForLevel4();
+		createVerticesForLevel4();
 	}
 }
