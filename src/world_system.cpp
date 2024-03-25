@@ -627,6 +627,14 @@ bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map)
 	return true;
 }
 
+Mix_Music* getMusicTrack(int level, const std::vector<Mix_Music*>& tracks) {
+    if (level >= 1 && level <= tracks.size()) {
+        return tracks[level - 1];
+    } else {
+        return nullptr;
+    }
+}
+
 // Reset the world state to its initial state
 void WorldSystem::restart_game()
 {
@@ -653,7 +661,14 @@ void WorldSystem::restart_game()
 	// Debugging for memory/component leaks
 	registry.list_all_components();
 
-	Mix_PlayMusic(bg1_music, -1);
+	std::vector<Mix_Music*> musicTracks = {bg1_music, bg2_music, bg3_music, bg4_music};
+	Mix_Music* currentMusicTrack = getMusicTrack(currentLevel, musicTracks);
+    
+	if (currentMusicTrack != nullptr) {
+        Mix_PlayMusic(currentMusicTrack, -1);
+    } else {
+        std::cerr << "Error: Music track for level " << currentLevel << " not found." << std::endl;
+    }
 
 	auto map = loadMap(map_path() + "level" + std::to_string(currentLevel) + ".txt");
 	createEntityBaseOnMap(map);
@@ -665,7 +680,7 @@ void WorldSystem::restart_game()
 		createHeart(renderer, vec2(30 + i * create_heart_distance, 20));
 	}
 
-	dialog->initializeDialog(dialog_path("level1.txt"));
+	dialog->initializeDialog(dialog_path("level"+ std::to_string(currentLevel) + ".txt"));
 }
 
 // Compute collisions between entities

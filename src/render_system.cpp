@@ -192,7 +192,7 @@ void RenderSystem::renderDialog(Speech dialog) {
 	float x = motion.position.x - total_length / 2;
 	float y = window_height_px - motion.position.y + 40;
 
-	renderText(text.second, x, y, 0.4f, vec3(224, 224, 224), mat4(1.0f));
+	renderText(text.second, x, y, 0.4f, vec3(255, 255, 0), mat4(1.0f));
 }
 
 void RenderSystem::renderText(const std::string& text, float x, float y,
