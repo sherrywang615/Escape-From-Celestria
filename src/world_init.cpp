@@ -413,7 +413,6 @@ Entity createHelpInfo(RenderSystem *renderer, vec2 position)
 	// Setting initial values, scale is negative to make it face the opposite way
 	motion.scale = vec2(700, 280);
 
-	registry.eatables.emplace(entity);
 	registry.renderRequests.insert(
 		entity,
 		{TEXTURE_ASSET_ID::HELP_INFO,
@@ -567,6 +566,91 @@ Entity createEgg(vec2 pos, vec2 size)
 		 EFFECT_ASSET_ID::EGG,
 		 GEOMETRY_BUFFER_ID::EGG});
 
+	return entity;
+}
+
+Entity createNPC(RenderSystem *renderer, vec2 position, unsigned int index)
+{
+	// Reserve en entity
+	auto entity = Entity();
+
+	// Store a reference to the potentially re-used mesh object
+	Mesh &mesh = renderer->getMesh(GEOMETRY_BUFFER_ID::SPRITE);
+	registry.meshPtrs.emplace(entity, &mesh);
+
+	// Initialize the position, scale, and physics components
+	auto &motion = registry.motions.emplace(entity);
+	motion.angle = 0.f;
+	motion.velocity = {0, 0};
+	motion.position = position;
+
+	// Setting initial values, scale is negative to make it face the opposite way
+	motion.scale = vec2({-NPC_BB_WIDTH, NPC_BB_HEIGHT});
+
+	
+
+	// Create an (empty) Bug component to be able to refer to all bug
+	NonPlayerCharacter npc = registry.nonPlayerCharacter.emplace(entity);
+	registry.gravities.emplace(entity);
+	npc.id = index;
+	if (index == 1)
+	{
+		registry.renderRequests.insert(
+		entity,
+		{TEXTURE_ASSET_ID::NPC1,
+		 EFFECT_ASSET_ID::TEXTURED,
+		 GEOMETRY_BUFFER_ID::SPRITE});
+	} 
+	else if (index == 2)
+	{
+		registry.renderRequests.insert(
+		entity,
+		{TEXTURE_ASSET_ID::NPC2,
+		 EFFECT_ASSET_ID::TEXTURED,
+		 GEOMETRY_BUFFER_ID::SPRITE});
+	}
+	else if (index == 3)
+	{
+		registry.renderRequests.insert(
+		entity,
+		{TEXTURE_ASSET_ID::NPC3,
+		 EFFECT_ASSET_ID::TEXTURED,
+		 GEOMETRY_BUFFER_ID::SPRITE});
+	}
+	else
+	{
+		registry.renderRequests.insert(
+		entity,
+		{TEXTURE_ASSET_ID::NPC4,
+		 EFFECT_ASSET_ID::TEXTURED,
+		 GEOMETRY_BUFFER_ID::SPRITE});
+	}
+
+
+	return entity;
+}
+
+Entity createSpeechPoint(RenderSystem *renderer, vec2 position, unsigned int index)
+{
+		// Reserve en entity
+	auto entity = Entity();
+
+	// Store a reference to the potentially re-used mesh object
+	Mesh &mesh = renderer->getMesh(GEOMETRY_BUFFER_ID::SPRITE);
+	registry.meshPtrs.emplace(entity, &mesh);
+
+	// Initialize the position, scale, and physics components
+	auto &motion = registry.motions.emplace(entity);
+	motion.angle = 0.f;
+	motion.velocity = {0, 0};
+	motion.position = position;
+
+	// Setting initial values, scale is negative to make it face the opposite way
+	motion.scale = vec2({-FOOD_BB_WIDTH, FOOD_BB_HEIGHT});
+
+	// Create an (empty) Bug component to be able to refer to all bug
+	SpeechPoint& speechPoint = registry.speechPoint.emplace(entity);
+	speechPoint.index = index;
 	return entity;
 }
 

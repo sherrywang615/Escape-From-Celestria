@@ -4,7 +4,7 @@
                                                                                                       
                                                                                                      
                                         O                                                             
-                                  K                                                                                     
+                                  K                        S2 N1                                                            
                                                                                                      
                                                                                                      
                                                                                                      
@@ -62,7 +62,7 @@ PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
                                                                                                      
                                                                                                      
                                                                  Z                                                    
-                      F                                                                               
+               S1      F                                                                               
                                         C                                                                                      
                                                                                                      
 

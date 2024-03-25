@@ -2,6 +2,7 @@
 #include "common.hpp"
 #include <vector>
 #include <unordered_map>
+#include <queue>
 #include "../ext/stb_image/stb_image.h"
 
 // Player component
@@ -189,6 +190,29 @@ struct ShootBullet
 {
 };
 
+struct NonPlayerCharacter
+{
+	int id;
+};
+
+struct Speech
+{
+	std::queue<std::pair<Entity, std::string>> texts;
+	std::queue<float> timer;
+	float counter_ms;
+};
+
+struct SpeechPoint
+{
+	bool isDone = false;
+	unsigned int index;
+};
+
+struct Timer
+{
+	float counter_ms;
+};
+
 /**
  * The following enumerators represent global identifiers refering to graphic
  * assets. For example TEXTURE_ASSET_ID are the identifiers of each texture
@@ -237,6 +261,10 @@ enum class TEXTURE_ASSET_ID
 	BACKGROUND4,
 	BARREL,
 	MENU,
+	NPC1,
+	NPC2,
+	NPC3,
+	NPC4,
 	TEXTURE_COUNT
 
 };

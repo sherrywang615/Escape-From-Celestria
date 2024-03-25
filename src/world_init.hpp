@@ -5,6 +5,8 @@
 #include "render_system.hpp"
 
 // These are ahrd coded to the dimensions of the entity texture
+const float NPC_BB_WIDTH = 0.5f * 165.f;
+const float NPC_BB_HEIGHT = 0.5f * 165.f;
 const float FOOD_BB_WIDTH = 0.25f * 165.f;
 const float FOOD_BB_HEIGHT = 0.25f * 165.f;
 const float EAGLE_BB_WIDTH = 0.6f * 300.f;
@@ -30,8 +32,6 @@ const float ZOMBIE_BB_HEIGHT = 0.6f * 184.f;
 const float PLATFORM_WIDTH = 24.2f;
 const float PLATFORM_HEIGHT = 24.2f;
 
-// the player
-Entity createJosh(RenderSystem *renderer, vec2 pos);
 // the zombie
 Entity createZombie(RenderSystem *renderer, vec2 position, int state = 0, double range = 200);
 // the prey
@@ -49,6 +49,8 @@ Entity createBackground2(RenderSystem* renderer, vec2 position);
 Entity createBackground3(RenderSystem* renderer, vec2 position);
 Entity createBackground4(RenderSystem* renderer, vec2 position);
 Entity createObject(RenderSystem *renderer, vec2 pos);
+Entity createSpeechPoint(RenderSystem *renderer, vec2 position, unsigned int index);
+Entity createNPC(RenderSystem *renderer, vec2 position, unsigned int index);
 // the enemy
 Entity createEagle(RenderSystem *renderer, vec2 position);
 // Josh

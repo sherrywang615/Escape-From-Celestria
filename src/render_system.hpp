@@ -57,7 +57,11 @@ class RenderSystem {
 		textures_path("exit.png"),
 
 		textures_path("menu_bg.png"),
-			 };
+		textures_path("lvl1.png"),
+		textures_path("lvl2.png"),
+		textures_path("lvl3.png"),		
+		textures_path("lvl4.png")
+		};
 
 
 	std::array<GLuint, effect_count> effects;
@@ -113,12 +117,12 @@ public:
 	mat3 createProjectionMatrix();
 
 	bool fontInit(GLFWwindow* window, const std::string& font_filename, unsigned int font_default_size);
-	void renderText(const std::string& text, float x, float y, float scale, const glm::vec3& color,
-		const glm::mat4& trans);
 private:
 	// Internal drawing functions for each entity type
 	void drawTexturedMesh(Entity entity, const mat3& projection);
 	void drawToScreen();
+	void renderText(const std::string& text, float x, float y, float scale, const glm::vec3& color, const glm::mat4& trans);
+	void renderDialog(Speech dialog);
 	
 
 	// Window handle

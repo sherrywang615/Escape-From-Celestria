@@ -9,9 +9,9 @@
 #include "physics_system.hpp"
 #include "render_system.hpp"
 #include "world_system.hpp"
+#include "dialog_system.hpp"
 
 #include "ai_system.hpp"
-#include <windows.h>
 #include <iostream>
 
 using Clock = std::chrono::high_resolution_clock;
@@ -122,6 +122,7 @@ int main()
 	WorldSystem world;
 	RenderSystem renderer;
 	PhysicsSystem physics;
+	DialogSystem dialog;
 	AISystem ai;
 
 	// Initializing window
@@ -137,10 +138,10 @@ int main()
 	renderer.init(window);
 
 	// initialize font
-	std::string font_filename = "..//..//..//data/fonts/Kenney_Future.ttf";
+	std::string font_filename = font_path("Kenney_Future.ttf");
 	unsigned int font_default_size = 48;
 	renderer.fontInit(window, font_filename, font_default_size);
-	world.init(&renderer);
+	world.init(&renderer,&dialog);
 
 	int level = world.currentLevel;
 	createVerticesForLevel1();
@@ -178,9 +179,9 @@ int main()
 		renderer.draw();
 		float ms_to_sleep = 1000 /60 - elapsed_ms;
 		//std::cout << ms_to_sleep << std::endl;
-		if (ms_to_sleep > 0) {
-			Sleep((ms_to_sleep));
-		}
+		// if (ms_to_sleep > 0) {
+		// 	Sleep((ms_to_sleep));
+		// }
 		
 		// renderer.renderText("test", -0.6f, 0.0f, 1.0f, glm::vec3(1.0f, 1.0f, 1.0f), trans);
 
