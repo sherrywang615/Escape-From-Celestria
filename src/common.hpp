@@ -21,6 +21,7 @@
 using namespace glm;
 
 #include "tiny_ecs.hpp"
+#include <chrono>
 
 // Simple utility functions to avoid mistyping directory name
 // audio_path("audio.ogg") -> data/audio/audio.ogg
@@ -38,9 +39,11 @@ const int window_height_px = 700;
 const int width = window_width_px / 10;
 const int height = window_height_px / 10;
 
+
 const std::string MAP_PATH = "..//..//..//data//maps//";
 //const std::string GRAPH_PATH = "..//..//..//data//graphs//";
 const std::string SAVE_PATH = "..\\..\\..\\data\\saving\\save.txt";
+
 //const std::string MAP_PATH = "../data/maps/";
 
 

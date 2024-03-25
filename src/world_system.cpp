@@ -19,7 +19,7 @@ const size_t MAX_BUG = 5;
 const size_t EAGLE_DELAY_MS = 2000 * 3;
 const size_t BUG_DELAY_MS = 5000 * 3;
 const float JOSH_SPEED = 200.f;
-const float JOSH_JUMP = 800.f;
+const float JOSH_JUMP = 1000.f;
 const float KNOCKBACK_DIST = 50.f;
 
 // Threshold to test if one thing is close enough to another
@@ -33,6 +33,7 @@ bool rightKeyPressed = false;
 bool spacePressed = false;
 
 // Animation controls
+bool is_josh_moving = false;
 int josh_step_counter = 0;
 
 // flag to check if the game is paused
@@ -47,6 +48,7 @@ WorldSystem::WorldSystem()
 	: hp_count(0), next_eagle_spawn(0.f), next_bug_spawn(0.f), bullets_count(0), have_key(false), fps(0.f), fpsCount(0.f), fpsTimer(0.f)
 {
 	// Seeding rng with random device
+	start = std::chrono::system_clock::now();
 	renderInfo = false;
 	rng = std::default_random_engine(std::random_device()());
 }
@@ -236,6 +238,15 @@ void handleMovementKeys(Entity entity)
 // Update our game world
 bool WorldSystem::step(float elapsed_ms_since_last_update)
 {
+
+	auto end = std::chrono::system_clock::now();
+
+	if(is_josh_moving){
+    	auto elasped = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
+		josh_step_counter = int(round(elasped)/100000);
+		//std::cout<< josh_step_counter<<std::endl;
+	}
+
 	if (paused) {
 		for (int i = 0; i < buttons.size(); i++) {
 
@@ -255,7 +266,10 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 		return true;
 	}
 	buttons.clear();
+
 	handleMovementKeys(player_josh);
+		
+	
 	// for fps counter
 	fpsTimer += elapsed_ms_since_last_update;
 	fpsCount++;
@@ -374,7 +388,25 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 		}
 	}
 
-	handleMovementKeys(player_josh);
+	for (Entity entity : registry.zombies.entities){
+		NormalZombie &zombie = registry.zombies.get(entity);
+		if(zombie.is_dead){
+			zombie.death_counter -=elapsed_ms_since_last_update;
+			if(zombie.death_counter>=1000.0){
+					registry.renderRequests.get(entity) = {TEXTURE_ASSET_ID::ZOMBIE_DIE1,
+										EFFECT_ASSET_ID::TEXTURED,
+										GEOMETRY_BUFFER_ID::SPRITE};
+					
+			}
+			if(zombie.death_counter<1.0){
+				registry.renderRequests.remove(entity);
+				registry.remove_all_components_of(entity);
+				
+			}
+		}
+	}
+
+
 
 	return true;
 }
@@ -668,13 +700,20 @@ void WorldSystem::handle_collisions()
 		// Zombie and Bullet collision
 		else if (registry.zombies.has(entity))
 		{
-			if (registry.shootBullets.has(entity_other))
+			NormalZombie &zombie = registry.zombies.get(entity);
+			if (registry.shootBullets.has(entity_other)&&!zombie.is_dead)
 			{
-				// Remove bullet and zombie
-				registry.remove_all_components_of(entity_other);
-				NormalZombie &zombie = registry.zombies.get(entity);
-				registry.remove_all_components_of(entity);
+					//remove bullet render effect, enter 2 frames zombie death animation 
+				    // zombie_die_start = std::chrono::system_clock::now();
+					registry.renderRequests.get(entity) = {TEXTURE_ASSET_ID::ZOMBIE_DIE,
+														EFFECT_ASSET_ID::TEXTURED,
+														GEOMETRY_BUFFER_ID::SPRITE};
+					registry.remove_all_components_of(entity_other);
+					registry.renderRequests.remove(entity_other);
+					registry.deadlys.remove(entity);
+					zombie.is_dead = true;
 			}
+
 		}
 
 		else
@@ -788,11 +827,13 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 	{
 		if (action == GLFW_PRESS || action == GLFW_REPEAT)
 		{
-			josh_step_counter++;
+			is_josh_moving = true;
+			//josh_step_counter++;
 			leftKeyPressed = true;
 		}
 		else if (action == GLFW_RELEASE)
 		{
+			is_josh_moving = false;
 			leftKeyPressed = false;
 		}
 	}
@@ -800,11 +841,13 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 	{
 		if (action == GLFW_PRESS || action == GLFW_REPEAT)
 		{
-			josh_step_counter++;
+			is_josh_moving = true;
+			//josh_step_counter++;
 			rightKeyPressed = true;
 		}
 		else if (action == GLFW_RELEASE)
 		{
+			is_josh_moving = false;
 			rightKeyPressed = false;
 		}
 	}
