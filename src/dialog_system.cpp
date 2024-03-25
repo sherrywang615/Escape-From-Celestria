@@ -114,7 +114,6 @@ Entity DialogSystem::findEntityById(int id)
 	if (id == 0)
 	{
 		return registry.players.entities[0];
-
 	}
 
 	for (Entity entity : registry.nonPlayerCharacter.entities)
@@ -125,5 +124,7 @@ Entity DialogSystem::findEntityById(int id)
 			return entity;
 		}
 	}
+
+	printf("ERROR: cannot find NPC %i\n", id);
 	return Entity();
 }
