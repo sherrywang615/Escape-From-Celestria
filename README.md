@@ -8,3 +8,6 @@ Exit Sign: https://www.flaticon.com/free-icons/emergency-exit
 Door: https://netherzapdos.itch.io/pixel-spaces
 Background level 1: https://free-game-assets.itch.io/free-industrial-zone-tileset-pixel-art
 Background level 2: https://guilemus.itch.io/post-apocalyptic-backgrounds
+npc1,2: https://craftpix.net/freebies/free-raider-sprite-sheets-pixel-art/
+npc3: https://craftpix.net/freebies/free-fantasy-chibi-female-sprites-pixel-art/
+npc4: https://craftpix.net/freebies/free-soldier-sprite-sheets-pixel-art/
