@@ -46,6 +46,8 @@ Entity createSmallKey(RenderSystem *renderer, vec2 position);
 Entity createBulletShoot(RenderSystem *renderer, vec2 position);
 Entity createBackground(RenderSystem* renderer, vec2 position);
 Entity createBackground2(RenderSystem* renderer, vec2 position);
+Entity createBackground3(RenderSystem* renderer, vec2 position);
+Entity createBackground4(RenderSystem* renderer, vec2 position);
 Entity createObject(RenderSystem *renderer, vec2 pos);
 Entity createSpeechPoint(RenderSystem *renderer, vec2 position, unsigned int index);
 Entity createNPC(RenderSystem *renderer, vec2 position, unsigned int index);

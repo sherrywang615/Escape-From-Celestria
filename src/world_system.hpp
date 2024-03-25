@@ -28,6 +28,8 @@ public:
 
 	int currentLevel = 1;
 
+	bool zombie_died = false;
+
 	// Creates a window
 	GLFWwindow *create_window();
 
@@ -50,6 +52,11 @@ public:
 	bool is_paused() const;
 
 private:
+	//start time
+	std::chrono::system_clock::time_point start;
+	std::chrono::system_clock::time_point zombie_die_start;
+	int zombie_die_counter = 0;
+	
 	// Input callback functions
 	bool renderInfo;
 	void on_key(int key, int, int action, int mod);

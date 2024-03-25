@@ -36,9 +36,12 @@ class RenderSystem {
 		textures_path("josh1.png"),
 		textures_path("josh_gun.png"),
 		textures_path("josh_gun1.png"),
-		textures_path("zombie1.png"), 
+		textures_path("zombie_1.png"), 
+		textures_path("zombie_2.png"), 
+		textures_path("zombie_3.png"), 
+		textures_path("zombie_4.png"), 
+		textures_path("zombie_5.png"), 
 		textures_path("ground.png"),
-
    		textures_path("bullet.png"),
 		textures_path("Elevator_closed.png"),
 		textures_path("Elevator_opened.png"),
@@ -49,13 +52,17 @@ class RenderSystem {
 		textures_path("cabinet.png"),
 		textures_path("background.png"),
 		textures_path("background2.png"),
+		textures_path("background3.png"),
+		textures_path("background4.png"),
 		textures_path("exit.png"),
+
 		textures_path("menu_bg.png"),
 		textures_path("lvl1.png"),
 		textures_path("lvl2.png"),
 		textures_path("lvl3.png"),		
 		textures_path("lvl4.png")
 		};
+
 
 	std::array<GLuint, effect_count> effects;
 	// Make sure these paths remain in sync with the associated enumerators.

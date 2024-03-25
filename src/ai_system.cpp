@@ -1,10 +1,17 @@
 // internal
 #include "ai_system.hpp"
 
+
 #include <queue>
 #include <unordered_map>
+#include <iostream>
+
 
 int X_frame = 1;
+
+AISystem::AISystem(){
+	start = std::chrono::system_clock::now();
+}
 
 
 Vertex* findNearestVertex(vec2 pos) {
@@ -21,7 +28,7 @@ Vertex* findNearestVertex(vec2 pos) {
 			point->adjs = vertex->adjs;
 		}
 	}
-	return point;
+ 	return point;
 }
 
 void updateZombieMemory(Entity entity, float elapsed_ms) {
@@ -139,12 +146,43 @@ void followPath(Motion& motion, std::queue<Vertex*> path,ACTION action, float sp
 	}
 }
 
-void updateZombiePath(float elapsed_ms) 
+
+
+
+
+void updateZombiePath(float elapsed_ms, int elapsed) 
 {
+	
 	float memory = 2000.f;
 	for (Entity entity_z : registry.zombies.entities) {
+
 		NormalZombie& zombie = registry.zombies.get(entity_z);
 		Motion& motion_z = registry.motions.get(entity_z);
+
+		if(zombie.is_dead){
+			motion_z.velocity = vec2(0,0);
+			continue;
+		}
+		if (elapsed % 3 == 0)
+		{
+			registry.renderRequests.get(entity_z) = {TEXTURE_ASSET_ID::ZOMBIE,
+													EFFECT_ASSET_ID::TEXTURED,
+													GEOMETRY_BUFFER_ID::SPRITE};
+		}
+		else if (elapsed % 3 == 1)
+		{
+			registry.renderRequests.get(entity_z) = {TEXTURE_ASSET_ID::ZOMBIE1,
+														EFFECT_ASSET_ID::TEXTURED,
+														GEOMETRY_BUFFER_ID::SPRITE};
+		}else{
+			registry.renderRequests.get(entity_z) = {TEXTURE_ASSET_ID::ZOMBIE2,
+														EFFECT_ASSET_ID::TEXTURED,
+														GEOMETRY_BUFFER_ID::SPRITE};
+		}
+		
+
+		
+		
 		if (registry.players.entities.empty() && zombie.is_alerted) {
 			followPath(motion_z, prev_path, ACTION::WALK, zombie.alerted_speed, zombie.is_jumping);
 			updateZombieMemory(entity_z, elapsed_ms);
@@ -227,7 +265,12 @@ void updateZombiePath(float elapsed_ms)
 	}
 }
 
+
+
 void AISystem::step(float elapsed_ms)
 {
-	updateZombiePath(elapsed_ms);
+	auto end = std::chrono::system_clock::now();
+	auto elasped = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
+	updateZombiePath(elapsed_ms, int(round(elasped)/100000));
+
 }
