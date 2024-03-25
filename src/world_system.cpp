@@ -163,6 +163,7 @@ GLFWwindow *WorldSystem::create_window()
 	}
 
 	bg1_music = Mix_LoadMUS(audio_path("bg1.mp3").c_str());
+
 	if (bg1_music == nullptr)
 	{
 		fprintf(stderr, "Failed to load sounds %s make sure the data directory is present",
@@ -769,7 +770,7 @@ void WorldSystem::handle_collisions()
 				if (registry.foods.has(entity_other))
 				{
 					// chew, add hp if hp is not full
-					//Mix_PlayChannel(-1, eat_music, 0);
+					Mix_PlayChannel(-1, eat_music, 0);
 					registry.remove_all_components_of(entity_other);
 					++hp_count;
 					// std::cout << "hp count: " << hp_count << std::endl;
