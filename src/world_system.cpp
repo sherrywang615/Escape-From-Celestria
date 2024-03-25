@@ -253,6 +253,7 @@ void handleMovementKeys(Entity entity)
 			// Handle right key
 			if (rightKeyPressed)
 			{
+				if(!spacePressed){
 				if (josh_step_counter % 2 == 0)
 				{
 					registry.renderRequests.get(entity) = {TEXTURE_ASSET_ID::JOSHGUN1,
@@ -264,7 +265,7 @@ void handleMovementKeys(Entity entity)
 					registry.renderRequests.get(entity) = {TEXTURE_ASSET_ID::JOSHGUN,
 														   EFFECT_ASSET_ID::TEXTURED,
 														   GEOMETRY_BUFFER_ID::SPRITE};
-				}
+				}}
 				if (motion.scale.x < 0 && !registry.players.get(entity).against_wall)
 				{
 					motion.scale.x *= -1;
@@ -275,6 +276,7 @@ void handleMovementKeys(Entity entity)
 			// Handle left key
 			if (leftKeyPressed)
 			{
+				if(!spacePressed){
 				if (josh_step_counter % 2 == 0)
 				{
 					registry.renderRequests.get(entity) = {TEXTURE_ASSET_ID::JOSHGUN1,
@@ -286,7 +288,7 @@ void handleMovementKeys(Entity entity)
 					registry.renderRequests.get(entity) = {TEXTURE_ASSET_ID::JOSHGUN,
 														   EFFECT_ASSET_ID::TEXTURED,
 														   GEOMETRY_BUFFER_ID::SPRITE};
-				}
+				}}
 				motion.velocity.x = -JOSH_SPEED;
 				if (motion.scale.x > 0 && !registry.players.get(entity).against_wall)
 				{
@@ -1064,11 +1066,13 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 			Motion &josh_motion = registry.motions.get(player_josh);
 			josh_motion.velocity.y = -JOSH_JUMP;
 			jumped = true;
+			spacePressed = true;
 			//registry.players.get(player_josh).standing = false;
 		}
 		else if (action == GLFW_RELEASE && key == GLFW_KEY_SPACE)
 		{
 			jumped = false;
+			spacePressed = false;
 		}
 	}
 
