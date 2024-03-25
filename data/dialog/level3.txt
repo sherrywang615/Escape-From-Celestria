@@ -1,12 +1,14 @@
 :1
 @J
-Are you ok?
+Do you need help?
 @3
 I am fine！
 @J
-Have you seen your friend Alice?
+Have you seen Alice?
 @3
-try safe zone！
+I remember she went to the safe zone
+@J 
+Thank you
 
 :2
 @1
