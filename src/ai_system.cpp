@@ -9,6 +9,8 @@
 
 int X_frame = 1;
 
+bool printed = false;
+
 AISystem::AISystem(){
 	start = std::chrono::system_clock::now();
 }
@@ -103,9 +105,24 @@ std::queue<Vertex*> findPathAStar(Vertex* start, Vertex* end) {
 	return std::queue<Vertex*>();
 }
 
+void printPath(std::queue<Vertex*> path) {
+	printed = true;
+	printf("path: ");
+	//while (!path.empty()) {
+	//	Vertex* v = path.front();
+	//	printf("{%f, %f} -> ", v->x, v->y);
+	//}
+	printf("\n");
+
+}
+
 
 // Zombie will move according to the path
 void followPath(Motion& motion, std::queue<Vertex*> path,ACTION action, float speed, bool is_jumping) {
+	if (debugging.in_debug_mode && !printed) {
+		printPath(path);
+	}
+
 	// precision controls how close between the target point and where the zombie stops
 	float precision = 20.f;
 	if (!path.empty()) {
@@ -115,18 +132,33 @@ void followPath(Motion& motion, std::queue<Vertex*> path,ACTION action, float sp
 		//printf("Current Action {%d}\n", action);
 		float current_h = findDistanceBetween(motion.position, { v->x, v->y });
 		path.pop();
+		// stop if it reaches destination
 		if (path.empty()) {
 			if (current_h <= precision) {
 				motion.velocity = { 0, 0 };
 			}
 			return;
 		}
+
 		Vertex* next = path.front();
 		float dist_to_next = findDistanceBetween(motion.position, { next->x, next->y });
 		float curr_to_next = findDistanceBetween({ v->x, v->y }, { next->x, next->y });
+
+		path.pop();
+		if (path.empty()) {
+			if (current_h <= precision) {
+				motion.velocity = { 0, 0 };
+			}
+			return;
+		}
+		Vertex* possible_jump = path.front();
 		//printf("dist to next: %f\n", dist_to_next);
 		// Go to next vertex if motion is between curr and next vertices
-		if (dist_to_next <= curr_to_next) {
+		if (next->adjs[possible_jump] == ACTION::JUMP) {
+			action = ACTION::JUMP;
+			v = possible_jump;
+		}
+		else if (dist_to_next <= curr_to_next) {
 			action = v->adjs[next];
 			v = next;
 			//printf("Reached vertex {%f}\n", v->x);
@@ -134,6 +166,7 @@ void followPath(Motion& motion, std::queue<Vertex*> path,ACTION action, float sp
 		}
 		float dp = v->x - motion.position.x;
 		float dir = dp / abs(dp);
+		//int dir = normalize(waypoint - npc.position)
 		// printf("%f\n", dir);
 		if (action == ACTION::WALK) {
 			motion.velocity.x = dir * speed;
@@ -269,6 +302,9 @@ void updateZombiePath(float elapsed_ms, int elapsed)
 
 void AISystem::step(float elapsed_ms)
 {
+	if (printed) {
+		return;
+	}
 	auto end = std::chrono::system_clock::now();
 	auto elasped = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
 	updateZombiePath(elapsed_ms, int(round(elasped)/100000));
