@@ -52,6 +52,8 @@ class RenderSystem {
 		textures_path("cabinet.png"),
 		textures_path("background.png"),
 		textures_path("background2.png"),
+		textures_path("background3.png"),
+		textures_path("background4.png"),
 		textures_path("exit.png"),
 
 		textures_path("menu_bg.png"),

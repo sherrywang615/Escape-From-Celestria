@@ -415,7 +415,7 @@ bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map)
 {
 	float josh_x = 0, josh_y = 0;
 	std::vector<std::pair<float, float>> zombiePositions;
-	// First pass: Create background entities first
+	//Create background entities first
 	for (int i = 0; i < map.size(); i++)
 	{
 		for (int j = 0; j < map[i].size(); j++)
@@ -431,10 +431,18 @@ bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map)
 			{
 				createBackground2(renderer, {x, y});
 			}
+			if (tok == 'L')
+			{
+				createBackground3(renderer, { x, y });
+			}
+			if (tok == 'M')
+			{
+				createBackground4(renderer, { x, y });
+			}
 		}
 	}
 
-	// Second pass: Create all other entities except for background
+	//Create all other entities except for background
 	for (int i = 0; i < map.size(); i++)
 	{
 		for (int j = 0; j < map[i].size(); j++)
@@ -443,7 +451,7 @@ bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map)
 			float y = i * 10;
 			char tok = map[i][j];
 
-			if (tok == ' ' || tok == 'O' || tok == 'Q') // Skip empty spaces and background already created
+			if (tok == ' ' || tok == 'O' || tok == 'Q' || tok == 'L' || tok == 'M')
 			{
 				continue;
 			}
