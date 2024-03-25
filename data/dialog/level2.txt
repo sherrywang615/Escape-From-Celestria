@@ -1,11 +1,16 @@
 :1
 @J
-Head to safe zooe
+Head to the safe zone
 
 :2
 @J
-Have you see a Girl?
+Have you seen my daughter Alice?
 @2
-Maybe in the next door
+I saw someone rescue her and leave
+@J 
+Where?
+@2
+They might have gone to the safe zone
+just go forward
 @J
 Thanks

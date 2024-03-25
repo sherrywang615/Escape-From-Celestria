@@ -1,0 +1,18 @@
+:1
+@J
+Are you ok?
+@3
+I am fine！
+@J
+Have you seen your friend Alice?
+@3
+try safe zone！
+
+:2
+@1
+safe zone is in front!
+keep going！
+
+:3
+@J
+getting close!
