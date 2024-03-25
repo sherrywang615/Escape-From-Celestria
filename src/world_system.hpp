@@ -29,6 +29,7 @@ public:
 	int currentLevel = 1;
 
 	bool zombie_died = false;
+	bool is_invincible = false;
 
 	// Creates a window
 	GLFWwindow *create_window();

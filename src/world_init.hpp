@@ -51,6 +51,7 @@ Entity createBackground4(RenderSystem* renderer, vec2 position);
 Entity createObject(RenderSystem *renderer, vec2 pos);
 Entity createSpeechPoint(RenderSystem *renderer, vec2 position, unsigned int index);
 Entity createNPC(RenderSystem *renderer, vec2 position, unsigned int index);
+Entity createGold(RenderSystem *renderer, vec2 position);
 // the enemy
 Entity createEagle(RenderSystem *renderer, vec2 position);
 // Josh

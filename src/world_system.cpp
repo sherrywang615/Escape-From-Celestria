@@ -480,6 +480,32 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 		}
 	}
 
+	for (Entity entity : registry.invincibleTimers.entities)
+	{
+		// Progress timer
+		InvincibleTimer &counter = registry.invincibleTimers.get(entity);
+		counter.counter_ms -= elapsed_ms_since_last_update;
+
+		if (counter.counter_ms < min_counter_ms)
+		{
+			min_counter_ms = counter.counter_ms;
+		}
+
+		if (counter.counter_ms < 0)
+		{
+			registry.invincibleTimers.remove(entity);
+			vec3 invincible_color = registry.colorChanges.get(entity).color_start;
+			vec3 color = registry.colors.get(entity);
+			float duration = 0.1f;
+			registry.colors.remove(entity);
+
+			// registry.colors.emplace(entity, death_color);
+			ColorChange colorChange = {color, invincible_color, duration, 0.0f};
+			registry.colorChanges.emplace(entity, colorChange);
+			return true;
+		}
+	}
+
 	for (Entity entity : registry.zombies.entities){
 		NormalZombie &zombie = registry.zombies.get(entity);
 		if(zombie.is_dead){
@@ -608,6 +634,9 @@ bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map)
 				int index = map[i][++j] - '0';
 				createSpeechPoint(renderer, {x, y}, index);
 			}
+			else if(tok == 'G'){
+				createGold(renderer, {x, y});
+			}
 			else
 			{
 				printf("Map contains invalid character '%c' at [%d, %d].", tok, i, j);
@@ -701,7 +730,7 @@ void WorldSystem::handle_collisions()
 		{
 			// Player& player = registry.players.get(entity);
 			// Checking Player - Deadly collisions
-			if (registry.deadlys.has(entity_other) && !registry.deductHpTimers.has(entity))
+			if (registry.deadlys.has(entity_other) && !registry.deductHpTimers.has(entity) && !registry.invincibleTimers.has(entity))
 			{
 				Motion &motion_p = registry.motions.get(entity);
 				Motion motion_z = registry.motions.get(entity_other);
@@ -812,6 +841,18 @@ void WorldSystem::handle_collisions()
 					// std::cout << "have key: " << have_key << std::endl;
 					showKeyOnScreen(renderer, have_key);
 					// registry.doors.get(registry.doors.entities[0]).is_open = true;
+				} 
+				else if(registry.golds.has(entity_other)){
+					registry.remove_all_components_of(entity_other);
+					registry.invincibleTimers.emplace(entity);
+					vec4 invincible_color = {1.0f, 1.0f, 0.6f, 0.6f};
+					vec3 color = registry.colors.get(entity);
+					float duration = 0.1f;
+					registry.colors.remove(entity);
+
+					// registry.colors.emplace(entity, death_color);
+					ColorChange colorChange = {color, invincible_color, duration, 0.0f};
+					registry.colorChanges.emplace(entity, colorChange);
 				}
 			}
 			else if (registry.doors.has(entity_other))

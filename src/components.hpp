@@ -213,6 +213,15 @@ struct Timer
 	float counter_ms;
 };
 
+struct Gold{
+	
+};
+
+struct InvincibleTimer
+{
+	float counter_ms = 5000;
+};
+
 /**
  * The following enumerators represent global identifiers refering to graphic
  * assets. For example TEXTURE_ASSET_ID are the identifiers of each texture
@@ -269,6 +278,7 @@ enum class TEXTURE_ASSET_ID
 	NPC2,
 	NPC3,
 	NPC4,
+	GOLD1,
 	TEXTURE_COUNT
 
 };
