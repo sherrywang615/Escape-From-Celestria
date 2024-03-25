@@ -1,16 +1,16 @@
 :1
 @J
-What's happen?
+What happened?
 Where's my daughter?
-I need to find her
+I need to find her.
 
 :2
 @1
 Hello
 @J
-What's happen?
+What happened?
 @1
-zombies are coming!
-go to safe zone!
+Zombies are coming!
+Go to safe zone!
 @J
 Thanks
