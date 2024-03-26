@@ -82,6 +82,7 @@ enum class ACTION {
 
 enum class MENU_FUNC {
 	RESUME = 0,
+	HELP,
 	SAVE,
 	LOAD,
 	QUIT,

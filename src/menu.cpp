@@ -1,29 +1,35 @@
 #pragma once
 #include "menu.hpp"
 
-const float LINE_SPACE = 130;
+const float LINE_SPACE = 100;
 const vec2 RESUME_POS = { window_width_px / 2 - 80, window_height_px / 2 + 200 };
 const vec2 SAVE_POS = { window_width_px / 2 - 80, RESUME_POS.y - LINE_SPACE };
 const vec2 LOAD_POS = { window_width_px / 2 - 80, SAVE_POS.y - LINE_SPACE };
 const vec2 QUIT_POS = { window_width_px / 2 - 80, LOAD_POS.y - LINE_SPACE };
 
+
+std::vector<vec2> arrangeText(int num) {
+	std::vector<vec2> result = {};
+	for (int i = 0; i < num; i++) {
+		vec2 pos = { window_width_px / 2 - 80, window_height_px / 2 + 200 - i *  LINE_SPACE};
+		result.push_back(pos);
+	}
+	return result;
+}
+
 void renderPauseMenu() {
-	Entity resume, save, load, quit;
-	std::vector<Entity> elements = {};
+	Entity resume, save, load, quit, help;
+	std::vector<Entity> elements = {Entity(), Entity(), Entity(), Entity(), Entity()};
+	std::vector<std::string> texts = { "Resume", "HELP", "Save", "Load", "QUIT" };
+	std::vector<MENU_FUNC> funcs = { MENU_FUNC::RESUME, MENU_FUNC::HELP, MENU_FUNC::SAVE, MENU_FUNC::LOAD, MENU_FUNC::QUIT };
 	Entity background = createMenuBackground({ window_width_px / 2, window_height_px / 2 }, { 300, 600 });
 	auto& menu1 = registry.menus.emplace(background);
-	resume = createText(RESUME_POS, 0.8, { 1, 1, 1 }, "Resume");
-	auto& menu2 = registry.menus.emplace(resume);
-	menu2.func = MENU_FUNC::RESUME;
-	save = createText(SAVE_POS, 1, { 1, 1, 1 }, "SAVE");
-	auto& menu3 = registry.menus.emplace(save);
-	menu3.func = MENU_FUNC::SAVE;
-	load = createText(LOAD_POS, 1, { 1, 1, 1 }, "LOAD");
-	auto& menu4 = registry.menus.emplace(load);
-	menu4.func = MENU_FUNC::LOAD;
-	quit = createText(QUIT_POS, 1, { 1, 1, 1 }, "QUIT");
-	auto& menu5 = registry.menus.emplace(quit);
-	menu5.func = MENU_FUNC::QUIT;
+	std::vector<vec2> pos = arrangeText(elements.size());
+	for (int i = 0; i < elements.size(); i++) {
+		Entity entity = createText(pos[i], 0.8, {1, 1, 1}, texts[i]);
+		auto& menu2 = registry.menus.emplace(entity);
+		menu2.func = funcs[i];
+	}
 }
 
 void clearMenu() {
@@ -164,6 +170,10 @@ bool handleButtonEvents(Entity entity, RenderSystem* renderer, GLFWwindow* windo
 	else if (me.func == MENU_FUNC::QUIT) {
 		graph.clear();
 		glfwSetWindowShouldClose(window, true);
+	}
+	else if (me.func == MENU_FUNC::HELP) {
+		Entity entity = createHelpInfo(renderer, vec2(window_width_px - 515, window_height_px - 350));
+		registry.menus.emplace(entity);
 	}
 	return true;
 }

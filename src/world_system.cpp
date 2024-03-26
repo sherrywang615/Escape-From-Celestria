@@ -387,11 +387,6 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 		}
 	}
 
-	if (renderInfo)
-	{
-		createHelpInfo(renderer, vec2(window_width_px - 515, window_height_px - 350));
-	}
-
 	// Removing out of screen entities
 	auto &motions_registry = registry.motions;
 
@@ -1163,11 +1158,6 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 			jumped = false;
 			spacePressed = false;
 		}
-	}
-
-	if (action == GLFW_PRESS && key == GLFW_KEY_I)
-	{
-		renderInfo = !renderInfo;
 	}
 
 	if (action == GLFW_PRESS && key == GLFW_KEY_H)
