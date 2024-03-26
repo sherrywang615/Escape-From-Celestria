@@ -60,6 +60,7 @@ private:
 	int zombie_die_counter = 0;
 	float t = 0.f;
 	bool forward = true;
+	vec3 color;
 	
 	// Input callback functions
 	bool renderInfo;
