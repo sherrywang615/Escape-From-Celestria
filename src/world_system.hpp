@@ -30,7 +30,6 @@ public:
 
 	bool zombie_died = false;
 	bool is_invincible = false;
-	vec3 color;
 
 	// Creates a window
 	GLFWwindow *create_window();
