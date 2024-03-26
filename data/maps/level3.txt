@@ -3,10 +3,10 @@
 
                                                                                                       
                                                                                                      
-                                                          F         B                               
+                                                                                                  
                                                                                                                                
                                                                                                        
-                                                                                                     
+                                                          F        B                                   
  
     E
               D                                                                                         
@@ -24,7 +24,7 @@ PPPPPPPPPPPPPPPPPPPPPP
    
    
                                                                                                      
-                                           C                                S2   N1                      
+                                           C            Z                    S2   N1                      
        L                                                                                              
                                                                                                    
                                                                                                      
@@ -33,7 +33,7 @@ PPPPPPPPPPPPPPPPPPPPPP
                                                                                                      
                                                                                                                                                                                                           
                                                                                                      
-                                                                                                     
+      B                                                                                               
                                                                                                      
                                                                                                      
                                                                                                      
@@ -41,7 +41,7 @@ PPPPPPPPPPPPP                                                          F
                                                                                                      
 
                                                                                            
-                     Z                                                                                        
+                                                                                                             
                                                                                                
                                                                   PPPPPPPPPPPPPPPPPPPPPPP                                    
                                                                                                      
@@ -51,7 +51,7 @@ PPPPPPPPPPPPP                                                          F
                                                                                                      
                                                                                                            
                                                                                                         
-                                                                 N3
+                                                                 N3                 Z
                                                              S1                                        
                                                                                                      
                                                                                                        
@@ -62,8 +62,8 @@ PPPPPPPPPPPPP                                                          F
                                                                               
                                                                                                      
        J                                                                                              
-                                                                             Z            B                            
-           S3                                  C                                                        
+                         B     F                                               Z        Z        B                    
+           S3                                               C                                                        
                                                                                                                               
                                                                                                      
                           
