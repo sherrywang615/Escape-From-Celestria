@@ -393,10 +393,9 @@ void PhysicsSystem::step(float elapsed_ms)
 			{
 				Platform& plat = plat_container.components[p];
 				Motion motion_p = { plat.position, 0, {0,0}, plat.scale };
-
-				if (abs(motion_p.position.x - motion.position.x) < 200 && abs(motion_p.position.y - motion.position.y) < 200) {
+				if (abs(motion_p.position.x - motion.position.x) < 200 && abs(motion_p.position.y - motion.position.y) < 200 && !registry.golds.has(registry.motions.entities[i])) {
 					// make collision checking more efficient, only check close platforms
-					// mesh collision
+					// mesh collision				
 					if (registry.players.has(entity)) {
 						Player& player = registry.players.get(entity);
 						std::vector<int> collide_dir = collides_with_mesh(motion_p, motion, step_seconds, *registry.meshPtrs.get(motion_container.entities[i]));
@@ -525,9 +524,6 @@ void PhysicsSystem::step(float elapsed_ms)
 			motion.velocity.y = 0;
 			motion.position.y = window_height_px - abs(motion.scale.y) / 2;
 		}
-
-
-	
 	}
-
 }
+

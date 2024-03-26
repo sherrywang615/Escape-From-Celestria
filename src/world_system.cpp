@@ -73,6 +73,8 @@ WorldSystem::~WorldSystem()
 		Mix_FreeChunk(shoot_music);
 	if (trush_music != nullptr)
 		Mix_FreeChunk(trush_music);
+	if (bonus_music != nullptr)
+		Mix_FreeChunk(bonus_music);
 	Mix_CloseAudio();
 
 	// Destroy all created components
@@ -219,6 +221,13 @@ GLFWwindow *WorldSystem::create_window()
 				audio_path("trush.wav").c_str());
 		return nullptr;
 	}
+	bonus_music = Mix_LoadWAV(audio_path("bonus.wav").c_str());
+	if (bonus_music == nullptr)
+	{
+		fprintf(stderr, "Failed to load sounds %s make sure the data directory is present",
+				audio_path("bonus.wav").c_str());
+		return nullptr;
+	}
 
 	return window;
 }
@@ -253,6 +262,7 @@ void handleMovementKeys(Entity entity)
 			// Handle right key
 			if (rightKeyPressed)
 			{
+				if(!spacePressed){
 				if (josh_step_counter % 2 == 0)
 				{
 					registry.renderRequests.get(entity) = {TEXTURE_ASSET_ID::JOSHGUN1,
@@ -264,7 +274,7 @@ void handleMovementKeys(Entity entity)
 					registry.renderRequests.get(entity) = {TEXTURE_ASSET_ID::JOSHGUN,
 														   EFFECT_ASSET_ID::TEXTURED,
 														   GEOMETRY_BUFFER_ID::SPRITE};
-				}
+				}}
 				if (motion.scale.x < 0 && !registry.players.get(entity).against_wall)
 				{
 					motion.scale.x *= -1;
@@ -275,6 +285,7 @@ void handleMovementKeys(Entity entity)
 			// Handle left key
 			if (leftKeyPressed)
 			{
+				if(!spacePressed){
 				if (josh_step_counter % 2 == 0)
 				{
 					registry.renderRequests.get(entity) = {TEXTURE_ASSET_ID::JOSHGUN1,
@@ -286,7 +297,7 @@ void handleMovementKeys(Entity entity)
 					registry.renderRequests.get(entity) = {TEXTURE_ASSET_ID::JOSHGUN,
 														   EFFECT_ASSET_ID::TEXTURED,
 														   GEOMETRY_BUFFER_ID::SPRITE};
-				}
+				}}
 				motion.velocity.x = -JOSH_SPEED;
 				if (motion.scale.x > 0 && !registry.players.get(entity).against_wall)
 				{
@@ -477,6 +488,32 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 		}
 	}
 
+	for (Entity entity : registry.invincibleTimers.entities)
+	{
+		// Progress timer
+		InvincibleTimer &counter = registry.invincibleTimers.get(entity);
+		counter.counter_ms -= elapsed_ms_since_last_update;
+
+		if (counter.counter_ms < min_counter_ms)
+		{
+			min_counter_ms = counter.counter_ms;
+		}
+
+		if (counter.counter_ms < 0)
+		{
+			registry.invincibleTimers.remove(entity);
+			vec3 invincible_color = registry.colorChanges.get(entity).color_start;
+			vec3 color = registry.colors.get(entity);
+			float duration = 0.1f;
+			registry.colors.remove(entity);
+
+			// registry.colors.emplace(entity, death_color);
+			ColorChange colorChange = {color, invincible_color, duration, 0.0f};
+			registry.colorChanges.emplace(entity, colorChange);
+			return true;
+		}
+	}
+
 	for (Entity entity : registry.zombies.entities){
 		NormalZombie &zombie = registry.zombies.get(entity);
 		if(zombie.is_dead){
@@ -495,9 +532,41 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 		}
 	}
 
+	vec2 p0 = {200, 700}; // Start point
+    vec2 p1 = {300, 100}; // Control point 1
+    vec2 p2 = {500, 500}; // Control point 2
+    vec2 p3 = {700, 700}; // End point
+
+	for (Entity entity: registry.golds.entities){
+		if (forward) {
+        t += elapsed_ms_since_last_update / 1000.f * 0.2f;
+        if (t >= 1) {
+            t = 1.0f; 
+            forward = false;
+        }
+    } else {
+        t -= elapsed_ms_since_last_update / 1000.f * 0.2f;
+        if (t <= 0) {
+            t = 0.0f; 
+            forward = true; 
+        }
+    }
+		vec2 pos = cubicBezier(p0, p1, p2, p3, t);
+		Motion &motion = registry.motions.get(entity);
+		motion.position = pos;
+		// std::cout << "Forward: " << forward << std::endl;
+		// printf("Gold position: %f, %f\n", motion.position.x, motion.position.y);
+	}
+
 
 
 	return true;
+}
+
+vec2 WorldSystem::cubicBezier(vec2 &p0, vec2 &p1, vec2 &p2, vec2 &p3, float t) {
+    float t1 = 1.0f - t;
+    vec2 pos = p0 * (t1 * t1 * t1) + p1 * (3 * t1 * t1 * t) + p2 * (3 * t1 * t * t) + p3 * (t * t * t);
+    return pos;
 }
 
 bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map)
@@ -607,6 +676,9 @@ bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map)
 				int index = map[i][++j] - '0';
 				createSpeechPoint(renderer, {x, y}, index);
 			}
+			else if(tok == 'G'){
+				createGold(renderer, {x, y});
+			}
 			else
 			{
 				printf("Map contains invalid character '%c' at [%d, %d].", tok, i, j);
@@ -701,7 +773,7 @@ void WorldSystem::handle_collisions()
 		{
 			// Player& player = registry.players.get(entity);
 			// Checking Player - Deadly collisions
-			if (registry.deadlys.has(entity_other) && !registry.deductHpTimers.has(entity))
+			if (registry.deadlys.has(entity_other) && !registry.deductHpTimers.has(entity) && !registry.invincibleTimers.has(entity))
 			{
 				Motion &motion_p = registry.motions.get(entity);
 				Motion motion_z = registry.motions.get(entity_other);
@@ -812,6 +884,20 @@ void WorldSystem::handle_collisions()
 					// std::cout << "have key: " << have_key << std::endl;
 					showKeyOnScreen(renderer, have_key);
 					// registry.doors.get(registry.doors.entities[0]).is_open = true;
+				} 
+				else if(registry.golds.has(entity_other)){
+					registry.remove_all_components_of(entity_other);
+					registry.invincibleTimers.emplace(entity);
+					vec4 invincible_color = {1.0f, 1.0f, 0.6f, 0.6f};
+					vec3 color = registry.colors.get(entity);
+					float duration = 0.1f;
+					registry.colors.remove(entity);
+
+					// registry.colors.emplace(entity, death_color);
+					ColorChange colorChange = {color, invincible_color, duration, 0.0f};
+					registry.colorChanges.emplace(entity, colorChange);
+					Mix_PlayChannel(-1, bonus_music, 0);
+					Mix_VolumeChunk(bonus_music, 30);
 				}
 			}
 			else if (registry.doors.has(entity_other))
@@ -865,7 +951,7 @@ void WorldSystem::handle_collisions()
 					zombie.is_dead = true;
 			}
 
-		}
+		} 
 
 		else
 		{
@@ -1066,11 +1152,13 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 			Motion &josh_motion = registry.motions.get(player_josh);
 			josh_motion.velocity.y = -JOSH_JUMP;
 			jumped = true;
+			spacePressed = true;
 			//registry.players.get(player_josh).standing = false;
 		}
 		else if (action == GLFW_RELEASE && key == GLFW_KEY_SPACE)
 		{
 			jumped = false;
+			spacePressed = false;
 		}
 	}
 

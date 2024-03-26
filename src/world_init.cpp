@@ -13,7 +13,7 @@ Entity createJosh(RenderSystem *renderer, vec2 position)
 	motion.angle = 0.f;
 	motion.velocity = {0, 0};
 	motion.position = position;
-	motion.scale = vec2({JOSH_BB_WIDTH * 0.2, JOSH_BB_HEIGHT * 0.6});
+	motion.scale = vec2({JOSH_BB_WIDTH * 0.5, JOSH_BB_HEIGHT * 0.6});
 	registry.players.emplace(entity);
 	registry.gravities.emplace(entity);
 	registry.renderRequests.insert(
@@ -721,6 +721,36 @@ Entity createMenuBackground(vec2 pos, vec2 scale) {
 		{ TEXTURE_ASSET_ID::MENU,
 		 EFFECT_ASSET_ID::TEXTURED,
 		 GEOMETRY_BUFFER_ID::SPRITE });
+
+	return entity;
+}
+
+Entity createGold(RenderSystem *renderer, vec2 position)
+{
+	// Reserve en entity
+	auto entity = Entity();
+
+	// Store a reference to the potentially re-used mesh object
+	Mesh &mesh = renderer->getMesh(GEOMETRY_BUFFER_ID::SPRITE);
+	registry.meshPtrs.emplace(entity, &mesh);
+
+	// Initialize the position, scale, and physics components
+	auto &motion = registry.motions.emplace(entity);
+	motion.angle = 0.f;
+	motion.velocity = {0, 0};
+	motion.position = position;
+
+	// Setting initial values, scale is negative to make it face the opposite way
+	motion.scale = vec2({-FOOD_BB_WIDTH, FOOD_BB_HEIGHT});
+
+	// Create an (empty) Bug component to be able to refer to all bug
+	registry.eatables.emplace(entity);
+	registry.golds.emplace(entity);
+	registry.renderRequests.insert(
+		entity,
+		{TEXTURE_ASSET_ID::GOLD1,
+		 EFFECT_ASSET_ID::TEXTURED,
+		 GEOMETRY_BUFFER_ID::SPRITE});
 
 	return entity;
 }

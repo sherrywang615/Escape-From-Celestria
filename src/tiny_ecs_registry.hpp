@@ -44,6 +44,8 @@ public:
 	ComponentContainer<Speech> speech;
 	ComponentContainer<Timer> timer;
 	ComponentContainer<SpeechPoint> speechPoint;
+	ComponentContainer<Gold> golds;
+	ComponentContainer<InvincibleTimer> invincibleTimers;
 
 	// constructor that adds all containers for looping over them
 	// IMPORTANT: Don't forget to add any newly added containers!
@@ -82,6 +84,8 @@ public:
 		registry_list.push_back(&speech);
 		registry_list.push_back(&timer);
 		registry_list.push_back(&speechPoint);
+		registry_list.push_back(&golds);
+		registry_list.push_back(&invincibleTimers);
 	}
 
 	void clear_all_components()
