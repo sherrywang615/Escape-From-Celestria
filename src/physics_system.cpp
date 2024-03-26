@@ -324,6 +324,20 @@ void PhysicsSystem::step(float elapsed_ms)
 	// ------------------------------- Debugging ---------------------------------
 	
 	if (debugging.in_debug_mode == true) {
+		for (Vertex* v : graph.vertices) {
+			vec2 pos = { v->x, v->y };
+			createLine(pos, { 5, 5 });
+			for (auto it = v->adjs.begin(); it != v->adjs.end(); ++it) {
+				Vertex* adj = it->first;
+				vec2 pos2 = { adj->x, adj->y };
+				float dist = findDistanceBetween(pos, pos2);
+				float angle = atan2(pos.y - pos2.y, pos.x - pos2.x);
+				Entity line = createLine({ (pos.x + pos2.x) / 2, (pos.y + pos2.y) / 2 }, { dist, 1 });
+				Motion& motion = registry.motions.get(line);
+				motion.angle = angle;
+			}
+
+		}
 		vec2 player_pos = {};
 		// debugging box for player
 		for (int i = 0; i < registry.players.size(); i++) {

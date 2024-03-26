@@ -162,6 +162,7 @@ bool handleButtonEvents(Entity entity, RenderSystem* renderer, GLFWwindow* windo
 		return false;
 	}
 	else if (me.func == MENU_FUNC::QUIT) {
+		graph.clear();
 		glfwSetWindowShouldClose(window, true);
 	}
 	return true;

@@ -321,7 +321,6 @@ void handleMovementKeys(Entity entity)
 // Update our game world
 bool WorldSystem::step(float elapsed_ms_since_last_update)
 {
-
 	auto end = std::chrono::system_clock::now();
 
 	if (is_josh_moving)
@@ -586,6 +585,8 @@ vec2 WorldSystem::cubicBezier(vec2 &p0, vec2 &p1, vec2 &p2, vec2 &p3, float t)
 
 bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map)
 {
+	// clear the graph first
+	graph.clear();
 	float josh_x = 0, josh_y = 0;
 	std::vector<std::pair<float, float>> zombiePositions;
 	// Create background entities first
@@ -618,7 +619,10 @@ bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map)
 	// Create all other entities except for background
 	for (int i = 0; i < map.size(); i++)
 	{
-		Vertex *latest = new Vertex(0, 0);
+
+		Vertex* latest = new Vertex(-100, -100);
+		graph.addVertex(latest);
+
 		for (int j = 0; j < map[i].size(); j++)
 		{
 			float x = j * 10;
@@ -766,6 +770,7 @@ void WorldSystem::restart_game()
 
 	auto map = loadMap(map_path() + "level" + std::to_string(currentLevel) + ".txt");
 	createEntityBaseOnMap(map);
+
 
 	createHelpSign(renderer, vec2(window_width_px - 70, window_height_px - 700));
 
@@ -1294,13 +1299,21 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 	// Control the current speed with `<` `>`
 	if (action == GLFW_RELEASE && (mod & GLFW_MOD_SHIFT) && key == GLFW_KEY_COMMA)
 	{
-		current_speed -= 0.1f;
-		printf("Current speed = %f\n", current_speed);
+		//current_speed -= 0.1f;
+		//printf("Current speed = %f\n", current_speed);
+		if (currentLevel > 0) {
+			currentLevel--;
+			restart_game();
+		}
 	}
 	if (action == GLFW_RELEASE && (mod & GLFW_MOD_SHIFT) && key == GLFW_KEY_PERIOD)
 	{
 		current_speed += 0.1f;
 		printf("Current speed = %f\n", current_speed);
+		if (currentLevel < 4) {
+			currentLevel++;
+			restart_game();
+		}
 	}
 	current_speed = fmax(0.f, current_speed);
 }

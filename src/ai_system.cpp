@@ -9,17 +9,24 @@
 
 int X_frame = 1;
 
-bool printed = false;
 
 AISystem::AISystem(){
 	start = std::chrono::system_clock::now();
+}
+
+AISystem::~AISystem() {
+	while (!prev_path.empty()) {
+		Vertex* v = prev_path.front();
+		prev_path.pop();
+		delete v;
+	}
 }
 
 
 Vertex* findNearestVertex(vec2 pos) {
 	float nearest = 9999999.f;
 	Vertex* point;
-	for (Vertex* vertex : graph.getVertices()) {
+	for (Vertex* vertex : graph.vertices) {
 		float dist = findDistanceBetween({ vertex->x, vertex->y }, pos);
 		if (dist < nearest) {
 			nearest = dist;
@@ -105,24 +112,9 @@ std::queue<Vertex*> findPathAStar(Vertex* start, Vertex* end) {
 	return std::queue<Vertex*>();
 }
 
-void printPath(std::queue<Vertex*> path) {
-	printed = true;
-	printf("path: ");
-	//while (!path.empty()) {
-	//	Vertex* v = path.front();
-	//	printf("{%f, %f} -> ", v->x, v->y);
-	//}
-	printf("\n");
-
-}
-
 
 // Zombie will move according to the path
 void followPath(Motion& motion, std::queue<Vertex*> path,ACTION action, float speed, bool is_jumping) {
-	if (debugging.in_debug_mode && !printed) {
-		printPath(path);
-	}
-
 	// precision controls how close between the target point and where the zombie stops
 	float precision = 20.f;
 	if (!path.empty()) {
@@ -152,13 +144,14 @@ void followPath(Motion& motion, std::queue<Vertex*> path,ACTION action, float sp
 			return;
 		}
 		Vertex* possible_jump = path.front();
+		//float dist_to_possible = findDistanceBetween(motion.position, { possible_jump->x, possible_jump->y });
 		//printf("dist to next: %f\n", dist_to_next);
 		// Go to next vertex if motion is between curr and next vertices
 		if (next->adjs[possible_jump] == ACTION::JUMP) {
 			action = ACTION::JUMP;
 			v = possible_jump;
-		}
-		else if (dist_to_next <= curr_to_next) {
+		} 
+		else if (dist_to_next <= curr_to_next || dist_to_next > 10) {
 			action = v->adjs[next];
 			v = next;
 			//printf("Reached vertex {%f}\n", v->x);
@@ -183,7 +176,7 @@ void followPath(Motion& motion, std::queue<Vertex*> path,ACTION action, float sp
 
 
 
-void updateZombiePath(float elapsed_ms, int elapsed) 
+void AISystem::updateZombiePath(float elapsed_ms, int elapsed) 
 {
 	
 	float memory = 2000.f;
@@ -302,9 +295,6 @@ void updateZombiePath(float elapsed_ms, int elapsed)
 
 void AISystem::step(float elapsed_ms)
 {
-	if (printed) {
-		return;
-	}
 	auto end = std::chrono::system_clock::now();
 	auto elasped = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
 	updateZombiePath(elapsed_ms, int(round(elasped)/100000));

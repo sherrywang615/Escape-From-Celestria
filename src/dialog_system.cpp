@@ -5,7 +5,7 @@
 
 std::vector<std::pair<int, std::string>> DialogSystem::parseDialog(std::fstream& file) {
 	std::string line;
-	int speaker;
+	int speaker = -1;
 	std::vector<std::pair<int, std::string>> result;
 
 	while (getline(file, line))

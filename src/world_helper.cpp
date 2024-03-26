@@ -30,11 +30,11 @@ void createVerticesForLevel2() {
 	graph.addJumpEdge(first_floor_land, first_mid_plat);
 	Vertex* second_floor_land = graph.getVertex(180, (int)520 - offset);
 	graph.addJumpEdge(first_mid_plat, second_floor_land);
-	Vertex* second_floor_left_jump = graph.getVertex(330, (int)520 - offset);
+	Vertex* second_floor_left_jump = graph.getVertex(440, (int)520 - offset);
 	Vertex* second_floor_plat_right = graph.getVertex(550, (int)420 - offset);
 	graph.addJumpEdge(second_floor_left_jump, second_floor_plat_right);
 	Vertex* second_floor_plat_right_land = graph.getVertex(540, (int)420 - offset);
-	Vertex* second_floor_right_jump = graph.getVertex(530, (int)520 - offset);
+	Vertex* second_floor_right_jump = graph.getVertex(720, (int)520 - offset);
 	graph.addJumpEdge(second_floor_right_jump, second_floor_plat_right_land);
 	Vertex* second_plat_left = graph.getVertex(70, (int)400 - offset);
 	graph.addJumpEdge(second_floor_land, second_plat_left);
