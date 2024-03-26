@@ -505,19 +505,26 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 		if (counter.counter_ms < min_counter_ms)
 		{
 			min_counter_ms = counter.counter_ms;
+			
 		}
 
+		
 		if (counter.counter_ms < 0)
 		{
-			registry.invincibleTimers.remove(entity);
-			vec3 invincible_color = registry.colorChanges.get(entity).color_start;
-			vec3 color = registry.colors.get(entity);
-			float duration = 0.1f;
+			if (!registry.colorChanges.has(entity)) {
+				std::cout << "hello" << std::endl;
+			}
+			//vec3 invincible_color = registry.colorChanges.get(entity).color_start;
+
+			//vec3 color = registry.colors.get(entity);
+			//float duration = 0.1f;
 			registry.colors.remove(entity);
 
 			// registry.colors.emplace(entity, death_color);
-			ColorChange colorChange = {color, invincible_color, duration, 0.0f};
-			registry.colorChanges.emplace(entity, colorChange);
+			//ColorChange colorChange = {color, invincible_color, duration, 0.0f};
+			//registry.colorChanges.emplace(entity, colorChange);
+			registry.colors.emplace(entity, color);
+			registry.invincibleTimers.remove(entity);
 			return true;
 		}
 	}
@@ -915,13 +922,14 @@ void WorldSystem::handle_collisions()
 					registry.remove_all_components_of(entity_other);
 					registry.invincibleTimers.emplace(entity);
 					vec4 invincible_color = {1.0f, 1.0f, 0.6f, 0.6f};
-					vec3 color = registry.colors.get(entity);
+					color = registry.colors.get(entity);
 					float duration = 0.1f;
+					vec4 new_color = { 1.f, 1.f, 0.6f, 0.6f };
 					registry.colors.remove(entity);
 
-					// registry.colors.emplace(entity, death_color);
-					ColorChange colorChange = {color, invincible_color, duration, 0.0f};
-					registry.colorChanges.emplace(entity, colorChange);
+					 registry.colors.emplace(entity, new_color);
+					//ColorChange colorChange = {color, invincible_color, duration, 0.0f};
+					//registry.colorChanges.emplace(entity, colorChange);
 					Mix_PlayChannel(-1, bonus_music, 0);
 					Mix_VolumeChunk(bonus_music, 30);
 				}
