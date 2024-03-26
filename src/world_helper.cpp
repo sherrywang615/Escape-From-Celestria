@@ -25,7 +25,7 @@ void createVerticesForLevel1() {
 }
 
 void createVerticesForLevel2() {
-	Vertex* first_floor_land = graph.getVertex(230, (int)710 - offset);
+	Vertex* first_floor_land = graph.getVertex(230, (int)700 - offset);
 	Vertex* first_mid_plat = graph.getVertex(70, (int)620 - offset);
 	graph.addJumpEdge(first_floor_land, first_mid_plat);
 	Vertex* second_floor_land = graph.getVertex(180, (int)520 - offset);

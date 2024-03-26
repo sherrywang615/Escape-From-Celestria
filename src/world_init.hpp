@@ -25,8 +25,8 @@ const float CABINET_BB_WIDTH = 0.5f * 165.f;
 const float CABINET_BB_HEIGHT = 0.5f * 165.f;
 
 // Zombie
-const float ZOMBIE_BB_WIDTH = 0.6f * 108.f;
-const float ZOMBIE_BB_HEIGHT = 0.6f * 184.f;
+const float ZOMBIE_BB_WIDTH = 0.65f * 108.f;
+const float ZOMBIE_BB_HEIGHT = 0.65f * 184.f;
 
 // platform
 const float PLATFORM_WIDTH = 24.2f;
@@ -51,6 +51,7 @@ Entity createBackground4(RenderSystem* renderer, vec2 position);
 Entity createObject(RenderSystem *renderer, vec2 pos);
 Entity createSpeechPoint(RenderSystem *renderer, vec2 position, unsigned int index);
 Entity createNPC(RenderSystem *renderer, vec2 position, unsigned int index);
+Entity createGold(RenderSystem *renderer, vec2 position);
 // the enemy
 Entity createEagle(RenderSystem *renderer, vec2 position);
 // Josh
