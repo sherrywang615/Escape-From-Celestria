@@ -57,6 +57,8 @@ private:
 	std::chrono::system_clock::time_point start;
 	std::chrono::system_clock::time_point zombie_die_start;
 	int zombie_die_counter = 0;
+	float t = 0.f;
+	bool forward = true;
 	
 	// Input callback functions
 	bool renderInfo;
@@ -67,6 +69,8 @@ private:
 	bool createEntityBaseOnMap(std::vector<std::vector<char>> map);
 
 	void showKeyOnScreen(RenderSystem *renderer, bool have_key);
+
+	vec2 cubicBezier(vec2 &p0, vec2 &p1, vec2 &p2, vec2 &p3, float t);
 
 	// restart level
 	void restart_game();

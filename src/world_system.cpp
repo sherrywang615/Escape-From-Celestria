@@ -524,9 +524,41 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 		}
 	}
 
+	vec2 p0 = {200, 700}; // Start point
+    vec2 p1 = {300, 100}; // Control point 1
+    vec2 p2 = {500, 500}; // Control point 2
+    vec2 p3 = {700, 700}; // End point
+
+	for (Entity entity: registry.golds.entities){
+		if (forward) {
+        t += elapsed_ms_since_last_update / 1000.f * 0.2f;
+        if (t >= 1) {
+            t = 1.0f; 
+            forward = false;
+        }
+    } else {
+        t -= elapsed_ms_since_last_update / 1000.f * 0.2f;
+        if (t <= 0) {
+            t = 0.0f; 
+            forward = true; 
+        }
+    }
+		vec2 pos = cubicBezier(p0, p1, p2, p3, t);
+		Motion &motion = registry.motions.get(entity);
+		motion.position = pos;
+		// std::cout << "Forward: " << forward << std::endl;
+		// printf("Gold position: %f, %f\n", motion.position.x, motion.position.y);
+	}
+
 
 
 	return true;
+}
+
+vec2 WorldSystem::cubicBezier(vec2 &p0, vec2 &p1, vec2 &p2, vec2 &p3, float t) {
+    float t1 = 1.0f - t;
+    vec2 pos = p0 * (t1 * t1 * t1) + p1 * (3 * t1 * t1 * t) + p2 * (3 * t1 * t * t) + p3 * (t * t * t);
+    return pos;
 }
 
 bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map)
@@ -906,7 +938,7 @@ void WorldSystem::handle_collisions()
 					zombie.is_dead = true;
 			}
 
-		}
+		} 
 
 		else
 		{
