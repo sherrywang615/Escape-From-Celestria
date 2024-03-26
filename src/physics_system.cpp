@@ -287,7 +287,9 @@ void PhysicsSystem::step(float elapsed_ms)
 		if (!registry.players.has(entity)) {
 			if (registry.motions.has(entity)) {
 				Motion& motion = registry.motions.get(entity);
-				motion.velocity[1] += gravity;
+				if (motion.velocity.y <= 9999) {
+					motion.velocity[1] += gravity;
+				}
 			}
 		}
 		else {
@@ -414,6 +416,8 @@ void PhysicsSystem::step(float elapsed_ms)
 							}
 							else {
 								player.against_wall = 0;
+
+
 							}
 
 						}
