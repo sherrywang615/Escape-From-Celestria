@@ -73,6 +73,8 @@ WorldSystem::~WorldSystem()
 		Mix_FreeChunk(shoot_music);
 	if (trush_music != nullptr)
 		Mix_FreeChunk(trush_music);
+	if (bonus_music != nullptr)
+		Mix_FreeChunk(bonus_music);
 	Mix_CloseAudio();
 
 	// Destroy all created components
@@ -217,6 +219,13 @@ GLFWwindow *WorldSystem::create_window()
 	{
 		fprintf(stderr, "Failed to load sounds %s make sure the data directory is present",
 				audio_path("trush.wav").c_str());
+		return nullptr;
+	}
+	bonus_music = Mix_LoadWAV(audio_path("bonus.wav").c_str());
+	if (bonus_music == nullptr)
+	{
+		fprintf(stderr, "Failed to load sounds %s make sure the data directory is present",
+				audio_path("bonus.wav").c_str());
 		return nullptr;
 	}
 
@@ -885,6 +894,8 @@ void WorldSystem::handle_collisions()
 					// registry.colors.emplace(entity, death_color);
 					ColorChange colorChange = {color, invincible_color, duration, 0.0f};
 					registry.colorChanges.emplace(entity, colorChange);
+					Mix_PlayChannel(-1, bonus_music, 0);
+					Mix_VolumeChunk(bonus_music, 30);
 				}
 			}
 			else if (registry.doors.has(entity_other))

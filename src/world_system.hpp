@@ -116,6 +116,7 @@ private:
 	Mix_Chunk *eat_music;
 	Mix_Chunk *shoot_music;
 	Mix_Chunk *trush_music;
+	Mix_Chunk *bonus_music;
 
 	// C++ random number generator
 	std::default_random_engine rng;
