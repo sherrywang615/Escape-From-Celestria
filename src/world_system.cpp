@@ -306,9 +306,6 @@ void handleMovementKeys(Entity entity)
 // Update our game world
 bool WorldSystem::step(float elapsed_ms_since_last_update)
 {
-
-	printGraph();
-
 	auto end = std::chrono::system_clock::now();
 
 	if(is_josh_moving){
@@ -539,7 +536,8 @@ bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map)
 	//Create all other entities except for background
 	for (int i = 0; i < map.size(); i++)
 	{
-		Vertex* latest = new Vertex(0, 0);
+		Vertex* latest = new Vertex(-100, -100);
+		graph.addVertex(latest);
 		for (int j = 0; j < map[i].size(); j++)
 		{
 			float x = j * 10;
@@ -557,7 +555,6 @@ bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map)
 			}
 			else if (tok == 'P')
 			{
-				//Vertex* newV = new Vertex(x, y - (ZOMBIE_BB_HEIGHT * 0.6)/2);
 				Vertex* newV = new Vertex(x, y - PLATFORM_HEIGHT / 2 - (ZOMBIE_BB_HEIGHT * 0.6)/2);
 
 				graph.addVertex(newV);

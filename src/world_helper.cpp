@@ -128,9 +128,9 @@ void createGraph(int level) {
 	}
 }
 
-void printGraph() {
-	for (Vertex* v : graph.vertices) {
-		vec2 pos = { v->x, v->y };
-		createLine(pos, { 100, 100 });
-	}
-}
+//void printGraph() {
+//	for (Vertex* v : graph.vertices) {
+//		vec2 pos = { v->x, v->y };
+//		createLine(pos, { 100, 100 });
+//	}
+//}

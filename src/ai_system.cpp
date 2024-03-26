@@ -9,10 +9,17 @@
 
 int X_frame = 1;
 
-bool printed = false;
 
 AISystem::AISystem(){
 	start = std::chrono::system_clock::now();
+}
+
+AISystem::~AISystem() {
+	while (!prev_path.empty()) {
+		Vertex* v = prev_path.front();
+		prev_path.pop();
+		delete v;
+	}
 }
 
 
@@ -105,24 +112,9 @@ std::queue<Vertex*> findPathAStar(Vertex* start, Vertex* end) {
 	return std::queue<Vertex*>();
 }
 
-void printPath(std::queue<Vertex*> path) {
-	printed = true;
-	printf("path: ");
-	//while (!path.empty()) {
-	//	Vertex* v = path.front();
-	//	printf("{%f, %f} -> ", v->x, v->y);
-	//}
-	printf("\n");
-
-}
-
 
 // Zombie will move according to the path
 void followPath(Motion& motion, std::queue<Vertex*> path,ACTION action, float speed, bool is_jumping) {
-	if (debugging.in_debug_mode && !printed) {
-		printPath(path);
-	}
-
 	// precision controls how close between the target point and where the zombie stops
 	float precision = 20.f;
 	if (!path.empty()) {
@@ -183,7 +175,7 @@ void followPath(Motion& motion, std::queue<Vertex*> path,ACTION action, float sp
 
 
 
-void updateZombiePath(float elapsed_ms, int elapsed) 
+void AISystem::updateZombiePath(float elapsed_ms, int elapsed) 
 {
 	
 	float memory = 2000.f;
@@ -302,9 +294,6 @@ void updateZombiePath(float elapsed_ms, int elapsed)
 
 void AISystem::step(float elapsed_ms)
 {
-	if (printed) {
-		return;
-	}
 	auto end = std::chrono::system_clock::now();
 	auto elasped = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
 	updateZombiePath(elapsed_ms, int(round(elasped)/100000));

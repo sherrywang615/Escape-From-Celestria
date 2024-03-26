@@ -106,6 +106,4 @@ void Graph::clear() {
 	vertices.clear();
 }
 
-extern std::queue<Vertex*> prev_path = {};
-
 
