@@ -397,7 +397,7 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 
 	if (renderInfo)
 	{
-		createHelpInfo(renderer, vec2(window_width_px - 500, window_height_px - 450));
+		createHelpInfo(renderer, vec2(window_width_px - 515, window_height_px - 350));
 	}
 
 	// Removing out of screen entities
@@ -1053,7 +1053,7 @@ void WorldSystem::render_new_level(int level)
 	createHelpSign(renderer, vec2(window_width_px - 70, window_height_px - 700));
 	if (renderInfo)
 	{
-		createHelpInfo(renderer, vec2(window_width_px - 500, window_height_px - 450));
+		createHelpInfo(renderer, vec2(window_width_px - 515, window_height_px - 350));
 	}
 	for (int i = 0; i < bullets_count; i++)
 	{
