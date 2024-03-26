@@ -144,13 +144,14 @@ void followPath(Motion& motion, std::queue<Vertex*> path,ACTION action, float sp
 			return;
 		}
 		Vertex* possible_jump = path.front();
+		//float dist_to_possible = findDistanceBetween(motion.position, { possible_jump->x, possible_jump->y });
 		//printf("dist to next: %f\n", dist_to_next);
 		// Go to next vertex if motion is between curr and next vertices
 		if (next->adjs[possible_jump] == ACTION::JUMP) {
 			action = ACTION::JUMP;
 			v = possible_jump;
-		}
-		else if (dist_to_next <= curr_to_next) {
+		} 
+		else if (dist_to_next <= curr_to_next || dist_to_next > 10) {
 			action = v->adjs[next];
 			v = next;
 			//printf("Reached vertex {%f}\n", v->x);
