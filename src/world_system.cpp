@@ -262,19 +262,21 @@ void handleMovementKeys(Entity entity)
 			// Handle right key
 			if (rightKeyPressed)
 			{
-				if(!spacePressed){
-				if (josh_step_counter % 2 == 0)
+				if (!spacePressed)
 				{
-					registry.renderRequests.get(entity) = {TEXTURE_ASSET_ID::JOSHGUN1,
-														   EFFECT_ASSET_ID::TEXTURED,
-														   GEOMETRY_BUFFER_ID::SPRITE};
+					if (josh_step_counter % 2 == 0)
+					{
+						registry.renderRequests.get(entity) = {TEXTURE_ASSET_ID::JOSHGUN1,
+															   EFFECT_ASSET_ID::TEXTURED,
+															   GEOMETRY_BUFFER_ID::SPRITE};
+					}
+					else
+					{
+						registry.renderRequests.get(entity) = {TEXTURE_ASSET_ID::JOSHGUN,
+															   EFFECT_ASSET_ID::TEXTURED,
+															   GEOMETRY_BUFFER_ID::SPRITE};
+					}
 				}
-				else
-				{
-					registry.renderRequests.get(entity) = {TEXTURE_ASSET_ID::JOSHGUN,
-														   EFFECT_ASSET_ID::TEXTURED,
-														   GEOMETRY_BUFFER_ID::SPRITE};
-				}}
 				if (motion.scale.x < 0 && !registry.players.get(entity).against_wall)
 				{
 					motion.scale.x *= -1;
@@ -285,19 +287,21 @@ void handleMovementKeys(Entity entity)
 			// Handle left key
 			if (leftKeyPressed)
 			{
-				if(!spacePressed){
-				if (josh_step_counter % 2 == 0)
+				if (!spacePressed)
 				{
-					registry.renderRequests.get(entity) = {TEXTURE_ASSET_ID::JOSHGUN1,
-														   EFFECT_ASSET_ID::TEXTURED,
-														   GEOMETRY_BUFFER_ID::SPRITE};
+					if (josh_step_counter % 2 == 0)
+					{
+						registry.renderRequests.get(entity) = {TEXTURE_ASSET_ID::JOSHGUN1,
+															   EFFECT_ASSET_ID::TEXTURED,
+															   GEOMETRY_BUFFER_ID::SPRITE};
+					}
+					else
+					{
+						registry.renderRequests.get(entity) = {TEXTURE_ASSET_ID::JOSHGUN,
+															   EFFECT_ASSET_ID::TEXTURED,
+															   GEOMETRY_BUFFER_ID::SPRITE};
+					}
 				}
-				else
-				{
-					registry.renderRequests.get(entity) = {TEXTURE_ASSET_ID::JOSHGUN,
-														   EFFECT_ASSET_ID::TEXTURED,
-														   GEOMETRY_BUFFER_ID::SPRITE};
-				}}
 				motion.velocity.x = -JOSH_SPEED;
 				if (motion.scale.x > 0 && !registry.players.get(entity).against_wall)
 				{
@@ -320,25 +324,30 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 
 	auto end = std::chrono::system_clock::now();
 
-	if(is_josh_moving){
-    	auto elasped = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
-		josh_step_counter = int(round(elasped)/100000);
-		//std::cout<< josh_step_counter<<std::endl;
+	if (is_josh_moving)
+	{
+		auto elasped = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
+		josh_step_counter = int(round(elasped) / 100000);
+		// std::cout<< josh_step_counter<<std::endl;
 	}
 
-	if (paused) {
-		for (int i = 0; i < buttons.size(); i++) {
+	if (paused)
+	{
+		for (int i = 0; i < buttons.size(); i++)
+		{
 
-			if (!registry.texts.has(buttons[i])) {
+			if (!registry.texts.has(buttons[i]))
+			{
 				continue;
 			}
-			Text& text = registry.texts.get(buttons[i]);
-			if (i != current_button) {
-				text.color = { 1, 1, 1 };
+			Text &text = registry.texts.get(buttons[i]);
+			if (i != current_button)
+			{
+				text.color = {1, 1, 1};
 			}
 			else
 			{
-				text.color = { 1, 1, 0 };
+				text.color = {1, 1, 0};
 			}
 		}
 
@@ -347,8 +356,7 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 	buttons.clear();
 
 	handleMovementKeys(player_josh);
-		
-	
+
 	// for fps counter
 	fpsTimer += elapsed_ms_since_last_update;
 	fpsCount++;
@@ -370,14 +378,14 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 	for (Entity entity : registry.speech.entities)
 	{
 		// progress timer
-		Speech& speech = registry.speech.get(entity);
+		Speech &speech = registry.speech.get(entity);
 		speech.counter_ms -= elapsed_ms_since_last_update;
 		// remove entity if timer expired
 		if (speech.counter_ms < 0)
 		{
 			speech.texts.pop();
 			speech.timer.pop();
-			if (speech.texts.size() > 0) 
+			if (speech.texts.size() > 0)
 			{
 				speech.counter_ms = speech.timer.front();
 			}
@@ -515,66 +523,72 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 		}
 	}
 
-	for (Entity entity : registry.zombies.entities){
+	for (Entity entity : registry.zombies.entities)
+	{
 		NormalZombie &zombie = registry.zombies.get(entity);
-		if(zombie.is_dead){
-			zombie.death_counter -=elapsed_ms_since_last_update;
-			if(zombie.death_counter>=1000.0){
-					registry.renderRequests.get(entity) = {TEXTURE_ASSET_ID::ZOMBIE_DIE1,
-										EFFECT_ASSET_ID::TEXTURED,
-										GEOMETRY_BUFFER_ID::SPRITE};
-					
+		if (zombie.is_dead)
+		{
+			zombie.death_counter -= elapsed_ms_since_last_update;
+			if (zombie.death_counter >= 1000.0)
+			{
+				registry.renderRequests.get(entity) = {TEXTURE_ASSET_ID::ZOMBIE_DIE1,
+													   EFFECT_ASSET_ID::TEXTURED,
+													   GEOMETRY_BUFFER_ID::SPRITE};
 			}
-			if(zombie.death_counter<1.0){
+			if (zombie.death_counter < 1.0)
+			{
 				registry.renderRequests.remove(entity);
 				registry.remove_all_components_of(entity);
-				
 			}
 		}
 	}
 
-	vec2 p0 = {200, 700}; // Start point
-    vec2 p1 = {300, 100}; // Control point 1
-    vec2 p2 = {500, 500}; // Control point 2
-    vec2 p3 = {700, 700}; // End point
+	// Implement Bezier curve 
+	vec2 p0 = {50, 150}; // start point
+	vec2 p1 = {255, 1000}; 
+	vec2 p2 = {765, 0}; 
+	vec2 p3 = {970, 150}; // end point
 
-	for (Entity entity: registry.golds.entities){
-		if (forward) {
-        t += elapsed_ms_since_last_update / 1000.f * 0.2f;
-        if (t >= 1) {
-            t = 1.0f; 
-            forward = false;
-        }
-    } else {
-        t -= elapsed_ms_since_last_update / 1000.f * 0.2f;
-        if (t <= 0) {
-            t = 0.0f; 
-            forward = true; 
-        }
-    }
+	for (Entity entity : registry.golds.entities)
+	{
+		if (forward)
+		{
+			t += elapsed_ms_since_last_update / 1000.f * 0.2f;
+			if (t >= 1)
+			{
+				t = 1.0f;
+				forward = false;
+			}
+		}
+		else
+		{
+			t -= elapsed_ms_since_last_update / 1000.f * 0.2f;
+			if (t <= 0)
+			{
+				t = 0.0f;
+				forward = true;
+			}
+		}
 		vec2 pos = cubicBezier(p0, p1, p2, p3, t);
 		Motion &motion = registry.motions.get(entity);
 		motion.position = pos;
-		// std::cout << "Forward: " << forward << std::endl;
-		// printf("Gold position: %f, %f\n", motion.position.x, motion.position.y);
 	}
-
-
 
 	return true;
 }
 
-vec2 WorldSystem::cubicBezier(vec2 &p0, vec2 &p1, vec2 &p2, vec2 &p3, float t) {
-    float t1 = 1.0f - t;
-    vec2 pos = p0 * (t1 * t1 * t1) + p1 * (3 * t1 * t1 * t) + p2 * (3 * t1 * t * t) + p3 * (t * t * t);
-    return pos;
+vec2 WorldSystem::cubicBezier(vec2 &p0, vec2 &p1, vec2 &p2, vec2 &p3, float t)
+{
+	float t1 = 1.0f - t;
+	vec2 pos = p0 * (t1 * t1 * t1) + p1 * (3 * t1 * t1 * t) + p2 * (3 * t1 * t * t) + p3 * (t * t * t);
+	return pos;
 }
 
 bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map)
 {
 	float josh_x = 0, josh_y = 0;
 	std::vector<std::pair<float, float>> zombiePositions;
-	//Create background entities first
+	// Create background entities first
 	for (int i = 0; i < map.size(); i++)
 	{
 		for (int j = 0; j < map[i].size(); j++)
@@ -592,19 +606,19 @@ bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map)
 			}
 			if (tok == 'L')
 			{
-				createBackground3(renderer, { x, y });
+				createBackground3(renderer, {x, y});
 			}
 			if (tok == 'M')
 			{
-				createBackground4(renderer, { x, y });
+				createBackground4(renderer, {x, y});
 			}
 		}
 	}
 
-	//Create all other entities except for background
+	// Create all other entities except for background
 	for (int i = 0; i < map.size(); i++)
 	{
-		Vertex* latest = new Vertex(0, 0);
+		Vertex *latest = new Vertex(0, 0);
 		for (int j = 0; j < map[i].size(); j++)
 		{
 			float x = j * 10;
@@ -622,11 +636,12 @@ bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map)
 			}
 			else if (tok == 'P')
 			{
-				//Vertex* newV = new Vertex(x, y - (ZOMBIE_BB_HEIGHT * 0.6)/2);
-				Vertex* newV = new Vertex(x, y - PLATFORM_HEIGHT / 2 - (ZOMBIE_BB_HEIGHT * 0.6)/2);
+				// Vertex* newV = new Vertex(x, y - (ZOMBIE_BB_HEIGHT * 0.6)/2);
+				Vertex *newV = new Vertex(x, y - PLATFORM_HEIGHT / 2 - (ZOMBIE_BB_HEIGHT * 0.6) / 2);
 
 				graph.addVertex(newV);
-				if (findDistanceBetween({ newV->x, newV->y }, { latest->x, latest->y }) <= 10) {
+				if (findDistanceBetween({newV->x, newV->y}, {latest->x, latest->y}) <= 10)
+				{
 					graph.addEdge(newV, latest, ACTION::WALK);
 					graph.addEdge(latest, newV, ACTION::WALK);
 				}
@@ -675,7 +690,8 @@ bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map)
 				int index = map[i][++j] - '0';
 				createSpeechPoint(renderer, {x, y}, index);
 			}
-			else if(tok == 'G'){
+			else if (tok == 'G')
+			{
 				createGold(renderer, {x, y});
 			}
 			else
@@ -699,12 +715,16 @@ bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map)
 	return true;
 }
 
-Mix_Music* getMusicTrack(int level, const std::vector<Mix_Music*>& tracks) {
-    if (level >= 1 && level <= tracks.size()) {
-        return tracks[level - 1];
-    } else {
-        return nullptr;
-    }
+Mix_Music *getMusicTrack(int level, const std::vector<Mix_Music *> &tracks)
+{
+	if (level >= 1 && level <= tracks.size())
+	{
+		return tracks[level - 1];
+	}
+	else
+	{
+		return nullptr;
+	}
 }
 
 // Reset the world state to its initial state
@@ -719,28 +739,30 @@ void WorldSystem::restart_game()
 	bullets_count = 0;
 
 	// Reset current level
-	//currentLevel = 1;
+	// currentLevel = 1;
 
 	// Remove all entities that we created
 	// All that have a motion, we could also iterate over all bug, eagles, ... but that would be more cumbersome
 	while (registry.motions.entities.size() > 0)
 		registry.remove_all_components_of(registry.motions.entities.back());
-	
+
 	while (registry.speechPoint.entities.size() > 0)
 		registry.remove_all_components_of(registry.speechPoint.entities.back());
-	
 
 	// Debugging for memory/component leaks
 	registry.list_all_components();
 
-	std::vector<Mix_Music*> musicTracks = {bg1_music, bg2_music, bg3_music, bg4_music};
-	Mix_Music* currentMusicTrack = getMusicTrack(currentLevel, musicTracks);
-    
-	if (currentMusicTrack != nullptr) {
-        Mix_PlayMusic(currentMusicTrack, -1);
-    } else {
-        std::cerr << "Error: Music track for level " << currentLevel << " not found." << std::endl;
-    }
+	std::vector<Mix_Music *> musicTracks = {bg1_music, bg2_music, bg3_music, bg4_music};
+	Mix_Music *currentMusicTrack = getMusicTrack(currentLevel, musicTracks);
+
+	if (currentMusicTrack != nullptr)
+	{
+		Mix_PlayMusic(currentMusicTrack, -1);
+	}
+	else
+	{
+		std::cerr << "Error: Music track for level " << currentLevel << " not found." << std::endl;
+	}
 
 	auto map = loadMap(map_path() + "level" + std::to_string(currentLevel) + ".txt");
 	createEntityBaseOnMap(map);
@@ -752,7 +774,7 @@ void WorldSystem::restart_game()
 		createHeart(renderer, vec2(30 + i * create_heart_distance, 20));
 	}
 
-	dialog->initializeDialog(dialog_path("level"+ std::to_string(currentLevel) + ".txt"));
+	dialog->initializeDialog(dialog_path("level" + std::to_string(currentLevel) + ".txt"));
 }
 
 // Compute collisions between entities
@@ -882,8 +904,9 @@ void WorldSystem::handle_collisions()
 					// std::cout << "have key: " << have_key << std::endl;
 					showKeyOnScreen(renderer, have_key);
 					// registry.doors.get(registry.doors.entities[0]).is_open = true;
-				} 
-				else if(registry.golds.has(entity_other)){
+				}
+				else if (registry.golds.has(entity_other))
+				{
 					registry.remove_all_components_of(entity_other);
 					registry.invincibleTimers.emplace(entity);
 					vec4 invincible_color = {1.0f, 1.0f, 0.6f, 0.6f};
@@ -923,7 +946,7 @@ void WorldSystem::handle_collisions()
 			}
 			else if (registry.speechPoint.has(entity_other))
 			{
-				SpeechPoint& speechPoint = registry.speechPoint.get(entity_other);
+				SpeechPoint &speechPoint = registry.speechPoint.get(entity_other);
 				if (!speechPoint.isDone)
 				{
 					printf("speechPoint: %i\n", speechPoint.index);
@@ -936,20 +959,19 @@ void WorldSystem::handle_collisions()
 		else if (registry.zombies.has(entity))
 		{
 			NormalZombie &zombie = registry.zombies.get(entity);
-			if (registry.shootBullets.has(entity_other)&&!zombie.is_dead)
+			if (registry.shootBullets.has(entity_other) && !zombie.is_dead)
 			{
-					//remove bullet render effect, enter 2 frames zombie death animation 
-				    // zombie_die_start = std::chrono::system_clock::now();
-					registry.renderRequests.get(entity) = {TEXTURE_ASSET_ID::ZOMBIE_DIE,
-														EFFECT_ASSET_ID::TEXTURED,
-														GEOMETRY_BUFFER_ID::SPRITE};
-					registry.remove_all_components_of(entity_other);
-					registry.renderRequests.remove(entity_other);
-					registry.deadlys.remove(entity);
-					zombie.is_dead = true;
+				// remove bullet render effect, enter 2 frames zombie death animation
+				//  zombie_die_start = std::chrono::system_clock::now();
+				registry.renderRequests.get(entity) = {TEXTURE_ASSET_ID::ZOMBIE_DIE,
+													   EFFECT_ASSET_ID::TEXTURED,
+													   GEOMETRY_BUFFER_ID::SPRITE};
+				registry.remove_all_components_of(entity_other);
+				registry.renderRequests.remove(entity_other);
+				registry.deadlys.remove(entity);
+				zombie.is_dead = true;
 			}
-
-		} 
+		}
 
 		else
 		{
@@ -1005,7 +1027,7 @@ void WorldSystem::render_new_level(int level)
 	else if (level == 3)
 	{
 		Mix_PlayMusic(bg3_music, -1);
-	} 
+	}
 	else if (level == 4)
 	{
 		Mix_PlayMusic(bg4_music, -1);
@@ -1049,24 +1071,28 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	if (action == GLFW_PRESS && key == GLFW_KEY_ESCAPE)
 	{
-		//glfwSetWindowShouldClose(window, true);
+		// glfwSetWindowShouldClose(window, true);
 		paused = !paused;
-		if (paused) {
+		if (paused)
+		{
 			renderPauseMenu();
-			for (Entity entity : registry.menus.entities) {
-				auto& me = registry.menus.get(entity);
-				if (me.func != MENU_FUNC::ALL) {
+			for (Entity entity : registry.menus.entities)
+			{
+				auto &me = registry.menus.get(entity);
+				if (me.func != MENU_FUNC::ALL)
+				{
 					buttons.push_back(entity);
 				}
 			}
 		}
-		else {
-			for (Entity entity : registry.menus.entities) {
+		else
+		{
+			for (Entity entity : registry.menus.entities)
+			{
 				registry.remove_all_components_of(entity);
 			}
 			buttons.clear();
 		}
-
 	}
 
 	if (isJoshHidden && key != GLFW_KEY_H)
@@ -1079,7 +1105,7 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 		if (action == GLFW_PRESS || action == GLFW_REPEAT)
 		{
 			is_josh_moving = true;
-			//josh_step_counter++;
+			// josh_step_counter++;
 			leftKeyPressed = true;
 		}
 		else if (action == GLFW_RELEASE)
@@ -1093,7 +1119,7 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 		if (action == GLFW_PRESS || action == GLFW_REPEAT)
 		{
 			is_josh_moving = true;
-			//josh_step_counter++;
+			// josh_step_counter++;
 			rightKeyPressed = true;
 		}
 		else if (action == GLFW_RELEASE)
@@ -1151,7 +1177,7 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 			josh_motion.velocity.y = -JOSH_JUMP;
 			jumped = true;
 			spacePressed = true;
-			//registry.players.get(player_josh).standing = false;
+			// registry.players.get(player_josh).standing = false;
 		}
 		else if (action == GLFW_RELEASE && key == GLFW_KEY_SPACE)
 		{
@@ -1198,7 +1224,7 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 				registry.hearts.remove(entity);
 				registry.renderRequests.remove(entity);
 			}
-			for (int i = 0; i < hp_count ; i++)
+			for (int i = 0; i < hp_count; i++)
 			{
 				createHeart(renderer, vec2(30 + i * create_heart_distance, 20));
 			}
@@ -1221,27 +1247,36 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 	}
 
 	// Handle Menu
-	if (paused) {
+	if (paused)
+	{
 
-		if (action == GLFW_RELEASE && key == GLFW_KEY_DOWN) {
-			if (current_button == buttons.size() - 1) {
+		if (action == GLFW_RELEASE && key == GLFW_KEY_DOWN)
+		{
+			if (current_button == buttons.size() - 1)
+			{
 				current_button = 0;
 			}
-			else {
+			else
+			{
 				current_button++;
 			}
 		}
-		if (action == GLFW_RELEASE && key == GLFW_KEY_UP) {
-			if (current_button == 0) {
+		if (action == GLFW_RELEASE && key == GLFW_KEY_UP)
+		{
+			if (current_button == 0)
+			{
 				current_button = buttons.size() - 1;
 			}
-			else {
+			else
+			{
 				current_button--;
 			}
 		}
-		if (action == GLFW_RELEASE && key == GLFW_KEY_ENTER) {
+		if (action == GLFW_RELEASE && key == GLFW_KEY_ENTER)
+		{
 			paused = handleButtonEvents(buttons[current_button], renderer, window);
-			for (Entity entity : registry.players.entities) {
+			for (Entity entity : registry.players.entities)
+			{
 				player_josh = entity;
 			}
 		}
@@ -1309,6 +1344,7 @@ void WorldSystem::removeSmallBullets(RenderSystem *renderer)
 	}
 }
 
-bool WorldSystem::is_paused() const {
+bool WorldSystem::is_paused() const
+{
 	return paused;
 }
