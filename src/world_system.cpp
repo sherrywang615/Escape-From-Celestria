@@ -744,7 +744,7 @@ void WorldSystem::restart_game()
 	createEntityBaseOnMap(map);
 
 
-	createHelpSign(renderer, vec2(window_width_px - 70, window_height_px - 700));
+	//createHelpSign(renderer, vec2(window_width_px - 70, window_height_px - 700));
 
 	for (int i = 0; i < hp_count; i++)
 	{
