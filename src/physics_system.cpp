@@ -324,6 +324,10 @@ void PhysicsSystem::step(float elapsed_ms)
 	// ------------------------------- Debugging ---------------------------------
 	
 	if (debugging.in_debug_mode == true) {
+		//for (Vertex* v : graph.vertices) {
+		//	vec2 pos = { v->x, v->y };
+		//	createLine(pos, { 5, 5 });
+		//}
 		vec2 player_pos = {};
 		// debugging box for player
 		for (int i = 0; i < registry.players.size(); i++) {

@@ -108,16 +108,15 @@ public:
 
 struct Graph {
 
-private:
-	std::vector<Vertex*> vertices;
-
 public:
+	std::vector<Vertex*> vertices;
 	void addVertex(Vertex* v);
 	void addEdge(Vertex* v1, Vertex* v2, ACTION action);
 	void addJumpEdge(Vertex* jump, Vertex* land);
-	std::vector<Vertex*> getVertices();
+	//std::vector<Vertex*> getVertices();
 	void saveGraph(std::string path);
 	Vertex* getVertex(int x, int y);
+	void clear();
 };
 
 extern Graph graph;

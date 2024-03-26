@@ -81,9 +81,6 @@ void Graph::addEdge(Vertex* v1, Vertex* v2, ACTION action) {
 	//v2->adjs[v1] = action;
 }
 
-std::vector<Vertex*> Graph::getVertices() {
-	return vertices;
-}
 
 Vertex* Graph::getVertex(int vx, int vy) {
 	for (Vertex* vertex : vertices) {
@@ -100,6 +97,13 @@ Vertex* Graph::getVertex(int vx, int vy) {
 void Graph::addJumpEdge(Vertex* jump, Vertex* land) {
 	graph.addEdge(jump, land, ACTION::JUMP);
 	graph.addEdge(land, jump, ACTION::WALK);
+}
+
+void Graph::clear() {
+	for (auto v : vertices) {
+		delete v;
+	}
+	vertices.clear();
 }
 
 extern std::queue<Vertex*> prev_path = {};

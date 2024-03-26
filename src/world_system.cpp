@@ -307,6 +307,8 @@ void handleMovementKeys(Entity entity)
 bool WorldSystem::step(float elapsed_ms_since_last_update)
 {
 
+	printGraph();
+
 	auto end = std::chrono::system_clock::now();
 
 	if(is_josh_moving){
@@ -503,6 +505,8 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 
 bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map)
 {
+	// clear the graph first
+	graph.clear();
 	float josh_x = 0, josh_y = 0;
 	std::vector<std::pair<float, float>> zombiePositions;
 	//Create background entities first
@@ -672,6 +676,7 @@ void WorldSystem::restart_game()
 
 	auto map = loadMap(map_path() + "level" + std::to_string(currentLevel) + ".txt");
 	createEntityBaseOnMap(map);
+
 
 	createHelpSign(renderer, vec2(window_width_px - 70, window_height_px - 700));
 
@@ -1171,13 +1176,21 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 	// Control the current speed with `<` `>`
 	if (action == GLFW_RELEASE && (mod & GLFW_MOD_SHIFT) && key == GLFW_KEY_COMMA)
 	{
-		current_speed -= 0.1f;
-		printf("Current speed = %f\n", current_speed);
+		//current_speed -= 0.1f;
+		//printf("Current speed = %f\n", current_speed);
+		if (currentLevel > 0) {
+			currentLevel--;
+			restart_game();
+		}
 	}
 	if (action == GLFW_RELEASE && (mod & GLFW_MOD_SHIFT) && key == GLFW_KEY_PERIOD)
 	{
 		current_speed += 0.1f;
 		printf("Current speed = %f\n", current_speed);
+		if (currentLevel < 4) {
+			currentLevel++;
+			restart_game();
+		}
 	}
 	current_speed = fmax(0.f, current_speed);
 }

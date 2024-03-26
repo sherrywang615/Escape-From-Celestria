@@ -19,7 +19,7 @@ AISystem::AISystem(){
 Vertex* findNearestVertex(vec2 pos) {
 	float nearest = 9999999.f;
 	Vertex* point;
-	for (Vertex* vertex : graph.getVertices()) {
+	for (Vertex* vertex : graph.vertices) {
 		float dist = findDistanceBetween({ vertex->x, vertex->y }, pos);
 		if (dist < nearest) {
 			nearest = dist;

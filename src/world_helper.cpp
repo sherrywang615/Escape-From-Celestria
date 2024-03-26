@@ -127,3 +127,10 @@ void createGraph(int level) {
 		createVerticesForLevel4();
 	}
 }
+
+void printGraph() {
+	for (Vertex* v : graph.vertices) {
+		vec2 pos = { v->x, v->y };
+		createLine(pos, { 100, 100 });
+	}
+}
