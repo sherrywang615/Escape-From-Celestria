@@ -501,15 +501,17 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 
 		if (counter.counter_ms < 0)
 		{
-			registry.invincibleTimers.remove(entity);
-			vec3 invincible_color = registry.colorChanges.get(entity).color_start;
-			vec3 color = registry.colors.get(entity);
-			float duration = 0.1f;
+			//vec3 invincible_color = registry.colorChanges.get(entity).color_start;
+
+			//vec3 color = registry.colors.get(entity);
+			//float duration = 0.1f;
 			registry.colors.remove(entity);
 
 			// registry.colors.emplace(entity, death_color);
-			ColorChange colorChange = {color, invincible_color, duration, 0.0f};
-			registry.colorChanges.emplace(entity, colorChange);
+			//ColorChange colorChange = {color, invincible_color, duration, 0.0f};
+			//registry.colorChanges.emplace(entity, colorChange);
+			registry.colors.emplace(entity, color);
+			registry.invincibleTimers.remove(entity);
 			return true;
 		}
 	}
@@ -532,10 +534,10 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 		}
 	}
 
-	vec2 p0 = {200, 700}; // Start point
-    vec2 p1 = {300, 100}; // Control point 1
-    vec2 p2 = {500, 500}; // Control point 2
-    vec2 p3 = {700, 700}; // End point
+	vec2 p0 = { 50, 150 }; // start point
+	vec2 p1 = { 255, 1000 };
+	vec2 p2 = { 765, 50 };
+	vec2 p3 = { 970, 150 }; // end point
 
 	for (Entity entity: registry.golds.entities){
 		if (forward) {
@@ -888,14 +890,15 @@ void WorldSystem::handle_collisions()
 				else if(registry.golds.has(entity_other)){
 					registry.remove_all_components_of(entity_other);
 					registry.invincibleTimers.emplace(entity);
-					vec4 invincible_color = {1.0f, 1.0f, 0.6f, 0.6f};
-					vec3 color = registry.colors.get(entity);
-					float duration = 0.1f;
+					//vec4 invincible_color = { 1.0f, 1.0f, 0.6f, 0.6f };
+					color = registry.colors.get(entity);
+					//float duration = 0.1f;
+					vec4 new_color = { 1.f, 1.f, 0.6f, 0.6f };
 					registry.colors.remove(entity);
 
-					// registry.colors.emplace(entity, death_color);
-					ColorChange colorChange = {color, invincible_color, duration, 0.0f};
-					registry.colorChanges.emplace(entity, colorChange);
+					registry.colors.emplace(entity, new_color);
+					//ColorChange colorChange = {color, invincible_color, duration, 0.0f};
+					//registry.colorChanges.emplace(entity, colorChange);
 					Mix_PlayChannel(-1, bonus_music, 0);
 					Mix_VolumeChunk(bonus_music, 30);
 				}

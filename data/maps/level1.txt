@@ -61,7 +61,7 @@ PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
                                                                               
                                                                                                      
                                                                                                      
-                                                    G                          Z                                                    
+                                                                              Z                                                    
                S1      F                                                                               
                                         C                                                                                      
                                                                                                      
