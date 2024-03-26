@@ -6,3 +6,4 @@
 
 
 void createGraph(int level);
+void printGraph();

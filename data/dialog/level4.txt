@@ -2,7 +2,11 @@
 @4
 Survival! Here is safe zone
 @J
-Have you see my daughter Alice?
+Have you seen Alice, my daughter
 @4
 Don't worry, she is safe inside！
-Congratulations!!! You have reunited！
+Congratulations! 
+I think she must miss you very much!
+You guys are about to reunite!
+@J 
+Thank you!

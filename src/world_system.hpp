@@ -26,7 +26,7 @@ public:
 	float fpsCount;
 	float fpsTimer;
 
-	int currentLevel = 3;
+	int currentLevel = 1;
 
 	bool zombie_died = false;
 

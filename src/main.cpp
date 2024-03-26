@@ -16,72 +16,6 @@
 
 using Clock = std::chrono::high_resolution_clock;
 
-VecVertice createVerticesForAPlatform(vec2 range, float y, int head, int tail) {
-	Vertex* latest;
-	Vertex* vHead;
-	Vertex* vTail;
-	for (int i = range[0]; i <= range[1]; i += 50) {
-		Vertex* v = new Vertex(i, y);
-		graph.addVertex(v);
-		if (i != range[0]) {
-			graph.addEdge(v, latest, ACTION::WALK);
-			graph.addEdge(latest, v, ACTION::WALK);
-		}
-		if (i == head) {
-			vHead = v;
-		}
-		if (i == tail) {
-			vTail = v;
-		}
-		latest = v;
-	}
-	VecVertice result = { vHead, vTail };
-	return result;
-}
-
-
-
-
-//void createVerticesForLevel2() {
-//	VecVertice vv1 = createVerticesForAPlatform({ 0, 1050 }, 644, 900, 100);
-//	Vertex* first_mid_plat = new Vertex(50, 544);
-//	graph.addVertex(first_mid_plat);
-//	graph.addEdge(first_mid_plat, vv1.tail, ACTION::WALK);
-//	graph.addEdge(vv1.tail, first_mid_plat, ACTION::JUMP);
-//	VecVertice vv2Left = createVerticesForAPlatform({ 180, 480 }, 444, 180, 480);
-//	graph.addEdge(first_mid_plat, vv2Left.head, ACTION::JUMP);
-//	graph.addEdge(vv2Left.head, first_mid_plat, ACTION::WALK);
-//	VecVertice vv2Mid = createVerticesForAPlatform({ 550, 650 }, 444, 550, 650);
-//	graph.addEdge(vv2Mid.head, vv2Left.tail, ACTION::WALK);
-//	graph.addEdge(vv2Left.tail, vv2Mid.head, ACTION::WALK);
-//	VecVertice vv2Right = createVerticesForAPlatform({ 720, 970 }, 444, 720, 970);
-//	graph.addEdge(vv2Mid.tail, vv2Right.head, ACTION::WALK);
-//	graph.addEdge(vv2Right.head, vv2Mid.tail, ACTION::WALK);
-//	VecVertice vvUp = createVerticesForAPlatform({ 550, 650 }, 344, 550, 650);
-//	graph.addEdge(vv2Left.tail, vvUp.head, ACTION::JUMP);
-//	graph.addEdge(vvUp.head, vv2Left.tail, ACTION::WALK);
-//	graph.addEdge(vv2Right.head, vvUp.tail, ACTION::JUMP);
-//	graph.addEdge(vvUp.tail, vv2Right.head, ACTION::WALK);
-//	Vertex* second_mid_plat = new Vertex(50, 344);
-//	graph.addVertex(second_mid_plat);
-//	graph.addEdge(vv2Left.head, second_mid_plat, ACTION::JUMP);
-//	graph.addEdge(second_mid_plat, vv2Left.head, ACTION::WALK);
-//	VecVertice vvLeft3 = createVerticesForAPlatform({ 170, 420 }, 244, 170, 420);
-//	graph.addEdge(vvUp.head, vvLeft3.tail, ACTION::JUMP);
-//	graph.addEdge(vvLeft3.tail, vvUp.head, ACTION::WALK);
-//	graph.addEdge(second_mid_plat, vvLeft3.head, ACTION::JUMP);
-//	graph.addEdge(vvLeft3.head, second_mid_plat, ACTION::WALK);
-//	VecVertice vvRight3 = createVerticesForAPlatform({ 770, 970 }, 244, 770, 970);
-//	graph.addEdge(vvUp.tail, vvRight3.head, ACTION::JUMP);
-//	graph.addEdge(vvRight3.head, vvUp.tail, ACTION::WALK);
-//	Vertex* third_mid_plat = new Vertex(50, 144);
-//	graph.addVertex(third_mid_plat);
-//	VecVertice vv4 = createVerticesForAPlatform({ 180, 1080 }, 64, 180, 980);
-//	graph.addEdge(vvLeft3.head, third_mid_plat, ACTION::JUMP);
-//	graph.addEdge(third_mid_plat, vvLeft3.head, ACTION::WALK);
-//	graph.addEdge(third_mid_plat, vv4.head, ACTION::JUMP);
-//	graph.addEdge(vv4.head, third_mid_plat, ACTION::WALK);
-//}
 
 
 // Entry point
@@ -111,13 +45,6 @@ int main()
 	unsigned int font_default_size = 48;
 	renderer.fontInit(window, font_filename, font_default_size);
 	world.init(&renderer,&dialog);
-
-	int level = world.currentLevel;
-	//createVerticesForLevel1();
-
-
-	//graph.saveGraph(GRAPH_PATH + "level1.txt");
-	//graph.loadFromFile(GRAPH_PATH + "level1.txt");
 	
 
 	// variable timestep loop
@@ -142,13 +69,6 @@ int main()
 		
 		renderer.draw();
 		float ms_to_sleep = 1000 /60 - elapsed_ms;
-		//std::cout << ms_to_sleep << std::endl;
-		// if (ms_to_sleep > 0) {
-		// 	Sleep((ms_to_sleep));
-		// }
-		
-		// renderer.renderText("test", -0.6f, 0.0f, 1.0f, glm::vec3(1.0f, 1.0f, 1.0f), trans);
-
 	}
 
 	return EXIT_SUCCESS;

@@ -163,33 +163,33 @@ GLFWwindow *WorldSystem::create_window()
 		return nullptr;
 	}
 
-	bg1_music = Mix_LoadMUS(audio_path("bg1.mp3").c_str());
+	bg1_music = Mix_LoadMUS(audio_path("bg1.wav").c_str());
 
 	if (bg1_music == nullptr)
 	{
 		fprintf(stderr, "Failed to load sounds %s make sure the data directory is present",
-				audio_path("bg1.mp3").c_str());
+				audio_path("bg1.wav").c_str());
 		return nullptr;
 	}
-	bg2_music = Mix_LoadMUS(audio_path("bg2.mp3").c_str());
+	bg2_music = Mix_LoadMUS(audio_path("bg2.wav").c_str());
 	if (bg2_music == nullptr)
 	{
 		fprintf(stderr, "Failed to load sounds %s make sure the data directory is present",
-				audio_path("bg2.mp3").c_str());
+				audio_path("bg2.wav").c_str());
 		return nullptr;
 	}
-	bg3_music = Mix_LoadMUS(audio_path("bg3.mp3").c_str());
+	bg3_music = Mix_LoadMUS(audio_path("bg3.wav").c_str());
 	if (bg3_music == nullptr)
 	{
 		fprintf(stderr, "Failed to load sounds %s make sure the data directory is present",
-				audio_path("bg3.mp3").c_str());
+				audio_path("bg3.wav").c_str());
 		return nullptr;
 	}
-	bg4_music = Mix_LoadMUS(audio_path("bg4.mp3").c_str());
+	bg4_music = Mix_LoadMUS(audio_path("bg4.wav").c_str());
 	if (bg4_music == nullptr)
 	{
 		fprintf(stderr, "Failed to load sounds %s make sure the data directory is present",
-				audio_path("bg4.mp3").c_str());
+				audio_path("bg4.wav").c_str());
 		return nullptr;
 	}
 	doorOpen_music = Mix_LoadWAV(audio_path("doorOpen.wav").c_str());
@@ -199,11 +199,11 @@ GLFWwindow *WorldSystem::create_window()
 				audio_path("doorOpen.wav").c_str());
 		return nullptr;
 	}
-	eat_music = Mix_LoadWAV(audio_path("eat.mp3").c_str());
+	eat_music = Mix_LoadWAV(audio_path("eat.wav").c_str());
 	if (eat_music == nullptr)
 	{
 		fprintf(stderr, "Failed to load sounds %s make sure the data directory is present",
-				audio_path("eat.mp3").c_str());
+				audio_path("eat.wav").c_str());
 		return nullptr;
 	}
 	shoot_music = Mix_LoadWAV(audio_path("shoot.wav").c_str());
@@ -307,7 +307,6 @@ void handleMovementKeys(Entity entity)
 // Update our game world
 bool WorldSystem::step(float elapsed_ms_since_last_update)
 {
-
 	auto end = std::chrono::system_clock::now();
 
 	if(is_josh_moving){
@@ -504,6 +503,8 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 
 bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map)
 {
+	// clear the graph first
+	graph.clear();
 	float josh_x = 0, josh_y = 0;
 	std::vector<std::pair<float, float>> zombiePositions;
 	//Create background entities first
@@ -536,7 +537,8 @@ bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map)
 	//Create all other entities except for background
 	for (int i = 0; i < map.size(); i++)
 	{
-		Vertex* latest = new Vertex(0, 0);
+		Vertex* latest = new Vertex(-100, -100);
+		graph.addVertex(latest);
 		for (int j = 0; j < map[i].size(); j++)
 		{
 			float x = j * 10;
@@ -554,7 +556,6 @@ bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map)
 			}
 			else if (tok == 'P')
 			{
-				//Vertex* newV = new Vertex(x, y - (ZOMBIE_BB_HEIGHT * 0.6)/2);
 				Vertex* newV = new Vertex(x, y - PLATFORM_HEIGHT / 2 - (ZOMBIE_BB_HEIGHT * 0.6)/2);
 
 				graph.addVertex(newV);
@@ -628,6 +629,14 @@ bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map)
 	return true;
 }
 
+Mix_Music* getMusicTrack(int level, const std::vector<Mix_Music*>& tracks) {
+    if (level >= 1 && level <= tracks.size()) {
+        return tracks[level - 1];
+    } else {
+        return nullptr;
+    }
+}
+
 // Reset the world state to its initial state
 void WorldSystem::restart_game()
 {
@@ -654,10 +663,18 @@ void WorldSystem::restart_game()
 	// Debugging for memory/component leaks
 	registry.list_all_components();
 
-	Mix_PlayMusic(bg1_music, -1);
+	std::vector<Mix_Music*> musicTracks = {bg1_music, bg2_music, bg3_music, bg4_music};
+	Mix_Music* currentMusicTrack = getMusicTrack(currentLevel, musicTracks);
+    
+	if (currentMusicTrack != nullptr) {
+        Mix_PlayMusic(currentMusicTrack, -1);
+    } else {
+        std::cerr << "Error: Music track for level " << currentLevel << " not found." << std::endl;
+    }
 
 	auto map = loadMap(map_path() + "level" + std::to_string(currentLevel) + ".txt");
 	createEntityBaseOnMap(map);
+
 
 	createHelpSign(renderer, vec2(window_width_px - 70, window_height_px - 700));
 
@@ -666,7 +683,7 @@ void WorldSystem::restart_game()
 		createHeart(renderer, vec2(30 + i * create_heart_distance, 20));
 	}
 
-	dialog->initializeDialog(dialog_path("level1.txt"));
+	dialog->initializeDialog(dialog_path("level"+ std::to_string(currentLevel) + ".txt"));
 }
 
 // Compute collisions between entities
@@ -1157,13 +1174,21 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 	// Control the current speed with `<` `>`
 	if (action == GLFW_RELEASE && (mod & GLFW_MOD_SHIFT) && key == GLFW_KEY_COMMA)
 	{
-		current_speed -= 0.1f;
-		printf("Current speed = %f\n", current_speed);
+		//current_speed -= 0.1f;
+		//printf("Current speed = %f\n", current_speed);
+		if (currentLevel > 0) {
+			currentLevel--;
+			restart_game();
+		}
 	}
 	if (action == GLFW_RELEASE && (mod & GLFW_MOD_SHIFT) && key == GLFW_KEY_PERIOD)
 	{
 		current_speed += 0.1f;
 		printf("Current speed = %f\n", current_speed);
+		if (currentLevel < 4) {
+			currentLevel++;
+			restart_game();
+		}
 	}
 	current_speed = fmax(0.f, current_speed);
 }
