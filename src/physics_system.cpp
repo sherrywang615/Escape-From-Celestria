@@ -288,6 +288,9 @@ void PhysicsSystem::step(float elapsed_ms)
 			if (registry.motions.has(entity)) {
 				Motion& motion = registry.motions.get(entity);
 				motion.velocity[1] += gravity;
+				if(motion.velocity.y <= 9999){
+					motion.velocity[1] += gravity;
+				}
 			}
 		}
 		else {

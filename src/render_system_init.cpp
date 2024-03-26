@@ -255,6 +255,10 @@ RenderSystem::~RenderSystem()
 	// remove all entities created by the render system
 	while (registry.renderRequests.entities.size() > 0)
 	    registry.remove_all_components_of(registry.renderRequests.entities.back());
+	
+	// delete vao & vbo
+	glDeleteVertexArrays(1, &vao);
+	m_ftCharacters.clear();
 }
 
 // Initialize the screen texture from a standard sprite

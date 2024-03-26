@@ -964,7 +964,7 @@ void WorldSystem::handle_collisions()
 				{
 					Motion &motion = registry.motions.get(entity);
 					motion.velocity.y = 0;
-					Gravity &gravity = registry.gravities.get(entity);
+					// Gravity &gravity = registry.gravities.get(entity);
 				}
 			}
 		}
