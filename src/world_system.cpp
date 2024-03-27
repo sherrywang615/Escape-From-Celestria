@@ -552,8 +552,34 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 		// printf("Gold position: %f, %f\n", motion.position.x, motion.position.y);
 	}
 
+	// recreate Health base on current hp_count
+	for (Entity entity : registry.hearts.entities) {
+		registry.remove_all_components_of(entity);
+	}
 
+	for (int i = 0; i < hp_count; i++)
+	{
+		createHeart(renderer, vec2(30 + i * create_heart_distance, 20));
+	}
 
+	// recreate Bullets base on bullet_count
+	removeSmallBullets(renderer);
+	for (int i = 0; i < bullets_count; i++)
+	{
+		// if (i % 10 == 0)
+		// {
+		createBulletSmall(renderer, vec2(30 + i * create_bullet_distance, 20 + HEART_BB_HEIGHT));
+		// }
+	}
+
+	for (Entity entity : registry.smallKeys.entities) {
+		registry.remove_all_components_of(entity);
+	}
+	if (have_key)
+	{
+		// show key on screen
+		createSmallKey(renderer, vec2(30, SMALL_BULLET_BB_HEIGHT + HEART_BB_HEIGHT + 25));
+	}
 	return true;
 }
 
@@ -1231,7 +1257,7 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 			}
 		}
 		if (action == GLFW_RELEASE && key == GLFW_KEY_ENTER) {
-			paused = handleButtonEvents(buttons[current_button], renderer, window);
+			paused = handleButtonEvents(buttons[current_button], renderer, window, have_key, hp_count, bullets_count);
 			for (Entity entity : registry.players.entities) {
 				player_josh = entity;
 			}

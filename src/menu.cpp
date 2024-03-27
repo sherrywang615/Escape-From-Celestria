@@ -23,7 +23,7 @@ void renderPauseMenu() {
 	std::vector<std::string> texts = { "Resume", "HELP", "Save", "Load", "QUIT" };
 	std::vector<MENU_FUNC> funcs = { MENU_FUNC::RESUME, MENU_FUNC::HELP, MENU_FUNC::SAVE, MENU_FUNC::LOAD, MENU_FUNC::QUIT };
 	Entity background = createMenuBackground({ window_width_px / 2, window_height_px / 2 }, { 300, 600 });
-	// auto& menu1 = registry.menus.emplace(background);
+	auto& menu1 = registry.menus.emplace(background);
 	std::vector<vec2> pos = arrangeText(elements.size());
 	for (int i = 0; i < elements.size(); i++) {
 		Entity entity = createText(pos[i], 0.8, {1, 1, 1}, texts[i]);
@@ -77,6 +77,13 @@ void saveGame() {
 			file << std::to_string(motion.position.x) << " ";
 			file << std::to_string(motion.position.y) << "\n";
 		}
+		file << "Health ";
+		file << registry.hearts.entities.size() << "\n";
+		for (Entity smallKey : registry.smallKeys.entities) {
+			file << "HasKey 1\n";
+		}
+		file << "SmallBullet ";
+		file << registry.smallBullets.entities.size() << "\n";
 	}
 	else
 	{
@@ -86,7 +93,7 @@ void saveGame() {
 }
 
 
-void loadGame(RenderSystem* renderer) {
+void loadGame(RenderSystem* renderer, bool& has_key, int& hp_count, int& bullet_count) {
 	// clear all existing characters
 	for (Entity entity : registry.players.entities) {
 		registry.remove_all_components_of(entity);
@@ -101,6 +108,15 @@ void loadGame(RenderSystem* renderer) {
 		registry.remove_all_components_of(entity);
 	}
 	for (Entity entity : registry.bullets.entities) {
+		registry.remove_all_components_of(entity);
+	}
+	for (Entity entity : registry.hearts.entities) {
+		registry.remove_all_components_of(entity);
+	}
+	for (Entity entity : registry.smallKeys.entities) {
+		registry.remove_all_components_of(entity);
+	}
+	for (Entity entity : registry.smallBullets.entities) {
 		registry.remove_all_components_of(entity);
 	}
 	std::fstream file;
@@ -142,6 +158,15 @@ void loadGame(RenderSystem* renderer) {
 			else if (toks[0] == "Bullet") {
 				createBullet(renderer, { std::stof(toks[1]), std::stof(toks[2]) });
 			}
+			else if (toks[0] == "Health") {
+				hp_count = std::stoi(toks[1]);
+			}
+			else if (toks[0] == "HasKey") {
+				has_key = std::stoi(toks[1]);
+			}
+			else if (toks[0] == "SmallBullet") {
+				bullet_count = std::stoi(toks[1]);
+			}
 		}
 	}
 	else
@@ -151,7 +176,7 @@ void loadGame(RenderSystem* renderer) {
 	file.close();
 }
 
-bool handleButtonEvents(Entity entity, RenderSystem* renderer, GLFWwindow* window) {
+bool handleButtonEvents(Entity entity, RenderSystem* renderer, GLFWwindow* window, bool& has_key, int& hp_count, int& bullet_count) {
 	MenuElement me = registry.menus.get(entity);
 	if (me.func == MENU_FUNC::RESUME) {
 		clearMenu();
@@ -163,7 +188,7 @@ bool handleButtonEvents(Entity entity, RenderSystem* renderer, GLFWwindow* windo
 		return true;
 	}
 	else if (me.func == MENU_FUNC::LOAD) {
-		loadGame(renderer);
+		loadGame(renderer, has_key, hp_count, bullet_count);
 		clearMenu();
 		return false;
 	}
