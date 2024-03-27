@@ -236,6 +236,9 @@ void WorldSystem::init(RenderSystem *renderer_arg, DialogSystem *dialog_arg)
 	// Mix_PlayMusic(background_music, -1);
 	// fprintf(stderr, "Loaded music\n");
 
+	Mix_VolumeChunk(bonus_music, 30);
+	Mix_VolumeMusic(20);
+
 	// Set all states to default
 	restart_game();
 }
@@ -580,6 +583,27 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 		// show key on screen
 		createSmallKey(renderer, vec2(30, SMALL_BULLET_BB_HEIGHT + HEART_BB_HEIGHT + 25));
 	}
+	if (hp_count <= 0) {
+		if (!registry.deathTimers.has(player_josh)) {
+			registry.deathTimers.emplace(player_josh);
+			// Mix_PlayChannel(-1, chicken_dead_sound, 0);
+
+			Motion& motion = registry.motions.get(player_josh);
+			motion.velocity[0] = 0;
+			motion.velocity[1] = 0;
+
+			// change color to red on death
+			vec3 death_color = { 255.0f, 0.0f, 0.0f };
+			vec3 color = registry.colors.get(player_josh);
+			float duration = 1.0f;
+			registry.colors.remove(player_josh);
+
+			// registry.colors.emplace(entity, death_color);
+			ColorChange colorChange = { color, death_color, duration, 0.0f };
+			registry.colorChanges.emplace(player_josh, colorChange);
+		}
+
+	}
 	return true;
 }
 
@@ -907,14 +931,15 @@ void WorldSystem::handle_collisions()
 				} 
 				else if(registry.golds.has(entity_other)){
 					registry.remove_all_components_of(entity_other);
-					registry.invincibleTimers.emplace(entity);
-					//vec4 invincible_color = { 1.0f, 1.0f, 0.6f, 0.6f };
-					color = registry.colors.get(entity);
-					//float duration = 0.1f;
-					vec4 new_color = { 1.f, 1.f, 0.6f, 0.6f };
-					registry.colors.remove(entity);
+					//registry.invincibleTimers.emplace(entity);
+					////vec4 invincible_color = { 1.0f, 1.0f, 0.6f, 0.6f };
+					//color = registry.colors.get(entity);
+					////float duration = 0.1f;
+					//vec4 new_color = { 1.f, 1.f, 0.6f, 0.6f };
+					//registry.colors.remove(entity);
 
-					registry.colors.emplace(entity, new_color);
+					//registry.colors.emplace(entity, new_color);
+					hp_count = 0;
 					//ColorChange colorChange = {color, invincible_color, duration, 0.0f};
 					//registry.colorChanges.emplace(entity, colorChange);
 					Mix_PlayChannel(-1, bonus_music, 0);
