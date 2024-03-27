@@ -1,7 +1,7 @@
 // Header
 #include "world_system.hpp"
 #include "world_init.hpp"
-#include "menu.cpp"
+#include "menu.hpp"
 #include "world_helper.hpp"
 
 // stlib
