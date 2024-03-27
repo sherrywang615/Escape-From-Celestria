@@ -225,7 +225,7 @@ Entity createSmallKey(RenderSystem *renderer, vec2 position)
 
 	// Create an (empty) Bug component to be able to refer to all bug
 	// registry.eatables.emplace(entity);
-	// registry.keys.emplace(entity);
+	 registry.smallKeys.emplace(entity);
 	registry.renderRequests.insert(
 		entity,
 		{TEXTURE_ASSET_ID::KEY,

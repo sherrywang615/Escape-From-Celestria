@@ -90,9 +90,9 @@ private:
 	GLFWwindow *window;
 
 	// Number of bug eaten by the chicken, displayed in the window title
-	unsigned int hp_count;
+	int hp_count;
 	bool have_key;
-	unsigned int bullets_count;
+	int bullets_count;
 	
 	// Game state
 	RenderSystem *renderer;

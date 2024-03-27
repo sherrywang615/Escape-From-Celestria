@@ -296,7 +296,10 @@ void RenderSystem::draw()
 	// Draw all textured meshes that have a position and size component
 	for (Entity entity : registry.renderRequests.entities)
 	{
-
+		// skip player for now
+		if (registry.players.has(entity)) {
+			continue;
+		}
 		if (registry.texts.has(entity)) {
 			Text text = registry.texts.get(entity);
 			std::string& content = text.text;
@@ -320,6 +323,13 @@ void RenderSystem::draw()
 	//glBindVertexArray(vao);
 	
 
+	for (Entity entity : registry.players.entities) {
+		glGenVertexArrays(1, &vao);
+		glBindVertexArray(vao);
+		drawTexturedMesh(entity, projection_2D);
+	}
+	glGenVertexArrays(1, &vao);
+	glBindVertexArray(vao);
 	// Truely render to the screen
 	drawToScreen();
 	glDeleteVertexArrays(1, &vao);

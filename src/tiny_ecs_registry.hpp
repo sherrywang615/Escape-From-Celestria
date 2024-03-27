@@ -47,6 +47,8 @@ public:
 	ComponentContainer<Gold> golds;
 	ComponentContainer<Fireball> fireballs;
 	ComponentContainer<InvincibleTimer> invincibleTimers;
+	ComponentContainer<SmallKey> smallKeys;
+
 
 	// constructor that adds all containers for looping over them
 	// IMPORTANT: Don't forget to add any newly added containers!
@@ -88,6 +90,7 @@ public:
 		registry_list.push_back(&golds);
 		registry_list.push_back(&fireballs);
 		registry_list.push_back(&invincibleTimers);
+		registry_list.push_back(&smallKeys);
 	}
 
 	void clear_all_components()

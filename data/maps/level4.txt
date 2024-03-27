@@ -9,7 +9,7 @@ M
                                                                                                          
                                          E
                                                    
-                                N4           Z             D                                                   
+                                N4                        D    Z                                               
                               S1                                       
     
                                                                                             
@@ -30,7 +30,7 @@ PPPPPPPPPPPPPPP
                                            PPPPPPPPPPPPPPPPPP                                                          
                                                                                                      
                                                                                                                           
-                               Z                                        Z                              
+                     G          Z                                        Z                              
                                                                                                                                                                                                           
                                                                                                                                                                                                        
                                                                                                      
@@ -48,7 +48,7 @@ PPPPPPPPPPPPPPP
 PPPPPPPPPPPPPPP                                                                          PPPPPPPPPPPPPPPPP 
  
                                                                                                      
-                                           B      C  G           Z        F                                     
+                                           B        G           Z        F                                     
                                                                                                         
 
                                                                                                      

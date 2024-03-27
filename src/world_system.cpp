@@ -237,6 +237,9 @@ void WorldSystem::init(RenderSystem *renderer_arg, DialogSystem *dialog_arg)
 	// Mix_PlayMusic(background_music, -1);
 	// fprintf(stderr, "Loaded music\n");
 
+	Mix_VolumeChunk(bonus_music, 30);
+	Mix_VolumeMusic(20);
+
 	// Set all states to default
 	restart_game();
 }
@@ -553,11 +556,42 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 		// printf("Gold position: %f, %f\n", motion.position.x, motion.position.y);
 	}
 
+	// recreate Health base on current hp_count
+	for (Entity entity : registry.hearts.entities) {
+		registry.remove_all_components_of(entity);
+	}
+
+	for (int i = 0; i < hp_count; i++)
+	{
+		createHeart(renderer, vec2(30 + i * create_heart_distance, 20));
+	}
+
+	// recreate Bullets base on bullet_count
+	removeSmallBullets(renderer);
+	for (int i = 0; i < bullets_count; i++)
+	{
+		// if (i % 10 == 0)
+		// {
+		createBulletSmall(renderer, vec2(30 + i * create_bullet_distance, 20 + HEART_BB_HEIGHT));
+		// }
+	}
 	vec2 p0F = { 100, 150 }; // start point
 	vec2 p1F = { 345, 1000 };
 	vec2 p2F = { 640, 50 };
 	vec2 p3F = { 800, 150 }; // end point
 
+	for (Entity entity : registry.smallKeys.entities) {
+		registry.remove_all_components_of(entity);
+	}
+	if (have_key)
+	{
+		// show key on screen
+		createSmallKey(renderer, vec2(30, SMALL_BULLET_BB_HEIGHT + HEART_BB_HEIGHT + 25));
+	}
+	if (hp_count <= 0) {
+		if (!registry.deathTimers.has(player_josh)) {
+			registry.deathTimers.emplace(player_josh);
+			// Mix_PlayChannel(-1, chicken_dead_sound, 0);
 	for (Entity entity : registry.fireballs.entities) {
 		if (forward) {
 			t += elapsed_ms_since_last_update / 1000.f * 0.2f;
@@ -582,6 +616,22 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 
 
 
+			Motion& motion = registry.motions.get(player_josh);
+			motion.velocity[0] = 0;
+			motion.velocity[1] = 0;
+
+			// change color to red on death
+			vec3 death_color = { 255.0f, 0.0f, 0.0f };
+			vec3 color = registry.colors.get(player_josh);
+			float duration = 1.0f;
+			registry.colors.remove(player_josh);
+
+			// registry.colors.emplace(entity, death_color);
+			ColorChange colorChange = { color, death_color, duration, 0.0f };
+			registry.colorChanges.emplace(player_josh, colorChange);
+		}
+
+	}
 	return true;
 }
 
@@ -912,14 +962,15 @@ void WorldSystem::handle_collisions()
 				} 
 				else if(registry.golds.has(entity_other)){
 					registry.remove_all_components_of(entity_other);
-					registry.invincibleTimers.emplace(entity);
-					//vec4 invincible_color = { 1.0f, 1.0f, 0.6f, 0.6f };
-					color = registry.colors.get(entity);
-					//float duration = 0.1f;
-					vec4 new_color = { 1.f, 1.f, 0.6f, 0.6f };
-					registry.colors.remove(entity);
+					//registry.invincibleTimers.emplace(entity);
+					////vec4 invincible_color = { 1.0f, 1.0f, 0.6f, 0.6f };
+					//color = registry.colors.get(entity);
+					////float duration = 0.1f;
+					//vec4 new_color = { 1.f, 1.f, 0.6f, 0.6f };
+					//registry.colors.remove(entity);
 
-					registry.colors.emplace(entity, new_color);
+					//registry.colors.emplace(entity, new_color);
+					hp_count = 0;
 					//ColorChange colorChange = {color, invincible_color, duration, 0.0f};
 					//registry.colorChanges.emplace(entity, colorChange);
 					Mix_PlayChannel(-1, bonus_music, 0);
@@ -1262,7 +1313,7 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 			}
 		}
 		if (action == GLFW_RELEASE && key == GLFW_KEY_ENTER) {
-			paused = handleButtonEvents(buttons[current_button], renderer, window);
+			paused = handleButtonEvents(buttons[current_button], renderer, window, have_key, hp_count, bullets_count);
 			for (Entity entity : registry.players.entities) {
 				player_josh = entity;
 			}

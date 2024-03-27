@@ -227,6 +227,9 @@ struct InvincibleTimer
 	float counter_ms = 5000;
 };
 
+struct SmallKey {
+};
+
 /**
  * The following enumerators represent global identifiers refering to graphic
  * assets. For example TEXTURE_ASSET_ID are the identifiers of each texture
