@@ -6,7 +6,7 @@ Bullet: https://www.flaticon.com/free-icons/bullet
 Trashcan: https://www.flaticon.com/free-icons/trash
 Exit Sign: https://www.flaticon.com/free-icons/emergency-exit
 Door: https://netherzapdos.itch.io/pixel-spaces
-Star coin: https://free-game-assets.itch.io/free-game-coins-sprite
+Bomb: https://www.flaticon.com/free-icon/bomb_4357187
 Background level 1: https://free-game-assets.itch.io/free-industrial-zone-tileset-pixel-art
 Background level 2: https://guilemus.itch.io/post-apocalyptic-backgrounds
 zombie: https://ironnbutterfly.itch.io/zombie-sprite
@@ -15,5 +15,6 @@ npc3: https://craftpix.net/freebies/free-fantasy-chibi-female-sprites-pixel-art/
 npc4: https://craftpix.net/freebies/free-soldier-sprite-sheets-pixel-art/
 audios: https://freesound.org/?feedbackRegistration=1
 audio/eat: https://pixabay.com/sound-effects/search/eating/
-invincible sound: https://mixkit.co/free-sound-effects/game/
+bomb sound: https://mixkit.co/free-sound-effects/bomb/
+
 
