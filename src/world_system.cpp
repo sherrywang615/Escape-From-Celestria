@@ -580,18 +580,6 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 	vec2 p2F = { 640, 50 };
 	vec2 p3F = { 800, 150 }; // end point
 
-	for (Entity entity : registry.smallKeys.entities) {
-		registry.remove_all_components_of(entity);
-	}
-	if (have_key)
-	{
-		// show key on screen
-		createSmallKey(renderer, vec2(30, SMALL_BULLET_BB_HEIGHT + HEART_BB_HEIGHT + 25));
-	}
-	if (hp_count <= 0) {
-		if (!registry.deathTimers.has(player_josh)) {
-			registry.deathTimers.emplace(player_josh);
-			// Mix_PlayChannel(-1, chicken_dead_sound, 0);
 	for (Entity entity : registry.fireballs.entities) {
 		if (forward) {
 			t += elapsed_ms_since_last_update / 1000.f * 0.2f;
@@ -615,6 +603,21 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 	}
 
 
+	for (Entity entity : registry.smallKeys.entities) {
+		registry.remove_all_components_of(entity);
+	}
+	if (have_key)
+	{
+		// show key on screen
+		createSmallKey(renderer, vec2(30, SMALL_BULLET_BB_HEIGHT + HEART_BB_HEIGHT + 25));
+	}
+	if (hp_count <= 0) {
+		if (!registry.deathTimers.has(player_josh)) {
+			registry.deathTimers.emplace(player_josh);
+			// Mix_PlayChannel(-1, chicken_dead_sound, 0);
+	
+
+
 
 			Motion& motion = registry.motions.get(player_josh);
 			motion.velocity[0] = 0;
@@ -632,6 +635,8 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 		}
 
 	}
+
+
 	return true;
 }
 
