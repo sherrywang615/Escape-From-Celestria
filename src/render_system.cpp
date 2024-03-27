@@ -301,20 +301,16 @@ void RenderSystem::draw()
 			continue;
 		}
 		if (registry.texts.has(entity)) {
-			Text text = registry.texts.get(entity);
-			std::string& content = text.text;
-			vec3& color = text.color;
-			glm::mat4 trans = glm::mat4(1.0f);
-			Motion motion = registry.motions.get(entity);
-			renderText(content, motion.position.x, motion.position.y, motion.scale.x, color, trans);
 			continue;
 		}
+
 
 		if (!registry.motions.has(entity))
 			continue;
 		// Note, its not very efficient to access elements indirectly via the entity
 		// albeit iterating through all Sprites in sequence. A good point to optimize
-	
+		glGenVertexArrays(1, &vao);
+		glBindVertexArray(vao);
 		drawTexturedMesh(entity, projection_2D);
 
 		
@@ -331,6 +327,17 @@ void RenderSystem::draw()
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
 	// Truely render to the screen
+	for (Entity entity : registry.texts.entities) {
+			Text text = registry.texts.get(entity);
+			std::string& content = text.text;
+			vec3& color = text.color;
+			glm::mat4 trans = glm::mat4(1.0f);
+			Motion motion = registry.motions.get(entity);
+			renderText(content, motion.position.x, motion.position.y, motion.scale.x, color, trans);
+
+	}
+	glGenVertexArrays(1, &vao);
+	glBindVertexArray(vao);
 	drawToScreen();
 	glDeleteVertexArrays(1, &vao);
 	for (Entity entity: registry.speech.entities)
