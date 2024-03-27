@@ -5,7 +5,7 @@ const float LINE_SPACE = 100;
 const vec2 RESUME_POS = { window_width_px / 2 - 80, window_height_px / 2 + 200 };
 const vec2 SAVE_POS = { window_width_px / 2 - 80, RESUME_POS.y - LINE_SPACE };
 const vec2 LOAD_POS = { window_width_px / 2 - 80, SAVE_POS.y - LINE_SPACE };
-const vec2 QUIT_POS = { window_width_px / 2 - 80, LOAD_POS.y - LINE_SPACE };
+// const vec2 QUIT_POS = { window_width_px / 2 - 80, LOAD_POS.y - LINE_SPACE };
 
 
 std::vector<vec2> arrangeText(int num) {
@@ -23,7 +23,7 @@ void renderPauseMenu() {
 	std::vector<std::string> texts = { "Resume", "HELP", "Save", "Load", "QUIT" };
 	std::vector<MENU_FUNC> funcs = { MENU_FUNC::RESUME, MENU_FUNC::HELP, MENU_FUNC::SAVE, MENU_FUNC::LOAD, MENU_FUNC::QUIT };
 	Entity background = createMenuBackground({ window_width_px / 2, window_height_px / 2 }, { 300, 600 });
-	auto& menu1 = registry.menus.emplace(background);
+	// auto& menu1 = registry.menus.emplace(background);
 	std::vector<vec2> pos = arrangeText(elements.size());
 	for (int i = 0; i < elements.size(); i++) {
 		Entity entity = createText(pos[i], 0.8, {1, 1, 1}, texts[i]);
@@ -105,8 +105,8 @@ void loadGame(RenderSystem* renderer) {
 	}
 	std::fstream file;
 	file.open(SAVE_PATH);
-	bool readingJosh = false;
-	bool readingZombie = false;
+	// bool readingJosh = false;
+	// bool readingZombie = false;
 
 	if (file.is_open())
 	{

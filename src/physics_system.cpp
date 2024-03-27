@@ -147,11 +147,11 @@ void collision_resolve(Motion& motion, vec2 prev_pos, std::vector<int> dir, Moti
 std::vector<int> collides_with_mesh(const Motion& motion, const Motion& mesh_motion, float step_secs, const Mesh& meshPtrs) {
 	vec2 pos1 = motion.position;
 	vec2 scale1 = motion.scale;
-	vec2 vel1 = motion.velocity;
+	// vec2 vel1 = motion.velocity;
 	
 	//player velocity and scale
 	vec2 pscale = mesh_motion.scale;
-	vec2 pvel = mesh_motion.velocity;
+	// vec2 pvel = mesh_motion.velocity;
 	
 
 	float left_b1 = pos1.x - abs(scale1.x) / 2 ;
@@ -352,10 +352,10 @@ void PhysicsSystem::step(float elapsed_ms)
 			{
 				double currX = player_pos.x - vertices[j].position.x * (registry.motions.get(registry.players.entities[i]).scale.x);
 				double currY = player_pos.y - vertices[j].position.y * (registry.motions.get(registry.players.entities[i]).scale.y);
-				double nextX = player_pos.x - vertices[j + 1].position.x * (registry.motions.get(registry.players.entities[i]).scale.x);
-				double nextY = player_pos.y - vertices[j + 1].position.y * (registry.motions.get(registry.players.entities[i]).scale.y);
+				// double nextX = player_pos.x - vertices[j + 1].position.x * (registry.motions.get(registry.players.entities[i]).scale.x);
+				// double nextY = player_pos.y - vertices[j + 1].position.y * (registry.motions.get(registry.players.entities[i]).scale.y);
 
-				auto newline = createLine({ currX , currY }, { 3, 3 });
+				// auto newline = createLine({ currX , currY }, { 3, 3 });
 
 			}
 
@@ -374,10 +374,10 @@ void PhysicsSystem::step(float elapsed_ms)
 				vec2 rightmid1 = { motion.position.x + xScale1 / 2 ,motion.position.y };
 				vec2 botmid1 = { motion.position.x, motion.position.y + yScale1 / 2 };
 
-				auto lineTop = createLine(topmid1, { xScale1, 2 });
-				auto lineLeft = createLine(leftmid1, { 2, yScale1 });
-				auto lineRight = createLine(rightmid1, { 2,yScale1 });
-				auto lineBottom = createLine(botmid1, { xScale1, 2 });
+				// auto lineTop = createLine(topmid1, { xScale1, 2 });
+				// auto lineLeft = createLine(leftmid1, { 2, yScale1 });
+				// auto lineRight = createLine(rightmid1, { 2,yScale1 });
+				// auto lineBottom = createLine(botmid1, { xScale1, 2 });
 			}
 		}
 

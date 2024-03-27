@@ -15,10 +15,6 @@
 // #include FT_FREETYPE_H
 
 // Game configuration
-const size_t MAX_EAGLES = 15;
-const size_t MAX_BUG = 5;
-const size_t EAGLE_DELAY_MS = 2000 * 3;
-const size_t BUG_DELAY_MS = 5000 * 3;
 const float JOSH_SPEED = 200.f;
 const float JOSH_JUMP = 1000.f;
 const float KNOCKBACK_DIST = 50.f;
@@ -45,7 +41,7 @@ int current_button = 0;
 
 // Create the bug world
 WorldSystem::WorldSystem()
-	: hp_count(0), next_eagle_spawn(0.f), next_bug_spawn(0.f), bullets_count(0), have_key(false), fps(0.f), fpsCount(0.f), fpsTimer(0.f)
+	: hp_count(0), bullets_count(0), have_key(false), fps(0.f), fpsCount(0.f), fpsTimer(0.f)
 {
 	// Seeding rng with random device
 	start = std::chrono::system_clock::now();
