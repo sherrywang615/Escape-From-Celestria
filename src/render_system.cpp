@@ -175,10 +175,12 @@ void RenderSystem::drawToScreen()
 		GL_TRIANGLES, 3, GL_UNSIGNED_SHORT,
 		nullptr); // one triangle = 3 vertices; nullptr indicates that there is
 				  // no offset from the bound index buffer
+	
 	gl_has_errors();
 }
 
 void RenderSystem::renderDialog(Speech dialog) {
+
 	std::pair<Entity, std::string>& text= dialog.texts.front();
 	Motion& motion = registry.motions.get(text.first);
 	float total_length = 0;
@@ -198,7 +200,7 @@ void RenderSystem::renderDialog(Speech dialog) {
 void RenderSystem::renderText(const std::string& text, float x, float y,
 	float scale, const glm::vec3& color,
 	const glm::mat4& trans) {
-
+	
 	// activate the shaders!
 	glUseProgram(m_font_shaderProgram);
 
@@ -289,7 +291,8 @@ void RenderSystem::draw()
 							  // sprites back to front
 	gl_has_errors();
 	mat3 projection_2D = createProjectionMatrix();
-
+	glGenVertexArrays(1, &vao);
+	glBindVertexArray(vao);
 	// Draw all textured meshes that have a position and size component
 	for (Entity entity : registry.renderRequests.entities)
 	{
@@ -311,12 +314,14 @@ void RenderSystem::draw()
 			continue;
 		// Note, its not very efficient to access elements indirectly via the entity
 		// albeit iterating through all Sprites in sequence. A good point to optimize
-		glGenVertexArrays(1, &vao);
-		glBindVertexArray(vao);
+	
 		drawTexturedMesh(entity, projection_2D);
+
+		
 	}
-	glGenVertexArrays(1, &vao);
-	glBindVertexArray(vao);
+	//glGenVertexArrays(1, &vao);
+	//glBindVertexArray(vao);
+	
 
 	for (Entity entity : registry.players.entities) {
 		glGenVertexArrays(1, &vao);
@@ -327,15 +332,16 @@ void RenderSystem::draw()
 	glBindVertexArray(vao);
 	// Truely render to the screen
 	drawToScreen();
-
+	glDeleteVertexArrays(1, &vao);
 	for (Entity entity: registry.speech.entities)
 	{
 		Speech& dialog = registry.speech.get(entity);
 		renderDialog(dialog);
 	}
-
+	
 	// flicker-free display with a double buffer
 	glfwSwapBuffers(window);
+
 	gl_has_errors();
 }
 

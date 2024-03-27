@@ -145,6 +145,8 @@ void collision_resolve(Motion& motion, vec2 prev_pos, std::vector<int> dir, Moti
 }
 // checks mesh based collision between player mesh and other objects
 std::vector<int> collides_with_mesh(const Motion& motion, const Motion& mesh_motion, float step_secs, const Mesh& meshPtrs) {
+
+	
 	vec2 pos1 = motion.position;
 	vec2 scale1 = motion.scale;
 	// vec2 vel1 = motion.velocity;
@@ -171,6 +173,7 @@ std::vector<int> collides_with_mesh(const Motion& motion, const Motion& mesh_mot
 	std::vector<int> collision_dirs = {0, 0, 0, 0, 0};
 	for (uint i = 0; i < vertices.size() - 1; i++)
 	{
+		
 		double currX = meshPosX - vertices[i].position.x * (pscale.x) ;
 		double currY = meshPosY - vertices[i].position.y * (pscale.y) ;
 		double nextX = meshPosX - vertices[i + 1].position.x * (pscale.x) ;
@@ -205,6 +208,58 @@ std::vector<int> collides_with_mesh(const Motion& motion, const Motion& mesh_mot
 		}
 
 	}
+
+	/*auto& vertInd = meshPtrs.vertex_indices;
+	for (uint j = 0; j < vertInd.size() - 1; j++)
+	{
+		auto& vertices = meshPtrs.vertices;
+		//std::cout << "vert size: " << vertices.size() << std::endl;
+		//std::cout << "Current Vert ind: " << vertInd[j] << std::endl;
+
+		double currX = meshPosX - vertices[vertInd[j]].position.x * (pscale.x);
+		double currY = meshPosY - vertices[vertInd[j]].position.y * (pscale.y);
+		double nextX = meshPosX - vertices[vertInd[j + 1]].position.x * (pscale.x);
+		double nextY = meshPosY - vertices[vertInd[j + 1]].position.y * (pscale.y);
+
+		double xDotP = (abs(nextX - currX) > 0) ? currX + (nextX - currX) / 2 : currX;
+		double yDotP = (abs(nextY - currY) > 0) ? currY + (nextY - currY) / 2 : currY;
+
+		double xScale = ((nextX - currX) < 0.5) ? 2 : abs(nextX - currX);
+		double yScale = ((nextY - currY) < 0.5) ? 2 : abs(nextY - currY);
+		//if (j < 5) {
+			//std::cout << xScale << yScale << std::endl;
+		createLine({ xDotP, yDotP }, { xScale, yScale });
+		createLine({ currX, currY }, { 3, 3 });
+		//}
+		if (check_point_within_boundary({ currX, currY }, { left_b1, right_b1 }, { top_b1, bot_b1 }) ||
+			check_point_within_boundary({ nextX, nextY }, { left_b1, right_b1 }, { top_b1, bot_b1 })) {
+			//bot
+			if (check_line_intersects({ top_left.x, top_left.y }, { top_right.x, top_right.y }, { currX, currY }, { nextX, nextY }))
+			{
+				collision_dirs[0] = 1;
+				collision_dirs[4] = 1;
+			}
+			//top
+			if (check_line_intersects(bot_left, bot_right, { currX, currY }, { nextX, nextY }))
+			{
+				collision_dirs[1] = 1;
+				collision_dirs[4] = 1;
+			}
+			//right
+			if (check_line_intersects({ top_right.x, top_right.y + 1 }, { bot_right.x, bot_right.y - 1 }, { currX, currY }, { nextX, nextY }))
+			{
+				collision_dirs[2] = 1;
+				collision_dirs[4] = 1;
+			}
+			//left
+			if (check_line_intersects({ top_left.x, top_right.y + 1 }, { bot_left.x, bot_left.y - 1 }, { currX, currY }, { nextX, nextY }))
+			{
+				collision_dirs[3] = 1;
+				collision_dirs[4] = 1;
+			}
+		}
+	}*/
+
 	
 	return collision_dirs;
 }
@@ -274,6 +329,39 @@ void PhysicsSystem::step(float elapsed_ms)
 	auto& players = registry.players;
 	for (uint i = 0; i < players.size(); i++) {
 		previous_position = registry.motions.get(players.entities[i]).position;
+		if (debugging.in_debug_mode == true) {
+			auto& vertInd = registry.meshPtrs.get(players.entities[i])->vertex_indices;
+			for (uint j = 0; j < vertInd.size() - 1; j++)
+			{
+				auto& vertices = registry.meshPtrs.get(players.entities[i])->vertices;
+				//std::cout << "vert size: " << vertices.size() << std::endl;
+				//std::cout << "Current Vert ind: " << vertInd[j] << std::endl;
+
+				vec2 pscale = registry.motions.get(players.entities[i]).scale;
+				vec2 pvel = registry.motions.get(players.entities[i]).velocity;
+
+				double meshPosX = registry.motions.get(players.entities[i]).position.x;
+				double meshPosY = registry.motions.get(players.entities[i]).position.y;
+
+				double currX = meshPosX - vertices[vertInd[j]].position.x * (pscale.x);
+				double currY = meshPosY - vertices[vertInd[j]].position.y * (pscale.y);
+				double nextX = meshPosX - vertices[vertInd[j + 1]].position.x * (pscale.x);
+				double nextY = meshPosY - vertices[vertInd[j + 1]].position.y * (pscale.y);
+
+				double xDotP = (abs(nextX - currX) > 0) ? currX + (nextX - currX) / 2 : currX;
+				double yDotP = (abs(nextY - currY) > 0) ? currY + (nextY - currY) / 2 : currY;
+
+				double xScale = (abs(nextX - currX) < 0.1) ? 2 : (nextX - currX);
+				double yScale = (abs(nextY - currY) < 0.1) ? 2 : (nextY - currY);
+				//if (j < 5) {
+					//std::cout << xScale << yScale << std::endl;
+				//createLine({ xDotP, yDotP }, { xScale, yScale });
+				createLine({ xDotP, yDotP }, { 3, 3 });
+				//}
+
+			}
+		}
+
 	}
 
 	// ------------------- Gravity system -------------------------------------
@@ -303,6 +391,8 @@ void PhysicsSystem::step(float elapsed_ms)
 	}
 
 	
+
+	
 	ComponentContainer<Motion>& motion_container = registry.motions;
 	ComponentContainer<Platform>& plat_container = registry.platforms;
 
@@ -327,7 +417,7 @@ void PhysicsSystem::step(float elapsed_ms)
 	// ------------------------------- Debugging ---------------------------------
 	
 	if (debugging.in_debug_mode == true) {
-		for (Vertex* v : graph.vertices) {
+		/*for (Vertex* v : graph.vertices) {
 			vec2 pos = { v->x, v->y };
 			createLine(pos, { 5, 5 });
 			for (auto it = v->adjs.begin(); it != v->adjs.end(); ++it) {
@@ -340,7 +430,7 @@ void PhysicsSystem::step(float elapsed_ms)
 				motion.angle = angle;
 			}
 
-		}
+		}*/
 		vec2 player_pos = {};
 		// debugging box for player
 		for (int i = 0; i < registry.players.size(); i++) {
@@ -396,7 +486,7 @@ void PhysicsSystem::step(float elapsed_ms)
 			{
 				Platform& plat = plat_container.components[p];
 				Motion motion_p = { plat.position, 0, {0,0}, plat.scale };
-				if (abs(motion_p.position.x - motion.position.x) < 200 && abs(motion_p.position.y - motion.position.y) < 200 && !registry.golds.has(registry.motions.entities[i])) {
+				if (abs(motion_p.position.x - motion.position.x) < 200 && abs(motion_p.position.y - motion.position.y) < 200 && !registry.golds.has(registry.motions.entities[i]) && !registry.fireballs.has(registry.motions.entities[i])) {
 					// make collision checking more efficient, only check close platforms
 					// mesh collision				
 					if (registry.players.has(entity)) {

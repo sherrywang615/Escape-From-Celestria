@@ -45,6 +45,7 @@ public:
 	ComponentContainer<Timer> timer;
 	ComponentContainer<SpeechPoint> speechPoint;
 	ComponentContainer<Gold> golds;
+	ComponentContainer<Fireball> fireballs;
 	ComponentContainer<InvincibleTimer> invincibleTimers;
 	ComponentContainer<SmallKey> smallKeys;
 
@@ -87,6 +88,7 @@ public:
 		registry_list.push_back(&timer);
 		registry_list.push_back(&speechPoint);
 		registry_list.push_back(&golds);
+		registry_list.push_back(&fireballs);
 		registry_list.push_back(&invincibleTimers);
 		registry_list.push_back(&smallKeys);
 	}

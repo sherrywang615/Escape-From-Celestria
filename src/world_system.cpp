@@ -10,6 +10,7 @@
 #include <iostream>
 #include "physics_system.hpp"
 
+
 #include <fstream>
 // #include <ft2build.h>
 // #include FT_FREETYPE_H
@@ -574,6 +575,33 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 		createBulletSmall(renderer, vec2(30 + i * create_bullet_distance, 20 + HEART_BB_HEIGHT));
 		// }
 	}
+	vec2 p0F = { 100, 150 }; // start point
+	vec2 p1F = { 345, 1000 };
+	vec2 p2F = { 640, 50 };
+	vec2 p3F = { 800, 150 }; // end point
+
+	for (Entity entity : registry.fireballs.entities) {
+		if (forward) {
+			t += elapsed_ms_since_last_update / 1000.f * 0.2f;
+			if (t >= 1) {
+				t = 1.0f;
+				forward = false;
+			}
+		}
+		else {
+			t -= elapsed_ms_since_last_update / 1000.f * 0.2f;
+			if (t <= 0) {
+				t = 0.0f;
+				forward = true;
+			}
+		}
+		vec2 pos = cubicBezier(p0F, p1F, p2F, p3F, t);
+		Motion& motion = registry.motions.get(entity);
+		motion.position = pos;
+		// std::cout << "Forward: " << forward << std::endl;
+		// printf("Gold position: %f, %f\n", motion.position.x, motion.position.y);
+	}
+
 
 	for (Entity entity : registry.smallKeys.entities) {
 		registry.remove_all_components_of(entity);
@@ -587,6 +615,9 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 		if (!registry.deathTimers.has(player_josh)) {
 			registry.deathTimers.emplace(player_josh);
 			// Mix_PlayChannel(-1, chicken_dead_sound, 0);
+	
+
+
 
 			Motion& motion = registry.motions.get(player_josh);
 			motion.velocity[0] = 0;
@@ -604,6 +635,8 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 		}
 
 	}
+
+
 	return true;
 }
 
@@ -723,6 +756,9 @@ bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map)
 			else if(tok == 'G'){
 				createGold(renderer, {x, y});
 			}
+			else if (tok == '|') {
+				createFireball(renderer, { x, y });
+			}
 			else
 			{
 				printf("Map contains invalid character '%c' at [%d, %d].", tok, i, j);
@@ -823,7 +859,7 @@ void WorldSystem::handle_collisions()
 				Motion motion_z = registry.motions.get(entity_other);
 				motion_p.position.x -= (motion_z.position.x - motion_p.position.x) / abs(motion_z.position.x - motion_p.position.x) * KNOCKBACK_DIST;
 
-				if (hp_count == 1)
+				if (hp_count == 1 || registry.fireballs.has(entity_other))
 				{
 
 					// Game over and update the hearts

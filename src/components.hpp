@@ -217,6 +217,11 @@ struct Gold{
 	
 };
 
+struct Fireball {
+
+};
+
+
 struct InvincibleTimer
 {
 	float counter_ms = 5000;
