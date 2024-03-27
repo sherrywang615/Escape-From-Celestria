@@ -31,7 +31,6 @@ const int INITIAL_HP = 3;
 // Key flags to track key pressed
 bool leftKeyPressed = false;
 bool rightKeyPressed = false;
-bool spacePressed = false;
 
 // Animation controls
 bool is_josh_moving = false;
@@ -262,7 +261,7 @@ void handleMovementKeys(Entity entity)
 			// Handle right key
 			if (rightKeyPressed)
 			{
-				if(!spacePressed){
+				
 				if (josh_step_counter % 2 == 0)
 				{
 					registry.renderRequests.get(entity) = {TEXTURE_ASSET_ID::JOSHGUN1,
@@ -274,7 +273,7 @@ void handleMovementKeys(Entity entity)
 					registry.renderRequests.get(entity) = {TEXTURE_ASSET_ID::JOSHGUN,
 														   EFFECT_ASSET_ID::TEXTURED,
 														   GEOMETRY_BUFFER_ID::SPRITE};
-				}}
+				}
 				if (motion.scale.x < 0 && !registry.players.get(entity).against_wall)
 				{
 					motion.scale.x *= -1;
@@ -285,7 +284,7 @@ void handleMovementKeys(Entity entity)
 			// Handle left key
 			if (leftKeyPressed)
 			{
-				if(!spacePressed){
+				
 				if (josh_step_counter % 2 == 0)
 				{
 					registry.renderRequests.get(entity) = {TEXTURE_ASSET_ID::JOSHGUN1,
@@ -297,7 +296,7 @@ void handleMovementKeys(Entity entity)
 					registry.renderRequests.get(entity) = {TEXTURE_ASSET_ID::JOSHGUN,
 														   EFFECT_ASSET_ID::TEXTURED,
 														   GEOMETRY_BUFFER_ID::SPRITE};
-				}}
+				}
 				motion.velocity.x = -JOSH_SPEED;
 				if (motion.scale.x > 0 && !registry.players.get(entity).against_wall)
 				{
@@ -310,6 +309,8 @@ void handleMovementKeys(Entity entity)
 			{
 				motion.velocity.x = 0;
 			}
+
+
 		}
 	}
 }
@@ -1073,7 +1074,7 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 	{
 		return;
 	}
-
+	
 	if (key == GLFW_KEY_LEFT || key == GLFW_KEY_A)
 	{
 		if (action == GLFW_PRESS || action == GLFW_REPEAT)
@@ -1102,7 +1103,8 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 			rightKeyPressed = false;
 		}
 	}
-
+	
+	
 	if (!registry.deathTimers.has(player_josh))
 	{
 
@@ -1143,20 +1145,18 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 				createBulletSmall(renderer, vec2(30 + i * create_bullet_distance, 20 + HEART_BB_HEIGHT));
 			}
 		}
-
-		// josh jump
-		if (action == GLFW_PRESS && key == GLFW_KEY_SPACE && !jumped && registry.motions.get(player_josh).velocity.y == 0.f)
+		
+		if (action == GLFW_PRESS && key == GLFW_KEY_SPACE &&!jumped && registry.motions.get(player_josh).velocity.y == 0.f)
 		{
+			// josh jump
 			Motion &josh_motion = registry.motions.get(player_josh);
 			josh_motion.velocity.y = -JOSH_JUMP;
 			jumped = true;
-			spacePressed = true;
 			//registry.players.get(player_josh).standing = false;
 		}
 		else if (action == GLFW_RELEASE && key == GLFW_KEY_SPACE)
 		{
 			jumped = false;
-			spacePressed = false;
 		}
 	}
 

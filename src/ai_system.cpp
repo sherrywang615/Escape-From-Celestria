@@ -264,8 +264,8 @@ void AISystem::updateZombiePath(float elapsed_ms, int elapsed)
 				motion_z.velocity.x *= -1;
 				motion_z.scale.x *= -1;
 			}
-			// also turn around if the zombie touches the boundaries
-			if (motion_z.position.x <= 0 + (motion_z.scale.x / 2) || motion_z.position.x >= window_width_px + (motion_z.scale.x / 2)) {
+			else if (motion_z.position.x <= 0 + (motion_z.scale.x / 2) || motion_z.position.x >= window_width_px + (motion_z.scale.x / 2)) {
+				// also turn around if the zombie touches the boundaries
 				motion_z.velocity.x *= -1;
 				motion_z.scale.x *= -1;
 			}
