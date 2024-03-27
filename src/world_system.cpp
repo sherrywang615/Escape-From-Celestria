@@ -835,6 +835,7 @@ void WorldSystem::restart_game()
 	}
 
 	dialog->initializeDialog(dialog_path("level"+ std::to_string(currentLevel) + ".txt"));
+	have_key = false;
 }
 
 // Compute collisions between entities
