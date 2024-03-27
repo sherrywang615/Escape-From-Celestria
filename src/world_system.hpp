@@ -30,6 +30,7 @@ public:
 
 	bool zombie_died = false;
 	bool is_invincible = false;
+	vec3 color;
 
 	// Creates a window
 	GLFWwindow *create_window();
@@ -56,10 +57,8 @@ private:
 	//start time
 	std::chrono::system_clock::time_point start;
 	std::chrono::system_clock::time_point zombie_die_start;
-	int zombie_die_counter = 0;
 	float t = 0.f;
 	bool forward = true;
-	vec3 color;
 	
 	// Input callback functions
 	bool renderInfo;
@@ -91,7 +90,6 @@ private:
 	GLFWwindow *window;
 
 	// Number of bug eaten by the chicken, displayed in the window title
-	unsigned int points;
 	unsigned int hp_count;
 	bool have_key;
 	unsigned int bullets_count;
@@ -100,8 +98,6 @@ private:
 	RenderSystem *renderer;
 	DialogSystem *dialog;
 	float current_speed;
-	float next_eagle_spawn;
-	float next_bug_spawn;
 	Entity player_chicken;
 	Entity player_josh;
 	bool jumped = false;
