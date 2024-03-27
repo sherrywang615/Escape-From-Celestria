@@ -486,7 +486,7 @@ void PhysicsSystem::step(float elapsed_ms)
 			{
 				Platform& plat = plat_container.components[p];
 				Motion motion_p = { plat.position, 0, {0,0}, plat.scale };
-				if (abs(motion_p.position.x - motion.position.x) < 200 && abs(motion_p.position.y - motion.position.y) < 200 && !registry.golds.has(registry.motions.entities[i])) {
+				if (abs(motion_p.position.x - motion.position.x) < 200 && abs(motion_p.position.y - motion.position.y) < 200 && !registry.golds.has(registry.motions.entities[i]) && !registry.fireballs.has(registry.motions.entities[i])) {
 					// make collision checking more efficient, only check close platforms
 					// mesh collision				
 					if (registry.players.has(entity)) {
