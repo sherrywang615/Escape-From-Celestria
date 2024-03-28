@@ -306,29 +306,21 @@ void RenderSystem::draw()
 		if (registry.texts.has(entity)) {
 			continue;
 		}
-
-
 		if (!registry.motions.has(entity))
 			continue;
 		// Note, its not very efficient to access elements indirectly via the entity
 		// albeit iterating through all Sprites in sequence. A good point to optimize
-		glGenVertexArrays(1, &vao);
-		glBindVertexArray(vao);
 		drawTexturedMesh(entity, projection_2D);
 
 		
 	}
-	//glGenVertexArrays(1, &vao);
-	//glBindVertexArray(vao);
 	
 
 	for (Entity entity : registry.players.entities) {
-		glGenVertexArrays(1, &vao);
-		glBindVertexArray(vao);
 		drawTexturedMesh(entity, projection_2D);
 	}
-	glGenVertexArrays(1, &vao);
-	glBindVertexArray(vao);
+	//glGenVertexArrays(1, &vao);
+	//glBindVertexArray(vao);
 	// Truely render to the screen
 	for (Entity entity : registry.texts.entities) {
 			Text text = registry.texts.get(entity);
