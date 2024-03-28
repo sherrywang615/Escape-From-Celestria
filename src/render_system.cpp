@@ -12,6 +12,8 @@
 void RenderSystem::drawTexturedMesh(Entity entity,
 									const mat3 &projection)
 {
+	glGenVertexArrays(1, &vao);
+	glBindVertexArray(vao);
 	Motion &motion = registry.motions.get(entity);
 	// Transformation code, see Rendering and Transformation in the template
 	// specification for more info Incrementally updates transformation matrix,
@@ -118,6 +120,7 @@ void RenderSystem::drawTexturedMesh(Entity entity,
 	// Drawing of num_indices/3 triangles specified in the index buffer
 	glDrawElements(GL_TRIANGLES, num_indices, GL_UNSIGNED_SHORT, nullptr);
 	gl_has_errors();
+	glDeleteVertexArrays(1, &vao);
 }
 
 // draw the intermediate texture to the screen, with some distortion to simulate
