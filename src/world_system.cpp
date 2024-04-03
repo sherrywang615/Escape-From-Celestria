@@ -61,6 +61,8 @@ WorldSystem::~WorldSystem()
 		Mix_FreeMusic(bg3_music);
 	if (bg4_music != nullptr)
 		Mix_FreeMusic(bg4_music);
+	if (bgEnd_music != nullptr)
+		Mix_FreeMusic(bgEnd_music);
 	if (doorOpen_music != nullptr)
 		Mix_FreeChunk(doorOpen_music);
 	if (eat_music != nullptr)
@@ -187,6 +189,13 @@ GLFWwindow *WorldSystem::create_window()
 	{
 		fprintf(stderr, "Failed to load sounds %s make sure the data directory is present",
 				audio_path("bg4.wav").c_str());
+		return nullptr;
+	}
+	bgEnd_music = Mix_LoadMUS(audio_path("bgEnd.wav").c_str());
+	if (bgEnd_music == nullptr)
+	{
+		fprintf(stderr, "Failed to load sounds %s make sure the data directory is present",
+				audio_path("bgEnd.wav").c_str());
 		return nullptr;
 	}
 	doorOpen_music = Mix_LoadWAV(audio_path("doorOpen.wav").c_str());
@@ -676,6 +685,10 @@ bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map)
 			{
 				createBackground4(renderer, { x, y });
 			}
+			if (tok == 'W')
+			{
+				createBgEnd(renderer, { x, y });
+			}
 		}
 	}
 
@@ -814,7 +827,7 @@ void WorldSystem::restart_game()
 	// Debugging for memory/component leaks
 	registry.list_all_components();
 
-	std::vector<Mix_Music*> musicTracks = {bg1_music, bg2_music, bg3_music, bg4_music};
+	std::vector<Mix_Music*> musicTracks = {bg1_music, bg2_music, bg3_music, bg4_music, bgEnd_music};
 	Mix_Music* currentMusicTrack = getMusicTrack(currentLevel, musicTracks);
     
 	if (currentMusicTrack != nullptr) {
@@ -1095,6 +1108,10 @@ void WorldSystem::render_new_level(int level)
 	{
 		Mix_PlayMusic(bg4_music, -1);
 	}
+	else if (level == 5)
+	{
+		Mix_PlayMusic(bgEnd_music, -1);
+	}
 
 	for (int i = 0; i < hp_count; i++)
 	{
@@ -1349,7 +1366,7 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 	{
 		current_speed += 0.1f;
 		printf("Current speed = %f\n", current_speed);
-		if (currentLevel < 4) {
+		if (currentLevel < 5) {
 			currentLevel++;
 			restart_game();
 		}
