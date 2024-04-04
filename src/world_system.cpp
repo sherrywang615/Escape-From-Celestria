@@ -1116,9 +1116,11 @@ void WorldSystem::render_new_level(int level)
 		Mix_PlayMusic(bgEnd_music, -1);
 	}
 
+	if (level != 5) {
 	for (int i = 0; i < hp_count; i++)
 	{
 		createHeart(renderer, vec2(30 + i * create_heart_distance, 20));
+	}
 	}
 	createHelpSign(renderer, vec2(window_width_px - 70, window_height_px - 700));
 	if (renderInfo)

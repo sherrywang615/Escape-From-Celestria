@@ -560,7 +560,7 @@ Entity createBgEnd(RenderSystem* renderer, vec2 position)
 	auto& motion = registry.motions.emplace(entity);
 	motion.angle = 0.f;
 	motion.position = vec2({ window_height_px / 2, window_width_px / 2 });
-	motion.scale = vec2({ -window_width_px, window_height_px });
+	motion.scale = vec2({ window_width_px, window_height_px });
 
 	registry.renderRequests.insert(
 		entity,
@@ -649,8 +649,14 @@ Entity createNPC(RenderSystem *renderer, vec2 position, unsigned int index)
 		 EFFECT_ASSET_ID::TEXTURED,
 		 GEOMETRY_BUFFER_ID::SPRITE});
 	}
-
-
+	else if (index == 5)
+	{
+		registry.renderRequests.insert(
+		entity,
+		{TEXTURE_ASSET_ID::ALICE,
+		 EFFECT_ASSET_ID::TEXTURED,
+		 GEOMETRY_BUFFER_ID::SPRITE});
+	}
 	return entity;
 }
 

@@ -62,6 +62,7 @@ class RenderSystem {
 		textures_path("lvl2.png"),
 		textures_path("lvl3.png"),		
 		textures_path("lvl4.png"),
+		textures_path("alice.png"),
 		textures_path("Gold_21.png"),
 		};
 
