@@ -54,6 +54,7 @@ class RenderSystem {
 		textures_path("background2.png"),
 		textures_path("background3.png"),
 		textures_path("background4.png"),
+		textures_path("bgEnd.png"),
 		textures_path("exit.png"),
 
 		textures_path("menu_bg.png"),
@@ -61,6 +62,7 @@ class RenderSystem {
 		textures_path("lvl2.png"),
 		textures_path("lvl3.png"),		
 		textures_path("lvl4.png"),
+		textures_path("alice.png"),
 		textures_path("Gold_21.png"),
 		};
 

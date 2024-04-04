@@ -112,6 +112,16 @@ void createVerticesForLevel4() {
 
 }
 
+void createVerticesForLevel5() {
+	Vertex* first_floor_jump = graph.getVertex(170, (int)700 - offset);
+	Vertex* second_floor_left = graph.getVertex(250, (int)570 - offset);
+	graph.addJumpEdge(first_floor_jump, second_floor_left);
+	Vertex* second_floor_right = graph.getVertex(800, (int)570 - offset);
+	Vertex* first_floor_right = graph.getVertex(870, (int)700 - offset);
+	graph.addJumpEdge(first_floor_right, second_floor_right);
+	Vertex* second_plat_left = graph.getVertex(140, (int)480 - offset);
+}
+
 void createGraph(int level) {
 	//graph = Graph();
 	if (level == 1) {
@@ -125,5 +135,9 @@ void createGraph(int level) {
 	}
 	else if (level == 4) {
 		createVerticesForLevel4();
+	}
+	else if (level == 5) {
+		// level 5 is an ending scene, it doesn't need ai
+		//createVerticesForLevel5();
 	}
 }
