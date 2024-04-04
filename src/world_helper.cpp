@@ -137,6 +137,7 @@ void createGraph(int level) {
 		createVerticesForLevel4();
 	}
 	else if (level == 5) {
-		createVerticesForLevel5();
+		// level 5 is an ending scene, it doesn't need ai
+		//createVerticesForLevel5();
 	}
 }

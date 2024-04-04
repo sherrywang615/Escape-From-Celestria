@@ -775,7 +775,7 @@ bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map)
 			else
 			{
 				printf("Map contains invalid character '%c' at [%d, %d].", tok, i, j);
-				return false;
+				//return false;
 			}
 		}
 	}
@@ -814,6 +814,9 @@ void WorldSystem::restart_game()
 
 	// Reset current level
 	//currentLevel = 1;
+	if (currentLevel == 5) {
+		printf("haha");
+	}
 
 	// Remove all entities that we created
 	// All that have a motion, we could also iterate over all bug, eagles, ... but that would be more cumbersome
