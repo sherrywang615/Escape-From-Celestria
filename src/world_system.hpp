@@ -75,9 +75,6 @@ private:
 	// restart level
 	void restart_game();
 
-	// render new level
-	void render_new_level(int level);
-
 
 	bool isJoshHidden = false;
 	void hideJosh(RenderSystem *renderer);

@@ -878,10 +878,7 @@ void WorldSystem::restart_game()
 	{
 		std::cerr << "Error: Music track for level " << currentLevel << " not found." << std::endl;
 	}
-	// the player automaticly has key for level 5
-	if (currentLevel == 5) {
-		have_key = true;
-	}
+
 
 	// load credits
 	if (currentLevel == 6) {
@@ -916,7 +913,8 @@ void WorldSystem::restart_game()
 	}
 
 	dialog->initializeDialog(dialog_path("level" + std::to_string(currentLevel) + ".txt"));
-	have_key = false;
+	// the player automaticly has key for level 5
+	have_key = currentLevel == 5;
 }
 
 // Compute collisions between entities
@@ -1083,7 +1081,7 @@ void WorldSystem::handle_collisions()
 					{
 						Mix_PlayChannel(-1, doorOpen_music, 0);
 						currentLevel++;
-						render_new_level(currentLevel);
+						restart_game();
 						have_key = false;
 					}
 				}
@@ -1154,51 +1152,6 @@ void WorldSystem::showKeyOnScreen(RenderSystem *renderer, bool have_key)
 			registry.renderRequests.remove(entity);
 		}
 	}
-}
-
-// Render a new level
-void WorldSystem::render_new_level(int level)
-{
-	while (registry.motions.entities.size() > 0)
-		registry.remove_all_components_of(registry.motions.entities.back());
-	auto map = loadMap(map_path() + "level" + std::to_string(level) + ".txt");
-	createEntityBaseOnMap(map);
-
-	if (level == 2)
-	{
-		Mix_PlayMusic(bg2_music, -1);
-	}
-	else if (level == 3)
-	{
-		Mix_PlayMusic(bg3_music, -1);
-	}
-	else if (level == 4)
-	{
-		Mix_PlayMusic(bg4_music, -1);
-	}
-	else if (level == 5)
-	{
-		Mix_PlayMusic(bgEnd_music, -1);
-	}
-	for (int i = 0; i < hp_count; i++)
-	{
-		createHeart(renderer, vec2(30 + i * create_heart_distance, 20));
-	}
-	createHelpSign(renderer, vec2(window_width_px - 70, window_height_px - 700));
-	if (renderInfo)
-	{
-		createHelpInfo(renderer, vec2(window_width_px - 515, window_height_px - 350));
-	}
-	for (int i = 0; i < bullets_count; i++)
-	{
-		// if (i % 10 == 0)
-		// {
-		createBulletSmall(renderer, vec2(30 + i * create_bullet_distance, 20 + HEART_BB_HEIGHT));
-		// }
-	}
-
-	std::string dialog_file = dialog_path("level" + std::to_string(level) + ".txt");
-	dialog->initializeDialog(dialog_file);
 }
 
 // Should the game be over ?
