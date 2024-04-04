@@ -132,8 +132,9 @@ void collision_resolve(Motion& motion, vec2 prev_pos, std::vector<int> dir, Moti
 		motion.position.y = prev_pos.y;
 	}
 	if (dir[1] == 1) {
+		// collision with top
 		motion.velocity.y = 0;
-		motion.position.y = prev_pos.y;
+		motion.position = prev_pos;
 	}
 
 	if ((dir[2] == 1 || dir[3] == 1)) {
