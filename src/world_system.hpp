@@ -66,7 +66,7 @@ private:
 	void on_mouse_move(vec2 pos);
 
 	// read map
-	bool createEntityBaseOnMap(std::vector<std::vector<char>> map);
+	bool createEntityBaseOnMap(std::vector<std::vector<char>> map, bool plat_only = false);
 
 	void showKeyOnScreen(RenderSystem *renderer, bool have_key);
 

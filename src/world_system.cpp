@@ -448,6 +448,20 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 		}
 	}
 
+	// Linear interpolation: movement
+	for (Entity entity : registry.linearMovements.entities)
+	{
+		auto& movement = registry.linearMovements.get(entity);
+		movement.time_elapsed += elapsed_ms_since_last_update / 1000.0f;
+		float t = movement.time_elapsed / movement.duration;
+		if (t < 1.0f)
+		{
+			vec3 displacement3D = lerp(vec3(movement.pos_start, 0.0f), vec3(movement.pos_end, 0.0f), t);
+			Motion& motion = registry.motions.get(entity);
+			motion.position = { displacement3D.x, displacement3D.y };
+		}
+	}
+
 	// Processing the chicken state
 	assert(registry.screenStates.components.size() <= 1);
 	ScreenState &screen = registry.screenStates.components[0];
@@ -580,7 +594,7 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 		registry.remove_all_components_of(entity);
 	}
 
-	if (currentLevel != 5)
+	if (currentLevel < 5)
 	{
 		for (int i = 0; i < hp_count; i++)
 		{
@@ -675,7 +689,7 @@ vec2 WorldSystem::cubicBezier(vec2 &p0, vec2 &p1, vec2 &p2, vec2 &p3, float t)
 	return pos;
 }
 
-bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map)
+bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map, bool plat_only)
 {
 	// clear the graph first
 	graph.clear();
@@ -727,7 +741,7 @@ bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map)
 			{
 				continue;
 			}
-			else if (tok == 'J')
+			else if (tok == 'J' && !plat_only)
 			{
 				josh_x = x;
 				josh_y = y;
@@ -745,35 +759,35 @@ bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map)
 				latest = newV;
 				createPlatform(renderer, {x, y});
 			}
-			else if (tok == 'Z')
+			else if (tok == 'Z' && !plat_only)
 			{
 				zombiePositions.push_back({x, y});
 			}
-			else if (tok == 'F')
+			else if (tok == 'F' && !plat_only)
 			{
 				createFood(renderer, {x, y});
 			}
-			else if (tok == 'B')
+			else if (tok == 'B' && !plat_only)
 			{
 				createBullet(renderer, {x, y});
 			}
-			else if (tok == 'D')
+			else if (tok == 'D' && !plat_only)
 			{
 				createDoor(renderer, {x, y});
 			}
-			else if (tok == 'K')
+			else if (tok == 'K' && !plat_only)
 			{
 				createKey(renderer, {x, y});
 			}
-			else if (tok == 'C')
+			else if (tok == 'C' && !plat_only)
 			{
 				createCabinet(renderer, {x, y});
 			}
-			else if (tok == 'E')
+			else if (tok == 'E' && !plat_only)
 			{
 				createObject(renderer, {x, y});
 			}
-			else if (tok == 'N')
+			else if (tok == 'N' && !plat_only)
 			{
 				unsigned int id = 0;
 				if (map[i][++j] != ' ')
@@ -782,16 +796,16 @@ bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map)
 				}
 				createNPC(renderer, {x, y}, id);
 			}
-			else if (tok == 'S')
+			else if (tok == 'S' && !plat_only)
 			{
 				int index = map[i][++j] - '0';
 				createSpeechPoint(renderer, {x, y}, index);
 			}
-			else if (tok == 'G')
+			else if (tok == 'G' && !plat_only)
 			{
 				createGold(renderer, {x, y});
 			}
-			else if (tok == '|')
+			else if (tok == '|' && !plat_only)
 			{
 				createFireball(renderer, {x, y});
 			}
@@ -863,6 +877,32 @@ void WorldSystem::restart_game()
 	else
 	{
 		std::cerr << "Error: Music track for level " << currentLevel << " not found." << std::endl;
+	}
+	// the player automaticly has key for level 5
+	if (currentLevel == 5) {
+		have_key = true;
+	}
+
+	// load credits
+	if (currentLevel == 6) {
+		std::vector<std::string> credits = { "Thank you for playing", "Escape From Celestria", "a game produced by", "Peter Yang", "Qianzhi Zhang", "Sherry Wang", "Yi Ran Liao", "Yixuan Li" };
+		vec2 start_loc = { 180, 0 };
+		float duration = 10;
+		float displacement = 650;
+		float spacing = 80;
+		float size = 0.9;
+		for (int i = 0; i < credits.size(); i++) {
+
+			Entity text = createText({ start_loc.x, start_loc.y - i * spacing }, size, { 1, 1, 1 }, credits[i]);
+			registry.linearMovements.insert(text, 
+				{	{ start_loc.x, start_loc.y - i * spacing }, 
+					{ start_loc.x, start_loc.y - i * spacing + displacement}, 
+					duration, 
+					0 
+				});
+		}
+		return;
+
 	}
 
 	auto map = loadMap(map_path() + "level" + std::to_string(currentLevel) + ".txt");
@@ -1374,7 +1414,15 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 		}
 		if (action == GLFW_RELEASE && key == GLFW_KEY_ENTER)
 		{
-			paused = handleButtonEvents(buttons[current_button], renderer, window, have_key, hp_count, bullets_count);
+			MenuElement me = registry.menus.get(buttons[current_button]);
+			if (me.func == MENU_FUNC::LOAD) {
+				currentLevel = loadLevel();
+				restart_game();
+				loadGame(renderer, have_key, hp_count, bullets_count, currentLevel);
+				paused = false;
+				return;
+			}
+			paused = handleButtonEvents(buttons[current_button], renderer, window, have_key, hp_count, bullets_count, currentLevel);
 			for (Entity entity : registry.players.entities)
 			{
 				player_josh = entity;
@@ -1406,7 +1454,7 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 	{
 		current_speed += 0.1f;
 		printf("Current speed = %f\n", current_speed);
-		if (currentLevel < 5)
+		if (currentLevel < 6)
 		{
 			currentLevel++;
 			restart_game();

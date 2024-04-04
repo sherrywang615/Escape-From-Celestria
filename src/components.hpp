@@ -160,6 +160,14 @@ struct ColorChange
 	float color_time_elapsed;
 };
 
+struct LinearMovement
+{
+	vec2 pos_start;
+	vec2 pos_end;
+	float duration;
+	float time_elapsed;
+};
+
 struct DeductHpTimer
 {
 	float counter_ms = 900;
