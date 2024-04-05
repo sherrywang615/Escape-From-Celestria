@@ -20,7 +20,7 @@ M
                                                                                                      
                                                                                                Z                   
                                                                                                      
-       B                                                                                              
+                                                                                                      
                                                     K
                                                                                          PPPPPPPPPPPPPPP
                                                                                                      
@@ -30,7 +30,7 @@ PPPPPPPPPPPPPPP
                                            PPPPPPPPPPPPPPPPPP                                                          
                                                                                                      
                                                                                                                           
-                     G          Z                                        Z                              
+                     G                                                   Z                              
                                                                                                                                                                                                           
                                                                                                                                                                                                        
                                                                                                      
@@ -48,7 +48,7 @@ PPPPPPPPPPPPPPP
 PPPPPPPPPPPPPPP                                                                          PPPPPPPPPPPPPPPPP 
  
                                                                                                      
-                                           B        G           Z        F                                     
+                                                    G                    F                                     
                                                                                                         
 
                                                                                                      
@@ -62,9 +62,9 @@ PPPPPPPPPPPPPPP                                                                 
                                                                                                                              
                                                                               
                                                                                                      
-       J                      B                                                                 
+  B     J                B          B          B                                                       
                                                                      Z               Z       F                         
-               C                                           C                  
+               C                                             C                  
                                                                                                                               
                                                                                                      
 PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP                                                                                                                                                                                                        
