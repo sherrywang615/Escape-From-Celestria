@@ -94,7 +94,6 @@ private:
 	
 	// Game state
 	RenderSystem *renderer;
-	WorldSystem *worldSystem;
 	DialogSystem *dialog;
 	float current_speed;
 	Entity player_chicken;

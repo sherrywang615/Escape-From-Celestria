@@ -332,9 +332,7 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 	{
 		auto elasped = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
 		josh_step_counter = int(round(elasped) / 100000);
-		// std::cout<< josh_step_counter<<std::endl;
 	}
-
 	if (paused)
 	{
 		for (int i = 0; i < buttons.size(); i++)
@@ -358,27 +356,41 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 		return true;
 	}
 
-	if (currentLevel == 0) {
-		for (int i = 0; i < buttons_start.size(); i++) {
-
-			if (!registry.texts.has(buttons_start[i])) {
+	if (showStartScreen)
+	{
+		for (int i = 0; i < buttons_start.size(); i++)
+		{
+			if (!registry.texts.has(buttons_start[i]))
+			{
 				continue;
 			}
-			Text& text = registry.texts.get(buttons_start[i]);
-			if (i != current_button_start) {
-				text.color = { 1, 1, 1 };
+			Text &text = registry.texts.get(buttons_start[i]);
+			if (i != current_button_start)
+			{
+				text.color = {1, 1, 1};
 			}
 			else
 			{
-				text.color = { 1, 1, 0 };
+				text.color = {1, 1, 0};
 			}
+		}
+
+		fpsTimer += elapsed_ms_since_last_update;
+		fpsCount++;
+		if (fpsTimer >= 1000.0f)
+		{
+			fpsTimer = 0.0f;
+			fps = fpsCount;
+			fpsCount = 0;
+			std::stringstream windowCaption;
+			windowCaption << "Escape from Celestria - FPS Counter: " << fps;
+			glfwSetWindowTitle(window, windowCaption.str().c_str());
 		}
 
 		return true;
 	}
 	buttons.clear();
 	buttons_start.clear();
-
 	handleMovementKeys(player_josh);
 
 	// for fps counter
@@ -473,14 +485,14 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 	// Linear interpolation: movement
 	for (Entity entity : registry.linearMovements.entities)
 	{
-		auto& movement = registry.linearMovements.get(entity);
+		auto &movement = registry.linearMovements.get(entity);
 		movement.time_elapsed += elapsed_ms_since_last_update / 1000.0f;
 		float t = movement.time_elapsed / movement.duration;
 		if (t < 1.0f)
 		{
 			vec3 displacement3D = lerp(vec3(movement.pos_start, 0.0f), vec3(movement.pos_end, 0.0f), t);
-			Motion& motion = registry.motions.get(entity);
-			motion.position = { displacement3D.x, displacement3D.y };
+			Motion &motion = registry.motions.get(entity);
+			motion.position = {displacement3D.x, displacement3D.y};
 		}
 	}
 
@@ -616,14 +628,14 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 		registry.remove_all_components_of(entity);
 	}
 
-	if(currentLevel != 0 || currentLevel != 5)
+	if (currentLevel != 0 && currentLevel != 5)
 	{
 		for (int i = 0; i < hp_count; i++)
 		{
 			createHeart(renderer, vec2(30 + i * create_heart_distance, 20));
 		}
 	}
-	
+
 	// recreate Bullets base on bullet_count
 	removeSmallBullets(renderer);
 
@@ -901,18 +913,39 @@ void WorldSystem::restart_game()
 		std::cerr << "Error: Music track for level " << currentLevel << " not found." << std::endl;
 	}
 
-	auto map = loadMap(map_path() + "level" + std::to_string(currentLevel) + ".txt");
-	createEntityBaseOnMap(map);
-
-
-	//createHelpSign(renderer, vec2(window_width_px - 70, window_height_px - 700));
-
-	for (int i = 0; i < hp_count; i++)
+	if (currentLevel == 0)
 	{
-		createHeart(renderer, vec2(30 + i * create_heart_distance, 20));
+		showStartScreen = true;
+		renderStartMenu();
+		Entity background = createBackground4(renderer, {0, 0});
+		registry.menus.emplace(background);
+
+		for (Entity entity : registry.menus.entities)
+		{
+			auto &me = registry.menus.get(entity);
+			if (me.func != MENU_FUNC::ALL)
+			{
+				buttons_start.push_back(entity);
+			}
+		}
+	}
+	else
+	{
+		for (Entity entity : registry.menus.entities)
+		{
+			registry.remove_all_components_of(entity);
+		}
+		buttons_start.clear();
+		auto map = loadMap(map_path() + "level" + std::to_string(currentLevel) + ".txt");
+		createEntityBaseOnMap(map);
+
+		for (int i = 0; i < hp_count; i++)
+		{
+			createHeart(renderer, vec2(30 + i * create_heart_distance, 20));
+		}
+		dialog->initializeDialog(dialog_path("level" + std::to_string(currentLevel) + ".txt"));
 	}
 
-	dialog->initializeDialog(dialog_path("level"+ std::to_string(currentLevel) + ".txt"));
 	have_key = false;
 }
 
@@ -1367,7 +1400,8 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 		if (action == GLFW_RELEASE && key == GLFW_KEY_ENTER)
 		{
 			MenuElement me = registry.menus.get(buttons[current_button]);
-			if (me.func == MENU_FUNC::LOAD) {
+			if (me.func == MENU_FUNC::LOAD)
+			{
 				currentLevel = loadLevel();
 				restart_game();
 				loadGame(renderer, have_key, hp_count, bullets_count, currentLevel);
@@ -1382,32 +1416,41 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 		}
 	}
 
-	if (showStartScreen) {
-
-		if (action == GLFW_RELEASE && key == GLFW_KEY_DOWN) {
-			if (current_button_start == buttons_start.size() - 1) {
+	if (showStartScreen)
+	{
+		if (action == GLFW_RELEASE && key == GLFW_KEY_DOWN)
+		{
+			if (current_button_start == buttons_start.size() - 1)
+			{
 				current_button_start = 0;
 			}
-			else {
+			else
+			{
 				current_button_start++;
 			}
 		}
-		if (action == GLFW_RELEASE && key == GLFW_KEY_UP) {
-			if (current_button_start == 0) {
+		if (action == GLFW_RELEASE && key == GLFW_KEY_UP)
+		{
+			if (current_button_start == 0)
+			{
 				current_button_start = buttons_start.size() - 1;
 			}
-			else {
+			else
+			{
 				current_button_start--;
 			}
 		}
-		if (action == GLFW_RELEASE && key == GLFW_KEY_ENTER) {
-			int res = handleStartButtonEvents(buttons_start[current_button_start], renderer, window, have_key, hp_count, bullets_count);
-			if(res == 0){
+		if (action == GLFW_RELEASE && key == GLFW_KEY_ENTER)
+		{
+			int res = handleStartButtonEvents(buttons_start[current_button_start], renderer, window, have_key, hp_count, bullets_count, currentLevel);
+			if (res == 0)
+			{
 				currentLevel = 1;
 				restart_game();
-			} 
+			}
 			showStartScreen = false;
-			for (Entity entity : registry.players.entities) {
+			for (Entity entity : registry.players.entities)
+			{
 				player_josh = entity;
 			}
 		}

@@ -22,7 +22,7 @@ std::vector<vec2> arrangeText(int num) {
 std::vector<vec2> arrangeTextStart(int num) {
 	std::vector<vec2> result = {};
 	for (int i = 0; i < num; i++) {
-		vec2 pos = { window_width_px / 2 - 110, window_height_px / 2 - 50 - i *  LINE_SPACE_START};
+		vec2 pos = { window_width_px / 2 - 105, window_height_px / 2 - 80 - i *  LINE_SPACE_START};
 		result.push_back(pos);
 	}
 	return result;
@@ -270,7 +270,7 @@ bool handleButtonEvents(Entity entity, RenderSystem* renderer, GLFWwindow* windo
 	return true;
 }
 
-int handleStartButtonEvents(Entity entity, RenderSystem* renderer, GLFWwindow* window, bool& has_key, int& hp_count, int& bullet_count) {
+int handleStartButtonEvents(Entity entity, RenderSystem* renderer, GLFWwindow* window, bool& has_key, int& hp_count, int& bullet_count, int& current_level) {
 	MenuElement me = registry.menus.get(entity);
 	// if (me.func == MENU_FUNC::LOAD) {
 	// 	loadGame(renderer, has_key, hp_count, bullet_count);
@@ -285,19 +285,12 @@ int handleStartButtonEvents(Entity entity, RenderSystem* renderer, GLFWwindow* w
 		return 0;
 	}
 	else if (me.func == MENU_FUNC::LOAD) {
-		loadGame(renderer, has_key, hp_count, bullet_count);
+		loadGame(renderer, has_key, hp_count, bullet_count, current_level);
 		clearMenu();
 		return 1;
 	} else if(me.func == MENU_FUNC::TUTORIAL){
 		clearMenu();
 		return 2;
-	}
-	else if (me.func == MENU_FUNC::HELP) {
-		for (Entity entity : registry.menus.entities) {
-			registry.remove_all_components_of(entity);
-		}
-		Entity entity = createHelpInfo(renderer, vec2(window_width_px - 515, window_height_px - 350));
-		registry.menus.emplace(entity);
 	}
 	return 3;
 }
