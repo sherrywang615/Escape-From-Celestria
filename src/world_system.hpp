@@ -26,7 +26,8 @@ public:
 	float fpsCount;
 	float fpsTimer;
 
-	int currentLevel = 1;
+	int currentLevel = 0;
+	bool showStartScreen = false;
 
 	bool zombie_died = false;
 	bool is_invincible = false;
@@ -96,6 +97,7 @@ private:
 	
 	// Game state
 	RenderSystem *renderer;
+	WorldSystem *worldSystem;
 	DialogSystem *dialog;
 	float current_speed;
 	Entity player_chicken;

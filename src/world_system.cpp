@@ -39,6 +39,8 @@ bool paused = false;
 // track Menu
 std::vector<Entity> buttons = {};
 int current_button = 0;
+std::vector<Entity> buttons_start = {};
+int current_button_start = 0;
 
 // Create the bug world
 WorldSystem::WorldSystem()
@@ -344,7 +346,27 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 
 		return true;
 	}
+
+	if (currentLevel == 0) {
+		for (int i = 0; i < buttons_start.size(); i++) {
+
+			if (!registry.texts.has(buttons_start[i])) {
+				continue;
+			}
+			Text& text = registry.texts.get(buttons_start[i]);
+			if (i != current_button_start) {
+				text.color = { 1, 1, 1 };
+			}
+			else
+			{
+				text.color = { 1, 1, 0 };
+			}
+		}
+
+		return true;
+	}
 	buttons.clear();
+	buttons_start.clear();
 
 	handleMovementKeys(player_josh);
 		
@@ -561,11 +583,13 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 		registry.remove_all_components_of(entity);
 	}
 
-	for (int i = 0; i < hp_count; i++)
-	{
-		createHeart(renderer, vec2(30 + i * create_heart_distance, 20));
+	if(currentLevel != 0){
+		for (int i = 0; i < hp_count; i++)
+		{
+			createHeart(renderer, vec2(30 + i * create_heart_distance, 20));
+		}
 	}
-
+	
 	// recreate Bullets base on bullet_count
 	removeSmallBullets(renderer);
 	for (int i = 0; i < bullets_count; i++)
@@ -823,18 +847,29 @@ void WorldSystem::restart_game()
         std::cerr << "Error: Music track for level " << currentLevel << " not found." << std::endl;
     }
 
-	auto map = loadMap(map_path() + "level" + std::to_string(currentLevel) + ".txt");
-	createEntityBaseOnMap(map);
+	if(currentLevel == 0){
+		showStartScreen = true;
+		renderStartMenu();
+		for (Entity entity : registry.menus.entities) {
+				auto& me = registry.menus.get(entity);
+				if (me.func != MENU_FUNC::ALL) {
+					buttons_start.push_back(entity);
+				}
+			}
+	} else {
+		auto map = loadMap(map_path() + "level" + std::to_string(currentLevel) + ".txt");
+		createEntityBaseOnMap(map);
+		for (int i = 0; i < hp_count; i++)
+		{
+			createHeart(renderer, vec2(30 + i * create_heart_distance, 20));
+		}
 
-
+		dialog->initializeDialog(dialog_path("level"+ std::to_string(currentLevel) + ".txt"));
+	}
+	
 	//createHelpSign(renderer, vec2(window_width_px - 70, window_height_px - 700));
 
-	for (int i = 0; i < hp_count; i++)
-	{
-		createHeart(renderer, vec2(30 + i * create_heart_distance, 20));
-	}
-
-	dialog->initializeDialog(dialog_path("level"+ std::to_string(currentLevel) + ".txt"));
+	
 	have_key = false;
 }
 
@@ -1320,6 +1355,37 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 		}
 		if (action == GLFW_RELEASE && key == GLFW_KEY_ENTER) {
 			paused = handleButtonEvents(buttons[current_button], renderer, window, have_key, hp_count, bullets_count);
+			for (Entity entity : registry.players.entities) {
+				player_josh = entity;
+			}
+		}
+	}
+
+	if (showStartScreen) {
+
+		if (action == GLFW_RELEASE && key == GLFW_KEY_DOWN) {
+			if (current_button_start == buttons_start.size() - 1) {
+				current_button_start = 0;
+			}
+			else {
+				current_button_start++;
+			}
+		}
+		if (action == GLFW_RELEASE && key == GLFW_KEY_UP) {
+			if (current_button_start == 0) {
+				current_button_start = buttons_start.size() - 1;
+			}
+			else {
+				current_button_start--;
+			}
+		}
+		if (action == GLFW_RELEASE && key == GLFW_KEY_ENTER) {
+			int res = handleStartButtonEvents(buttons_start[current_button_start], renderer, window, have_key, hp_count, bullets_count);
+			if(res == 0){
+				currentLevel = 1;
+				restart_game();
+			} 
+			showStartScreen = false;
 			for (Entity entity : registry.players.entities) {
 				player_josh = entity;
 			}
