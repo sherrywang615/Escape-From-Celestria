@@ -1081,8 +1081,8 @@ void WorldSystem::handle_collisions()
 					{
 						Mix_PlayChannel(-1, doorOpen_music, 0);
 						currentLevel++;
-						restart_game();
 						have_key = false;
+						restart_game();
 					}
 				}
 			}
