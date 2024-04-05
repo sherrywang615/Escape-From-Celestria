@@ -66,7 +66,7 @@ private:
 	void on_mouse_move(vec2 pos);
 
 	// read map
-	bool createEntityBaseOnMap(std::vector<std::vector<char>> map);
+	bool createEntityBaseOnMap(std::vector<std::vector<char>> map, bool plat_only = false);
 
 	void showKeyOnScreen(RenderSystem *renderer, bool have_key);
 
@@ -74,9 +74,6 @@ private:
 
 	// restart level
 	void restart_game();
-
-	// render new level
-	void render_new_level(int level);
 
 
 	bool isJoshHidden = false;
@@ -109,6 +106,7 @@ private:
 	Mix_Music *bg2_music;
 	Mix_Music *bg3_music;
 	Mix_Music *bg4_music;
+	Mix_Music *bgEnd_music;
 	Mix_Chunk *doorOpen_music;
 	Mix_Chunk *eat_music;
 	Mix_Chunk *shoot_music;

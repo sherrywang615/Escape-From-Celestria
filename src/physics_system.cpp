@@ -132,8 +132,9 @@ void collision_resolve(Motion& motion, vec2 prev_pos, std::vector<int> dir, Moti
 		motion.position.y = prev_pos.y;
 	}
 	if (dir[1] == 1) {
+		// collision with top
 		motion.velocity.y = 0;
-		motion.position.y = prev_pos.y;
+		motion.position = prev_pos;
 	}
 
 	if ((dir[2] == 1 || dir[3] == 1)) {
@@ -588,6 +589,10 @@ void PhysicsSystem::step(float elapsed_ms)
 	auto& motion_registry = registry.motions;
 	for (uint i = 0; i < motion_registry.size(); i++) {
 		Entity entity = motion_container.entities[i];
+		// skip boundary checks for texts
+		if (registry.texts.has(entity)) {
+			continue;
+		}
 		Motion& motion = motion_registry.components[i];
 		if ((motion.position.x - abs(motion.scale.x) / 2) < 0) {
 			motion.velocity.x = 0;
@@ -609,10 +614,11 @@ void PhysicsSystem::step(float elapsed_ms)
 				registry.renderRequests.remove(entity);
 			}
 		}
-		if ((motion.position.y - abs(motion.scale.y) / 2) < 0) {
-			motion.velocity.y = 0;
-			motion.position.y = abs(motion.scale.y) / 2;
-		}
+		// don't really need to restrict top
+		//if ((motion.position.y - abs(motion.scale.y) / 2) < 0) {
+		//	motion.velocity.y = 0;
+		//	motion.position.y = abs(motion.scale.y) / 2;
+		//}
 		if ((motion.position.y + abs(motion.scale.y) / 2) > window_height_px) {
 			motion.velocity.y = 0;
 			motion.position.y = window_height_px - abs(motion.scale.y) / 2;

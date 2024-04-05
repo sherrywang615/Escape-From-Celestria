@@ -39,12 +39,14 @@ void clearMenu() {
 }
 
 
-void saveGame() {
+void saveGame(int& current_level) {
 	std::ofstream file(SAVE_PATH, std::ofstream::out);
 	//file.open(SAVE_PATH);
 
 	if (file.is_open())
 	{
+		file << "CurrentLevel ";
+		file << current_level << "\n";
 		for (Entity player : registry.players.entities)
 		{
 			Motion motion = registry.motions.get(player);
@@ -84,6 +86,7 @@ void saveGame() {
 		}
 		file << "SmallBullet ";
 		file << registry.smallBullets.entities.size() << "\n";
+
 	}
 	else
 	{
@@ -92,8 +95,40 @@ void saveGame() {
 	file.close();
 }
 
+// load the level first
+int loadLevel() {
+	std::fstream file;
+	file.open(SAVE_PATH);
+	if (file.is_open())
+	{
+		std::string line;
+		while (getline(file, line))
+		{
+			std::vector<std::string> toks;
+			std::string delimiter = " ";
+			while (line.find(delimiter) != std::string::npos)
+			{
+				int delim_loc = line.find(delimiter);
+				std::string token = line.substr(0, delim_loc);
+				toks.push_back(token);
+				line = line.substr(delim_loc + 1, line.size());
+			}
+			toks.push_back(line);
 
-void loadGame(RenderSystem* renderer, bool& has_key, int& hp_count, int& bullet_count) {
+			if (toks[0] == "CurrentLevel") {
+				return(std::stoi(toks[1]));
+			}
+		}
+	}
+	else
+	{
+		printf("Cannot load because cannot open saving file\n");
+	}
+	file.close();
+	return 0;
+}
+
+void loadGame(RenderSystem* renderer, bool& has_key, int& hp_count, int& bullet_count, int& current_level) {
 	// clear all existing characters
 	for (Entity entity : registry.players.entities) {
 		registry.remove_all_components_of(entity);
@@ -167,6 +202,9 @@ void loadGame(RenderSystem* renderer, bool& has_key, int& hp_count, int& bullet_
 			else if (toks[0] == "SmallBullet") {
 				bullet_count = std::stoi(toks[1]);
 			}
+			else if (toks[0] == "CurrentLevel") {
+				current_level = std::stoi(toks[1]);
+			}
 		}
 	}
 	else
@@ -176,19 +214,19 @@ void loadGame(RenderSystem* renderer, bool& has_key, int& hp_count, int& bullet_
 	file.close();
 }
 
-bool handleButtonEvents(Entity entity, RenderSystem* renderer, GLFWwindow* window, bool& has_key, int& hp_count, int& bullet_count) {
+bool handleButtonEvents(Entity entity, RenderSystem* renderer, GLFWwindow* window, bool& has_key, int& hp_count, int& bullet_count, int& current_level) {
 	MenuElement me = registry.menus.get(entity);
 	if (me.func == MENU_FUNC::RESUME) {
 		clearMenu();
 		return false;
 	}
 	else if (me.func == MENU_FUNC::SAVE) {
-		saveGame();
+		saveGame(current_level);
 		printf("Game saved to %s\n", SAVE_PATH.c_str());
 		return true;
 	}
 	else if (me.func == MENU_FUNC::LOAD) {
-		loadGame(renderer, has_key, hp_count, bullet_count);
+		loadGame(renderer, has_key, hp_count, bullet_count, current_level);
 		clearMenu();
 		return false;
 	}
