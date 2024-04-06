@@ -700,7 +700,7 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 	{
 		for (int i = 0; i < hp_count; i++)
 		{
-			c(renderer, vec2(30 + i * create_heart_distance, create_heart_height));
+			createHeart(renderer, vec2(30 + i * create_heart_distance, create_heart_height));
 		}
 	}
 
