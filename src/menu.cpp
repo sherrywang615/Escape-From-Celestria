@@ -1,7 +1,9 @@
 #pragma once
 #include "menu.hpp"
+#include "world_system.hpp"
 
 const float LINE_SPACE = 100;
+const float LINE_SPACE_START = 65;
 const vec2 RESUME_POS = { window_width_px / 2 - 80, window_height_px / 2 + 200 };
 const vec2 SAVE_POS = { window_width_px / 2 - 80, RESUME_POS.y - LINE_SPACE };
 const vec2 LOAD_POS = { window_width_px / 2 - 80, SAVE_POS.y - LINE_SPACE };
@@ -12,6 +14,15 @@ std::vector<vec2> arrangeText(int num) {
 	std::vector<vec2> result = {};
 	for (int i = 0; i < num; i++) {
 		vec2 pos = { window_width_px / 2 - 80, window_height_px / 2 + 200 - i *  LINE_SPACE};
+		result.push_back(pos);
+	}
+	return result;
+}
+
+std::vector<vec2> arrangeTextStart(int num) {
+	std::vector<vec2> result = {};
+	for (int i = 0; i < num; i++) {
+		vec2 pos = { window_width_px / 2 - 105, window_height_px / 2 - 70 - i *  LINE_SPACE_START};
 		result.push_back(pos);
 	}
 	return result;
@@ -29,6 +40,21 @@ void renderPauseMenu() {
 		Entity entity = createText(pos[i], 0.8, {1, 1, 1}, texts[i]);
 		auto& menu2 = registry.menus.emplace(entity);
 		menu2.func = funcs[i];
+	}
+}
+
+void renderStartMenu() {
+	Entity start, load, tutorial, quit;
+	std::vector<Entity> elements = {Entity(), Entity(), Entity(), Entity()};
+	std::vector<std::string> texts = { "New game", "Load game", "Tutorial", "QUIT" };
+	std::vector<MENU_FUNC> funcs = { MENU_FUNC::START, MENU_FUNC::LOAD, MENU_FUNC::TUTORIAL, MENU_FUNC::QUIT };
+	// Entity background = createMenuBackground({ window_width_px / 2, window_height_px / 2 }, { 300, 600 });
+	// auto& menu1 = registry.menus.emplace(background);
+	std::vector<vec2> pos = arrangeTextStart(elements.size());
+	for (int i = 0; i < elements.size(); i++) {
+		Entity entity = createText(pos[i], 0.7, {1, 1, 1}, texts[i]);
+		auto& menu3 = registry.menus.emplace(entity);
+		menu3.func = funcs[i];
 	}
 }
 
@@ -242,6 +268,29 @@ bool handleButtonEvents(Entity entity, RenderSystem* renderer, GLFWwindow* windo
 		registry.menus.emplace(entity);
 	}
 	return true;
+}
+
+int handleStartButtonEvents(Entity entity, RenderSystem* renderer, GLFWwindow* window, bool& has_key, int& hp_count, int& bullet_count, int& current_level) {
+	MenuElement me = registry.menus.get(entity);
+	// if (me.func == MENU_FUNC::LOAD) {
+	// 	loadGame(renderer, has_key, hp_count, bullet_count);
+	// 	clearMenu();
+	// 	return false;
+	// }
+	if (me.func == MENU_FUNC::QUIT) {
+		graph.clear();
+		glfwSetWindowShouldClose(window, true);
+	}
+	else if(me.func == MENU_FUNC::START){
+		return 1;
+	}
+	else if (me.func == MENU_FUNC::LOAD) {
+		return 2;
+	} else if(me.func == MENU_FUNC::TUTORIAL){
+		// clearMenu();
+		return 3;
+	}
+	return 0;
 }
 
 
