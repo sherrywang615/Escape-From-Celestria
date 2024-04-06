@@ -450,6 +450,29 @@ Entity createHelpSign(RenderSystem *renderer, vec2 position)
 
 	return entity;
 }
+Entity createBackgroundTutorial(RenderSystem *renderer, vec2 position)
+{
+	// Reserve an entity
+	auto entity = Entity();
+
+	// Store a reference to the potentially re-used mesh object
+	Mesh &mesh = renderer->getMesh(GEOMETRY_BUFFER_ID::SPRITE);
+	registry.meshPtrs.emplace(entity, &mesh);
+
+	// Initialize the position, scale, and physics components
+	auto &motion = registry.motions.emplace(entity);
+	motion.angle = 0.f;
+	motion.position = vec2({window_height_px / 2, window_width_px / 2});
+	motion.scale = vec2({-window_width_px, window_height_px});
+
+	registry.renderRequests.insert(
+		entity,
+		{TEXTURE_ASSET_ID::BACKGROUND_TUTORIAL,
+		 EFFECT_ASSET_ID::TEXTURED,
+		 GEOMETRY_BUFFER_ID::SPRITE});
+
+	return entity;
+}
 
 Entity createBackground(RenderSystem *renderer, vec2 position)
 {
@@ -641,7 +664,15 @@ Entity createNPC(RenderSystem *renderer, vec2 position, unsigned int index)
 	NonPlayerCharacter& npc = registry.nonPlayerCharacter.emplace(entity);
 	npc.id = index;
 	registry.gravities.emplace(entity);
-	if (index == 1)
+	if(index == 6){
+		//for tutorial purpose; a invisible texture 
+		registry.renderRequests.insert(
+		entity,
+		{TEXTURE_ASSET_ID::TUTOTRIAL,
+		 EFFECT_ASSET_ID::TEXTURED,
+		 GEOMETRY_BUFFER_ID::SPRITE});
+
+	}else if (index == 1)
 	{
 		registry.renderRequests.insert(
 		entity,

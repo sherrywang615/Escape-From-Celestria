@@ -19,8 +19,7 @@ std::vector<std::pair<int, std::string>> DialogSystem::parseDialog(std::fstream&
 			if (line[1] == 'J')
 			{
 				speaker = 0;
-			}
-			else
+			}else
 			{
 				speaker = line[1] - '0';
 			}
@@ -76,6 +75,39 @@ void DialogSystem::initializeDialog(std::string dialog_file)
 		printf("Cannot load map. Check file path!\n");
 	}
 	file.close();
+}
+
+Speech& DialogSystem::createSpeechPointTutorial(unsigned int speech_point, int index){
+	std::vector<std::pair<int, std::string>> dialog = dialog_data[speech_point];
+	std::pair<int, std::string> sentence = dialog[index];
+	//std::cout<<sentence.second<<std::endl;
+	return createTutorialSpeech(findEntityById(sentence.first), sentence.second, 1500.0f);
+}
+
+
+Speech&  DialogSystem::createTutorialSpeech(Entity speaker, std::string text, float time) {
+	if (registry.speech.has(registry.players.entities[0]))
+	{
+		Speech& dialog = registry.speech.get(registry.players.entities[0]);
+		std::pair<Entity, std::string> sentence;
+		sentence.first = speaker;
+		sentence.second = text;
+		dialog.texts.push(sentence);
+		dialog.timer.push(time);
+		dialog.counter_ms = time;
+		return dialog;
+	}
+	else
+	{
+		Speech& dialog = registry.speech.emplace(registry.players.entities[0]);
+		std::pair<Entity, std::string> sentence;
+		sentence.first = speaker;
+		sentence.second = text;
+		dialog.texts.push(sentence);
+		dialog.timer.push(time);
+		dialog.counter_ms = time;
+		return dialog;
+	}
 }
 
 void DialogSystem::createSpeechPoint(unsigned int speech_point)

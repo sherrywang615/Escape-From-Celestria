@@ -35,6 +35,15 @@ int josh_step_counter = 0;
 // flag to check if the game is paused
 bool paused = false;
 
+//flags to check if the current tutorial text can be escaped
+bool can_jump = false;
+bool can_move = false;
+bool can_shot = false;
+bool can_hide = false;
+bool can_out = false;
+bool can_get_key = false;
+int tutorial_index = 0;
+
 // track Menu
 std::vector<Entity> buttons = {};
 int current_button = 0;
@@ -260,6 +269,7 @@ vec3 lerp(vec3 start, vec3 end, float t)
 	return start * (1 - t) + end * t;
 }
 
+
 // Handle movement related key events
 void handleMovementKeys(Entity entity)
 {
@@ -326,6 +336,7 @@ void handleMovementKeys(Entity entity)
 // Update our game world
 bool WorldSystem::step(float elapsed_ms_since_last_update)
 {
+	//for josh movement animation
 	auto end = std::chrono::system_clock::now();
 
 	if (is_josh_moving)
@@ -333,6 +344,58 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 		auto elasped = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
 		josh_step_counter = int(round(elasped) / 100000);
 	}
+  
+  	//for tutorial
+	if(currentLevel == 1 && is_speech_point_index_assigned){
+		
+		if(!can_jump && tutorial_index == 0){
+			tutorial_start = std::chrono::system_clock::now();
+			paused = true;
+			dialog->createSpeechPointTutorial(speech_point_index, 0); 
+			tutorial_index=1;
+		}
+		if(can_jump && !can_move && tutorial_index == 1){
+			auto elasped = std::chrono::duration_cast<std::chrono::microseconds>(end - tutorial_start).count();
+			if(round(elasped)/100000 > 10){
+
+				dialog->createSpeechPointTutorial(speech_point_index, 2); 
+				// Speech& speech = registry.speech.get(registry.speech.entities[0]);
+				// speech.texts.pop();
+				// speech.timer.pop();
+			
+				paused = true;
+				tutorial_index = 2;
+			}
+		}
+		if(can_move && !can_shot && tutorial_index == 2){
+			auto elasped = std::chrono::duration_cast<std::chrono::microseconds>(end - tutorial_start).count();
+			if(round(elasped)/100000>10 && bullets_count>0){
+				
+				Speech& speech = registry.speech.get(registry.speech.entities[0]);
+				speech.texts.pop();
+				speech.timer.pop();
+				dialog->createSpeechPointTutorial(speech_point_index, 4); 
+				paused = true;
+				tutorial_index = 3;
+			}
+		}
+		if(can_shot && can_hide && can_out && !can_get_key && tutorial_index == 3){
+			Speech& speech = registry.speech.get(registry.speech.entities[0]);
+			speech.texts.pop();
+			speech.timer.pop();
+			dialog->createSpeechPointTutorial(speech_point_index, 6); 
+			tutorial_index = 4;
+		}
+		if(can_shot && can_hide && can_out && !can_get_key && have_key && tutorial_index == 4){
+			Speech& speech = registry.speech.get(registry.speech.entities[0]);
+			speech.texts.pop();
+			speech.timer.pop();
+			dialog->createSpeechPointTutorial(speech_point_index, 6); 
+			tutorial_index = 5;
+		}
+
+	}
+  
 	if (paused)
 	{
 		for (int i = 0; i < buttons.size(); i++)
@@ -352,9 +415,14 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 				text.color = {1, 1, 0};
 			}
 		}
-
-		return true;
+    return true;
 	}
+
+
+
+
+
+
 
 	if (showStartScreen)
 	{
@@ -417,7 +485,7 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 		Speech &speech = registry.speech.get(entity);
 		speech.counter_ms -= elapsed_ms_since_last_update;
 		// remove entity if timer expired
-		if (speech.counter_ms < 0)
+		if (speech.counter_ms < 0 && currentLevel!=1)
 		{
 			speech.texts.pop();
 			speech.timer.pop();
@@ -632,7 +700,7 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 	{
 		for (int i = 0; i < hp_count; i++)
 		{
-			createHeart(renderer, vec2(30 + i * create_heart_distance, create_heart_height));
+			c(renderer, vec2(30 + i * create_heart_distance, create_heart_height));
 		}
 	}
 
@@ -698,6 +766,7 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 			// Mix_PlayChannel(-1, chicken_dead_sound, 0);
 
 			Motion &motion = registry.motions.get(player_josh);
+
 			motion.velocity[0] = 0;
 			motion.velocity[1] = 0;
 
@@ -737,6 +806,9 @@ bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map, bool
 			float x = j * 10;
 			float y = i * 10;
 			char tok = map[i][j];
+			if(tok == 'T'){
+				createBackgroundTutorial(renderer, {x, y});
+			}
 			if (tok == 'O')
 			{
 				createBackground(renderer, {x, y});
@@ -771,7 +843,7 @@ bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map, bool
 			float y = i * 10;
 			char tok = map[i][j];
 
-			if (tok == ' ' || tok == 'O' || tok == 'Q' || tok == 'L' || tok == 'M')
+			if (tok == ' ' || tok == 'O' || tok == 'Q' || tok == 'L' || tok == 'M'||tok =='T')
 			{
 				continue;
 			}
@@ -829,6 +901,7 @@ bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map, bool
 					id = map[i][j] - '0';
 				}
 				createNPC(renderer, {x, y}, id);
+			
 			}
 			else if (tok == 'S' && !plat_only)
 			{
@@ -1116,7 +1189,15 @@ void WorldSystem::handle_collisions()
 						Mix_PlayChannel(-1, doorOpen_music, 0);
 						currentLevel++;
 						have_key = false;
+
+						if(currentLevel==1){
+							Speech& speech = registry.speech.get(registry.speech.entities[0]);
+							speech.texts.pop();
+							speech.timer.pop();
+						}
+
 						restart_game();
+
 					}
 				}
 			}
@@ -1125,9 +1206,19 @@ void WorldSystem::handle_collisions()
 				SpeechPoint &speechPoint = registry.speechPoint.get(entity_other);
 				if (!speechPoint.isDone)
 				{
-					printf("speechPoint: %i\n", speechPoint.index);
-					dialog->createSpeechPoint(speechPoint.index);
-					speechPoint.isDone = true;
+					if(currentLevel == 1){
+						speech_point_index = speechPoint.index;
+						is_speech_point_index_assigned = true;
+						speechPoint.isDone = true;
+					}else{
+						printf("speechPoint: %i\n", speechPoint.index);
+						std::cout<<speechPoint.index<<std::endl;
+						dialog->createSpeechPoint(speechPoint.index);
+						speechPoint.isDone = true;
+					}
+					
+				
+					
 				}
 			}
 		}
@@ -1147,6 +1238,7 @@ void WorldSystem::handle_collisions()
 				registry.deadlys.remove(entity);
 				zombie.is_dead = true;
 			}
+
 		}
 
 		else
@@ -1188,6 +1280,7 @@ void WorldSystem::showKeyOnScreen(RenderSystem *renderer, bool have_key)
 	}
 }
 
+
 // Should the game be over ?
 bool WorldSystem::is_over() const
 {
@@ -1203,6 +1296,48 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 	// key is of 'type' GLFW_KEY_
 	// action can be GLFW_PRESS GLFW_RELEASE GLFW_REPEAT
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+	if(currentLevel == 1 && paused == true){
+		if(!can_jump){
+			tutorial_start = std::chrono::system_clock::now();
+			if(action == GLFW_PRESS && key == GLFW_KEY_SPACE){
+				dialog->createSpeechPointTutorial(speech_point_index, 1); 
+				Speech& speech = registry.speech.get(registry.speech.entities[0]);
+				speech.texts.pop();
+				speech.timer.pop();
+				can_jump = true;
+				paused = false;
+				//std::cout<<"1st line is displayed"<<std::endl;
+			}
+		}else if(!can_move){
+			if(action == GLFW_PRESS && (key == GLFW_KEY_A || key == GLFW_KEY_D ||key == GLFW_KEY_RIGHT || key == GLFW_KEY_LEFT)){
+				//std::cout<<"can move now"<<std::endl;
+				dialog->createSpeechPointTutorial(speech_point_index, 3); 
+				Speech& speech = registry.speech.get(registry.speech.entities[0]);
+				speech.texts.pop();
+				speech.timer.pop();
+				can_move = true;
+				paused = false;
+				
+			}
+		}else if(!can_shot){
+			if (bullets_count>0 && (action == GLFW_REPEAT || action == GLFW_PRESS) && (key == GLFW_KEY_J)){
+				dialog->createSpeechPointTutorial(speech_point_index, 5); 
+				Speech& speech = registry.speech.get(registry.speech.entities[0]);
+				speech.texts.pop();
+				speech.timer.pop();
+				can_shot = true;
+				paused = false;
+				tutorial_index = 3;
+				//std::cout<<"shot now"<<std::endl;
+			}
+		}
+
+
+		// }else if(!can_hide){
+			
+		// }
+	}
 	if (action == GLFW_PRESS && key == GLFW_KEY_ESCAPE)
 	{
 		// disable pause menu when on start screen
@@ -1323,6 +1458,9 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 
 	if (action == GLFW_PRESS && key == GLFW_KEY_H)
 	{
+		//todo: remove later for debug purpose only
+		can_hide=true;
+		can_out=true;
 		if (!isJoshHidden)
 		{
 			for (Entity entity : registry.cabinets.entities)
@@ -1334,6 +1472,10 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 					joshScale = registry.motions.get(player_josh).scale;
 					hideJosh(renderer);
 					isJoshHidden = true;
+					if(currentLevel==1){
+						can_hide=true;
+					}
+					
 					break;
 				}
 			}
@@ -1345,7 +1487,10 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 			registry.motions.get(player_josh).scale = joshScale;
 			registry.colors.insert(player_josh, {1, 0.8f, 0.8f});
 			isJoshHidden = false;
-
+			if(currentLevel==1){
+				can_out = true;
+			}
+			
 			uint i = 0;
 			while (i < registry.hearts.components.size())
 			{

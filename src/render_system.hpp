@@ -50,6 +50,7 @@ class RenderSystem {
 		textures_path("help_info.png"),
 		textures_path("help_sign.png"),
 		textures_path("cabinet.png"),
+		textures_path("Background_tutorial.png"),
 		textures_path("background.png"),
 		textures_path("background2.png"),
 		textures_path("background3.png"),
@@ -58,6 +59,7 @@ class RenderSystem {
 		textures_path("exit.png"),
 
 		textures_path("menu_bg.png"),
+		textures_path("lvl0.png"),
 		textures_path("lvl1.png"),
 		textures_path("lvl2.png"),
 		textures_path("lvl3.png"),		
