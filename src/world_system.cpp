@@ -917,7 +917,7 @@ void WorldSystem::restart_game()
 	{
 		showStartScreen = true;
 		renderStartMenu();
-		Entity background = createBackground4(renderer, {0, 0});
+		Entity background = createBackgroundStart(renderer, {0, 0});
 		registry.menus.emplace(background);
 
 		for (Entity entity : registry.menus.entities)
@@ -931,6 +931,7 @@ void WorldSystem::restart_game()
 	}
 	else
 	{
+		showStartScreen = false;
 		for (Entity entity : registry.menus.entities)
 		{
 			registry.remove_all_components_of(entity);
