@@ -962,6 +962,15 @@ void WorldSystem::restart_game()
 
 	// Reset current level
 	// currentLevel = 1;
+	if(currentLevel == 1){
+		can_jump = false;
+		can_move = false;
+		can_shot = false;
+		can_hide = false;
+		can_out = false;
+		can_get_key = false;
+		tutorial_index = 0;
+	}
 
 	// Remove all entities that we created
 	// All that have a motion, we could also iterate over all bug, eagles, ... but that would be more cumbersome
@@ -1011,14 +1020,14 @@ void WorldSystem::restart_game()
 			registry.remove_all_components_of(entity);
 		}
 		buttons_start.clear();
-		auto map = loadMap(map_path() + "level" + std::to_string(currentLevel) + ".txt");
+		auto map = loadMap(map_path() + "level" + std::to_string(currentLevel-1) + ".txt");
 		createEntityBaseOnMap(map);
 
 		for (int i = 0; i < hp_count; i++)
 		{
 			createHeart(renderer, vec2(30 + i * create_heart_distance, create_heart_height));
 		}
-		dialog->initializeDialog(dialog_path("level" + std::to_string(currentLevel) + ".txt"));
+		dialog->initializeDialog(dialog_path("level" + std::to_string(currentLevel-1) + ".txt"));
 	}
 
 	have_key = false;
