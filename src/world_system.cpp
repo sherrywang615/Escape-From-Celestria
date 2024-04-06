@@ -1204,27 +1204,30 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	if (action == GLFW_PRESS && key == GLFW_KEY_ESCAPE)
 	{
-		// glfwSetWindowShouldClose(window, true);
-		paused = !paused;
-		if (paused)
+		//disable pause menu when on start screen
+		if (!showStartScreen)
 		{
-			renderPauseMenu();
-			for (Entity entity : registry.menus.entities)
+			paused = !paused;
+			if (paused)
 			{
-				auto &me = registry.menus.get(entity);
-				if (me.func != MENU_FUNC::ALL)
+				renderPauseMenu();
+				for (Entity entity : registry.menus.entities)
 				{
-					buttons.push_back(entity);
+					auto &me = registry.menus.get(entity);
+					if (me.func != MENU_FUNC::ALL)
+					{
+						buttons.push_back(entity);
+					}
 				}
 			}
-		}
-		else
-		{
-			for (Entity entity : registry.menus.entities)
+			else
 			{
-				registry.remove_all_components_of(entity);
+				for (Entity entity : registry.menus.entities)
+				{
+					registry.remove_all_components_of(entity);
+				}
+				buttons.clear();
 			}
-			buttons.clear();
 		}
 	}
 
@@ -1444,11 +1447,27 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 		if (action == GLFW_RELEASE && key == GLFW_KEY_ENTER)
 		{
 			int res = handleStartButtonEvents(buttons_start[current_button_start], renderer, window, have_key, hp_count, bullets_count, currentLevel);
-			if (res == 0)
+			if (res == 1)
 			{
+				//start new game
 				currentLevel = 1;
 				restart_game();
+			} else if(res == 2){
+				MenuElement me = registry.menus.get(buttons_start[current_button_start]);
+				if (me.func == MENU_FUNC::LOAD)
+				{
+					currentLevel = loadLevel();
+					restart_game();
+					loadGame(renderer, have_key, hp_count, bullets_count, currentLevel);
+					paused = false;
+					return;
+				}
+				for (Entity entity : registry.players.entities)
+				{
+					player_josh = entity;
+				}
 			}
+			
 			showStartScreen = false;
 			for (Entity entity : registry.players.entities)
 			{

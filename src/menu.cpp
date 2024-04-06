@@ -282,17 +282,17 @@ int handleStartButtonEvents(Entity entity, RenderSystem* renderer, GLFWwindow* w
 		glfwSetWindowShouldClose(window, true);
 	}
 	else if(me.func == MENU_FUNC::START){
-		return 0;
+		return 1;
 	}
 	else if (me.func == MENU_FUNC::LOAD) {
 		loadGame(renderer, has_key, hp_count, bullet_count, current_level);
 		clearMenu();
-		return 1;
+		return 2;
 	} else if(me.func == MENU_FUNC::TUTORIAL){
 		clearMenu();
-		return 2;
+		return 3;
 	}
-	return 3;
+	return 0;
 }
 
 
