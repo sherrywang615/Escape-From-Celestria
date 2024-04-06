@@ -298,8 +298,8 @@ enum class TEXTURE_ASSET_ID
 	ALICE,
 	GOLD1,
 	BACKGROUND5,
+	TITLE,
 	TEXTURE_COUNT
-
 };
 const int texture_count = (int)TEXTURE_ASSET_ID::TEXTURE_COUNT;
 

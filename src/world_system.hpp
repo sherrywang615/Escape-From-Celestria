@@ -87,10 +87,9 @@ private:
 	// OpenGL window handle
 	GLFWwindow *window;
 
-	// Number of bug eaten by the chicken, displayed in the window title
-	int hp_count;
-	bool have_key;
-	int bullets_count;
+	int hp_count = 3;
+	bool have_key = false;
+	int bullets_count = 0;
 	
 	// Game state
 	RenderSystem *renderer;
@@ -101,6 +100,7 @@ private:
 	bool jumped = false;
 	unsigned int create_heart_distance = 50;
 	unsigned int create_bullet_distance = 30;
+	unsigned int create_heart_height = 30;
 
 	// music references
 	Mix_Music *bg1_music;

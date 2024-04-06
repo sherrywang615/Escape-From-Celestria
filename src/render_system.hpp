@@ -65,6 +65,7 @@ class RenderSystem {
 		textures_path("alice.png"),
 		textures_path("Gold_21.png"),
 		textures_path("Background5.png"),
+		textures_path("title.png"),
 		};
 
 

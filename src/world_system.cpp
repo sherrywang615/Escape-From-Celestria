@@ -43,7 +43,7 @@ int current_button_start = 0;
 
 // Create the bug world
 WorldSystem::WorldSystem()
-	: hp_count(0), bullets_count(0), have_key(false), fps(0.f), fpsCount(0.f), fpsTimer(0.f)
+	: hp_count(3), bullets_count(0), have_key(false), fps(0.f), fpsCount(0.f), fpsTimer(0.f)
 {
 	// Seeding rng with random device
 	start = std::chrono::system_clock::now();
@@ -632,7 +632,7 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 	{
 		for (int i = 0; i < hp_count; i++)
 		{
-			createHeart(renderer, vec2(30 + i * create_heart_distance, 20));
+			createHeart(renderer, vec2(30 + i * create_heart_distance, create_heart_height));
 		}
 	}
 
@@ -884,8 +884,8 @@ void WorldSystem::restart_game()
 
 	// Reset the game speed
 	current_speed = 1.f;
-	hp_count = INITIAL_HP;
-	bullets_count = 0;
+	// hp_count = INITIAL_HP;
+	// bullets_count = 0;
 
 	// Reset current level
 	// currentLevel = 1;
@@ -919,6 +919,7 @@ void WorldSystem::restart_game()
 		renderStartMenu();
 		Entity background = createBackgroundStart(renderer, {0, 0});
 		registry.menus.emplace(background);
+		createTitle(renderer, {window_width_px / 2, window_height_px / 2 - 100});
 
 		for (Entity entity : registry.menus.entities)
 		{
@@ -942,7 +943,7 @@ void WorldSystem::restart_game()
 
 		for (int i = 0; i < hp_count; i++)
 		{
-			createHeart(renderer, vec2(30 + i * create_heart_distance, 20));
+			createHeart(renderer, vec2(30 + i * create_heart_distance, create_heart_height));
 		}
 		dialog->initializeDialog(dialog_path("level" + std::to_string(currentLevel) + ".txt"));
 	}
@@ -986,7 +987,7 @@ void WorldSystem::handle_collisions()
 					}
 					for (int i = 0; i < hp_count - 1; i++)
 					{
-						createHeart(renderer, vec2(30 + i * create_heart_distance, 20));
+						createHeart(renderer, vec2(30 + i * create_heart_distance, create_heart_height));
 					}
 					// initiate death unless already dying
 					if (!registry.deathTimers.has(entity))
@@ -1027,7 +1028,7 @@ void WorldSystem::handle_collisions()
 					}
 					for (int i = 0; i < hp_count; i++)
 					{
-						createHeart(renderer, vec2(30 + i * create_heart_distance, 20));
+						createHeart(renderer, vec2(30 + i * create_heart_distance, create_heart_height));
 					}
 				}
 			}
@@ -1052,7 +1053,7 @@ void WorldSystem::handle_collisions()
 					}
 					for (int i = 0; i < hp_count; i++)
 					{
-						createHeart(renderer, vec2(30 + i * create_heart_distance, 20));
+						createHeart(renderer, vec2(30 + i * create_heart_distance, create_heart_height));
 					}
 				}
 				else if (registry.bullets.has(entity_other))
@@ -1355,7 +1356,7 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 			}
 			for (int i = 0; i < hp_count; i++)
 			{
-				createHeart(renderer, vec2(30 + i * create_heart_distance, 20));
+				createHeart(renderer, vec2(30 + i * create_heart_distance, create_heart_height));
 			}
 		}
 	}
@@ -1367,6 +1368,8 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 		glfwGetWindowSize(window, &w, &h);
 
 		restart_game();
+		hp_count = INITIAL_HP;
+		bullets_count = 0;
 	}
 
 	if (action == GLFW_PRESS && key == GLFW_KEY_P)
