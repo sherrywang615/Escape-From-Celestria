@@ -518,11 +518,11 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 
 			screen.darken_screen_factor = 0;
 			restart_game();
+			hp_count = INITIAL_HP;
+			bullets_count = 0;
 			return true;
 		}
 	}
-	// reduce window brightness if any of the present chickens is dying
-	// screen.darken_screen_factor = 1 - min_counter_ms / 3000;
 
 	for (Entity entity : registry.deductHpTimers.entities)
 	{
