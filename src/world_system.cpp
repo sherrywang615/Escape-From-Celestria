@@ -1410,9 +1410,10 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 				restart_game();
 				loadGame(renderer, have_key, hp_count, bullets_count, currentLevel);
 				paused = false;
-				return;
+			} else {
+				paused = handleButtonEvents(buttons[current_button], renderer, window, have_key, hp_count, bullets_count, currentLevel);
 			}
-			paused = handleButtonEvents(buttons[current_button], renderer, window, have_key, hp_count, bullets_count, currentLevel);
+			
 			for (Entity entity : registry.players.entities)
 			{
 				player_josh = entity;
