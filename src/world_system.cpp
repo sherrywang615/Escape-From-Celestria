@@ -1446,6 +1446,7 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 		}
 		if (action == GLFW_RELEASE && key == GLFW_KEY_ENTER)
 		{
+			currentLevel = 1;
 			int res = handleStartButtonEvents(buttons_start[current_button_start], renderer, window, have_key, hp_count, bullets_count, currentLevel);
 			if (res == 1)
 			{
@@ -1453,13 +1454,14 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 				currentLevel = 1;
 				restart_game();
 			} else if(res == 2){
+				//load game
 				MenuElement me = registry.menus.get(buttons_start[current_button_start]);
 				if (me.func == MENU_FUNC::LOAD)
 				{
 					currentLevel = loadLevel();
 					restart_game();
 					loadGame(renderer, have_key, hp_count, bullets_count, currentLevel);
-					paused = false;
+					clearMenu();
 					return;
 				}
 				for (Entity entity : registry.players.entities)
