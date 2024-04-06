@@ -338,7 +338,7 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 	}
 
 	//for tutorial
-	if(currentLevel == 0 && is_speech_point_index_assigned){
+	if(currentLevel == 1 && is_speech_point_index_assigned){
 		
 		if(!can_jump && tutorial_index == 0){
 			tutorial_start = std::chrono::system_clock::now();
@@ -435,7 +435,7 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 		Speech& speech = registry.speech.get(entity);
 		speech.counter_ms -= elapsed_ms_since_last_update;
 		// remove entity if timer expired
-		if (speech.counter_ms < 0 && currentLevel!=0)
+		if (speech.counter_ms < 0 && currentLevel!=1)
 		{
 			speech.texts.pop();
 			speech.timer.pop();
@@ -1068,7 +1068,7 @@ void WorldSystem::handle_collisions()
 						currentLevel++;
 						render_new_level(currentLevel);
 						have_key = false;
-						if(currentLevel==0){
+						if(currentLevel==1){
 							Speech& speech = registry.speech.get(registry.speech.entities[0]);
 							speech.texts.pop();
 							speech.timer.pop();
@@ -1081,7 +1081,7 @@ void WorldSystem::handle_collisions()
 				SpeechPoint& speechPoint = registry.speechPoint.get(entity_other);
 				if (!speechPoint.isDone)
 				{
-					if(currentLevel == 0){
+					if(currentLevel == 1){
 						speech_point_index = speechPoint.index;
 						is_speech_point_index_assigned = true;
 						speechPoint.isDone = true;
@@ -1217,7 +1217,7 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 	// action can be GLFW_PRESS GLFW_RELEASE GLFW_REPEAT
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-	if(currentLevel == 0 && paused == true){
+	if(currentLevel == 1 && paused == true){
 		if(!can_jump){
 			tutorial_start = std::chrono::system_clock::now();
 			if(action == GLFW_PRESS && key == GLFW_KEY_SPACE){
@@ -1386,7 +1386,7 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 					joshScale = registry.motions.get(player_josh).scale;
 					hideJosh(renderer);
 					isJoshHidden = true;
-					if(currentLevel==0){
+					if(currentLevel==1){
 						can_hide=true;
 					}
 					
@@ -1401,7 +1401,7 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 			registry.motions.get(player_josh).scale = joshScale;
 			registry.colors.insert(player_josh, {1, 0.8f, 0.8f});
 			isJoshHidden = false;
-			if(currentLevel==0){
+			if(currentLevel==1){
 				can_out = true;
 			}
 			
