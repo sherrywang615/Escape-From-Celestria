@@ -285,12 +285,9 @@ int handleStartButtonEvents(Entity entity, RenderSystem* renderer, GLFWwindow* w
 		return 1;
 	}
 	else if (me.func == MENU_FUNC::LOAD) {
-		// printf("Current level: %d\n", current_level);
-		// loadGame(renderer, has_key, hp_count, bullet_count, current_level);
-		// clearMenu();
 		return 2;
 	} else if(me.func == MENU_FUNC::TUTORIAL){
-		clearMenu();
+		// clearMenu();
 		return 3;
 	}
 	return 0;

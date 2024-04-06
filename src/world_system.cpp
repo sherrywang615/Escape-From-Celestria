@@ -1204,7 +1204,7 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	if (action == GLFW_PRESS && key == GLFW_KEY_ESCAPE)
 	{
-		//disable pause menu when on start screen
+		// disable pause menu when on start screen
 		if (!showStartScreen)
 		{
 			paused = !paused;
@@ -1410,10 +1410,12 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 				restart_game();
 				loadGame(renderer, have_key, hp_count, bullets_count, currentLevel);
 				paused = false;
-			} else {
+			}
+			else
+			{
 				paused = handleButtonEvents(buttons[current_button], renderer, window, have_key, hp_count, bullets_count, currentLevel);
 			}
-			
+
 			for (Entity entity : registry.players.entities)
 			{
 				player_josh = entity;
@@ -1421,6 +1423,7 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 		}
 	}
 
+	// Handle Start Menu
 	if (showStartScreen)
 	{
 		if (action == GLFW_RELEASE && key == GLFW_KEY_DOWN)
@@ -1447,30 +1450,24 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 		}
 		if (action == GLFW_RELEASE && key == GLFW_KEY_ENTER)
 		{
-			currentLevel = 1;
 			int res = handleStartButtonEvents(buttons_start[current_button_start], renderer, window, have_key, hp_count, bullets_count, currentLevel);
 			if (res == 1)
 			{
-				//start new game
+				// start new game
 				currentLevel = 1;
 				restart_game();
-			} else if(res == 2){
-				//load game
+			}
+			else if (res == 2)
+			{
+				// load game
 				MenuElement me = registry.menus.get(buttons_start[current_button_start]);
 				if (me.func == MENU_FUNC::LOAD)
 				{
 					currentLevel = loadLevel();
 					restart_game();
 					loadGame(renderer, have_key, hp_count, bullets_count, currentLevel);
-					clearMenu();
-					return;
-				}
-				for (Entity entity : registry.players.entities)
-				{
-					player_josh = entity;
 				}
 			}
-			
 			showStartScreen = false;
 			for (Entity entity : registry.players.entities)
 			{
