@@ -1163,20 +1163,20 @@ void WorldSystem::render_new_level(int level)
 	auto map = loadMap(map_path() + "level" + std::to_string(level) + ".txt");
 	createEntityBaseOnMap(map);
 
-	if (level == 2)
+	if (level == 3)
 	{
 		Mix_PlayMusic(bg2_music, -1);
 	}
-	else if (level == 3)
+	else if (level == 4)
 	{
 		Mix_PlayMusic(bg3_music, -1);
 	} 
-	else if (level == 4)
+	else if (level == 5)
 	{
 		Mix_PlayMusic(bg4_music, -1);
 	}
 
-	if(level == 1){
+	if(level == 2){
 		//entering level 1
 		hp_count = INITIAL_HP;
 	}

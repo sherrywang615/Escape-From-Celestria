@@ -115,16 +115,16 @@ void createVerticesForLevel4() {
 
 void createGraph(int level) {
 	//graph = Graph();
-	if (level == 1) {
+	if (level == 2) {
 		createVerticesForLevel1();
 	}
-	else if (level == 2) {
+	else if (level == 3) {
 		createVerticesForLevel2();
 	}
-	else if (level == 3) {
+	else if (level == 4) {
 		createVerticesForLevel3();
 	}
-	else if (level == 4) {
+	else if (level == 5) {
 		createVerticesForLevel4();
 	}
 }
