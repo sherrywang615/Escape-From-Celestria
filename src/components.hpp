@@ -160,6 +160,14 @@ struct ColorChange
 	float color_time_elapsed;
 };
 
+struct LinearMovement
+{
+	vec2 pos_start;
+	vec2 pos_end;
+	float duration;
+	float time_elapsed;
+};
+
 struct DeductHpTimer
 {
 	float counter_ms = 900;
@@ -281,6 +289,7 @@ enum class TEXTURE_ASSET_ID
 	BACKGROUND2,
 	BACKGROUND3,
 	BACKGROUND4,
+	BgEnd,
 	BARREL,
 	MENU,
 	TUTOTRIAL,
@@ -288,9 +297,11 @@ enum class TEXTURE_ASSET_ID
 	NPC2,
 	NPC3,
 	NPC4,
+	ALICE,
 	GOLD1,
+	BACKGROUND5,
+	TITLE,
 	TEXTURE_COUNT
-
 };
 const int texture_count = (int)TEXTURE_ASSET_ID::TEXTURE_COUNT;
 

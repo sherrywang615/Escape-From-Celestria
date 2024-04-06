@@ -1,7 +1,9 @@
 #pragma once
 #include "menu.hpp"
+#include "world_system.hpp"
 
 const float LINE_SPACE = 100;
+const float LINE_SPACE_START = 65;
 const vec2 RESUME_POS = { window_width_px / 2 - 80, window_height_px / 2 + 200 };
 const vec2 SAVE_POS = { window_width_px / 2 - 80, RESUME_POS.y - LINE_SPACE };
 const vec2 LOAD_POS = { window_width_px / 2 - 80, SAVE_POS.y - LINE_SPACE };
@@ -12,6 +14,15 @@ std::vector<vec2> arrangeText(int num) {
 	std::vector<vec2> result = {};
 	for (int i = 0; i < num; i++) {
 		vec2 pos = { window_width_px / 2 - 80, window_height_px / 2 + 200 - i *  LINE_SPACE};
+		result.push_back(pos);
+	}
+	return result;
+}
+
+std::vector<vec2> arrangeTextStart(int num) {
+	std::vector<vec2> result = {};
+	for (int i = 0; i < num; i++) {
+		vec2 pos = { window_width_px / 2 - 105, window_height_px / 2 - 70 - i *  LINE_SPACE_START};
 		result.push_back(pos);
 	}
 	return result;
@@ -32,6 +43,21 @@ void renderPauseMenu() {
 	}
 }
 
+void renderStartMenu() {
+	Entity start, load, tutorial, quit;
+	std::vector<Entity> elements = {Entity(), Entity(), Entity(), Entity()};
+	std::vector<std::string> texts = { "New game", "Load game", "Tutorial", "QUIT" };
+	std::vector<MENU_FUNC> funcs = { MENU_FUNC::START, MENU_FUNC::LOAD, MENU_FUNC::TUTORIAL, MENU_FUNC::QUIT };
+	// Entity background = createMenuBackground({ window_width_px / 2, window_height_px / 2 }, { 300, 600 });
+	// auto& menu1 = registry.menus.emplace(background);
+	std::vector<vec2> pos = arrangeTextStart(elements.size());
+	for (int i = 0; i < elements.size(); i++) {
+		Entity entity = createText(pos[i], 0.7, {1, 1, 1}, texts[i]);
+		auto& menu3 = registry.menus.emplace(entity);
+		menu3.func = funcs[i];
+	}
+}
+
 void clearMenu() {
 	for (Entity entity : registry.menus.entities) {
 		registry.remove_all_components_of(entity);
@@ -39,12 +65,14 @@ void clearMenu() {
 }
 
 
-void saveGame() {
+void saveGame(int& current_level) {
 	std::ofstream file(SAVE_PATH, std::ofstream::out);
 	//file.open(SAVE_PATH);
 
 	if (file.is_open())
 	{
+		file << "CurrentLevel ";
+		file << current_level << "\n";
 		for (Entity player : registry.players.entities)
 		{
 			Motion motion = registry.motions.get(player);
@@ -84,6 +112,7 @@ void saveGame() {
 		}
 		file << "SmallBullet ";
 		file << registry.smallBullets.entities.size() << "\n";
+
 	}
 	else
 	{
@@ -92,8 +121,40 @@ void saveGame() {
 	file.close();
 }
 
+// load the level first
+int loadLevel() {
+	std::fstream file;
+	file.open(SAVE_PATH);
+	if (file.is_open())
+	{
+		std::string line;
+		while (getline(file, line))
+		{
+			std::vector<std::string> toks;
+			std::string delimiter = " ";
+			while (line.find(delimiter) != std::string::npos)
+			{
+				int delim_loc = line.find(delimiter);
+				std::string token = line.substr(0, delim_loc);
+				toks.push_back(token);
+				line = line.substr(delim_loc + 1, line.size());
+			}
+			toks.push_back(line);
 
-void loadGame(RenderSystem* renderer, bool& has_key, int& hp_count, int& bullet_count) {
+			if (toks[0] == "CurrentLevel") {
+				return(std::stoi(toks[1]));
+			}
+		}
+	}
+	else
+	{
+		printf("Cannot load because cannot open saving file\n");
+	}
+	file.close();
+	return 0;
+}
+
+void loadGame(RenderSystem* renderer, bool& has_key, int& hp_count, int& bullet_count, int& current_level) {
 	// clear all existing characters
 	for (Entity entity : registry.players.entities) {
 		registry.remove_all_components_of(entity);
@@ -167,6 +228,9 @@ void loadGame(RenderSystem* renderer, bool& has_key, int& hp_count, int& bullet_
 			else if (toks[0] == "SmallBullet") {
 				bullet_count = std::stoi(toks[1]);
 			}
+			else if (toks[0] == "CurrentLevel") {
+				current_level = std::stoi(toks[1]);
+			}
 		}
 	}
 	else
@@ -176,19 +240,19 @@ void loadGame(RenderSystem* renderer, bool& has_key, int& hp_count, int& bullet_
 	file.close();
 }
 
-bool handleButtonEvents(Entity entity, RenderSystem* renderer, GLFWwindow* window, bool& has_key, int& hp_count, int& bullet_count) {
+bool handleButtonEvents(Entity entity, RenderSystem* renderer, GLFWwindow* window, bool& has_key, int& hp_count, int& bullet_count, int& current_level) {
 	MenuElement me = registry.menus.get(entity);
 	if (me.func == MENU_FUNC::RESUME) {
 		clearMenu();
 		return false;
 	}
 	else if (me.func == MENU_FUNC::SAVE) {
-		saveGame();
+		saveGame(current_level);
 		printf("Game saved to %s\n", SAVE_PATH.c_str());
 		return true;
 	}
 	else if (me.func == MENU_FUNC::LOAD) {
-		loadGame(renderer, has_key, hp_count, bullet_count);
+		loadGame(renderer, has_key, hp_count, bullet_count, current_level);
 		clearMenu();
 		return false;
 	}
@@ -204,6 +268,29 @@ bool handleButtonEvents(Entity entity, RenderSystem* renderer, GLFWwindow* windo
 		registry.menus.emplace(entity);
 	}
 	return true;
+}
+
+int handleStartButtonEvents(Entity entity, RenderSystem* renderer, GLFWwindow* window, bool& has_key, int& hp_count, int& bullet_count, int& current_level) {
+	MenuElement me = registry.menus.get(entity);
+	// if (me.func == MENU_FUNC::LOAD) {
+	// 	loadGame(renderer, has_key, hp_count, bullet_count);
+	// 	clearMenu();
+	// 	return false;
+	// }
+	if (me.func == MENU_FUNC::QUIT) {
+		graph.clear();
+		glfwSetWindowShouldClose(window, true);
+	}
+	else if(me.func == MENU_FUNC::START){
+		return 1;
+	}
+	else if (me.func == MENU_FUNC::LOAD) {
+		return 2;
+	} else if(me.func == MENU_FUNC::TUTORIAL){
+		// clearMenu();
+		return 3;
+	}
+	return 0;
 }
 
 

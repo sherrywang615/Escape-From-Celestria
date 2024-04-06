@@ -25,9 +25,10 @@ public:
 	float fps;
 	float fpsCount;
 	float fpsTimer;
-	
-	// 0 == tutorial level
+
 	int currentLevel = 0;
+	bool showStartScreen = false;
+
 
 	bool zombie_died = false;
 	bool is_invincible = false;
@@ -75,7 +76,7 @@ private:
 	void on_mouse_move(vec2 pos);
 
 	// read map
-	bool createEntityBaseOnMap(std::vector<std::vector<char>> map);
+	bool createEntityBaseOnMap(std::vector<std::vector<char>> map, bool plat_only = false);
 
 	void showKeyOnScreen(RenderSystem *renderer, bool have_key);
 
@@ -83,9 +84,6 @@ private:
 
 	// restart level
 	void restart_game();
-
-	// render new level
-	void render_new_level(int level);
 
 
 	bool isJoshHidden = false;
@@ -98,10 +96,9 @@ private:
 	// OpenGL window handle
 	GLFWwindow *window;
 
-	// Number of bug eaten by the chicken, displayed in the window title
-	int hp_count;
-	bool have_key;
-	int bullets_count;
+	int hp_count = 3;
+	bool have_key = false;
+	int bullets_count = 0;
 	
 	// Game state
 	RenderSystem *renderer;
@@ -112,12 +109,14 @@ private:
 	bool jumped = false;
 	unsigned int create_heart_distance = 50;
 	unsigned int create_bullet_distance = 30;
+	unsigned int create_heart_height = 30;
 
 	// music references
 	Mix_Music *bg1_music;
 	Mix_Music *bg2_music;
 	Mix_Music *bg3_music;
 	Mix_Music *bg4_music;
+	Mix_Music *bgEnd_music;
 	Mix_Chunk *doorOpen_music;
 	Mix_Chunk *eat_music;
 	Mix_Chunk *shoot_music;

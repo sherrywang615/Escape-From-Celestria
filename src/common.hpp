@@ -44,11 +44,11 @@ const int width = window_width_px / 10;
 const int height = window_height_px / 10;
 
 
-const std::string MAP_PATH = "..//..//..//data//maps//";
+// const std::string MAP_PATH = "/Users/hanna/Desktop/Team7/data/maps/";
 //const std::string GRAPH_PATH = "..//..//..//data//graphs//";
 const std::string SAVE_PATH = "..\\..\\..\\data\\saving\\save.txt";
 
-//const std::string MAP_PATH = "../data/maps/";
+const std::string MAP_PATH = "../data/maps/";
 
 
 #ifndef M_PI
@@ -86,6 +86,8 @@ enum class MENU_FUNC {
 	SAVE,
 	LOAD,
 	QUIT,
+	START,
+	TUTORIAL,
 	ALL
 };
 
