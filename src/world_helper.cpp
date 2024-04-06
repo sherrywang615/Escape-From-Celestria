@@ -3,6 +3,7 @@
 float offset = PLATFORM_HEIGHT / 2 + (ZOMBIE_BB_HEIGHT * 0.6) / 2 + 10;
 
 
+
 void createVerticesForLevel1() {
 	Vertex* first_floor_jump = graph.getVertex(910, (int)700 - offset);
 	Vertex* first_mid_plat = graph.getVertex(940, (int)600 - offset);

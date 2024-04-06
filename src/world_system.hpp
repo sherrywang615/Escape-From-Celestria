@@ -25,8 +25,9 @@ public:
 	float fps;
 	float fpsCount;
 	float fpsTimer;
-
-	int currentLevel = 1;
+	
+	// 0 == tutorial level
+	int currentLevel = 0;
 
 	bool zombie_died = false;
 	bool is_invincible = false;
@@ -53,7 +54,15 @@ public:
 	// Is the game paused?
 	bool is_paused() const;
 
+
 private:
+	//tutorial text
+	unsigned int speech_point_index;
+	bool is_speech_point_index_assigned = false;
+	std::chrono::system_clock::time_point tutorial_start;
+	Speech tutorial;
+	
+	
 	//start time
 	std::chrono::system_clock::time_point start;
 	std::chrono::system_clock::time_point zombie_die_start;
