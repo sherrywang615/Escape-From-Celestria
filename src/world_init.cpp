@@ -857,7 +857,7 @@ Entity createTitle(RenderSystem* renderer, vec2 position)
 	motion.position = position;
 
 	// Setting initial values, scale is negative to make it face the opposite way
-	motion.scale = vec2({ window_width_px*0.9, window_height_px/2*0.8 });
+	motion.scale = vec2({ window_width_px*0.9, window_height_px/2*0.75 });
 
 	// Create an (empty) Bug component to be able to refer to all bug
 	//registry.eatables.emplace(entity);

@@ -22,7 +22,7 @@ std::vector<vec2> arrangeText(int num) {
 std::vector<vec2> arrangeTextStart(int num) {
 	std::vector<vec2> result = {};
 	for (int i = 0; i < num; i++) {
-		vec2 pos = { window_width_px / 2 - 105, window_height_px / 2 - 80 - i *  LINE_SPACE_START};
+		vec2 pos = { window_width_px / 2 - 105, window_height_px / 2 - 70 - i *  LINE_SPACE_START};
 		result.push_back(pos);
 	}
 	return result;
