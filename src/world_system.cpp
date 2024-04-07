@@ -47,8 +47,6 @@ int tutorial_index = 0;
 // track Menu
 std::vector<Entity> buttons = {};
 int current_button = 0;
-std::vector<Entity> buttons_start = {};
-int current_button_start = 0;
 
 // Create the bug world
 WorldSystem::WorldSystem()
@@ -396,7 +394,7 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 
 	}
   
-	if (paused)
+	if (paused || showStartScreen)
 	{
 		for (int i = 0; i < buttons.size(); i++)
 		{
@@ -417,48 +415,7 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 		}
     return true;
 	}
-
-
-
-
-
-
-
-	if (showStartScreen)
-	{
-		for (int i = 0; i < buttons_start.size(); i++)
-		{
-			if (!registry.texts.has(buttons_start[i]))
-			{
-				continue;
-			}
-			Text &text = registry.texts.get(buttons_start[i]);
-			if (i != current_button_start)
-			{
-				text.color = {1, 1, 1};
-			}
-			else
-			{
-				text.color = {1, 1, 0};
-			}
-		}
-
-		fpsTimer += elapsed_ms_since_last_update;
-		fpsCount++;
-		if (fpsTimer >= 1000.0f)
-		{
-			fpsTimer = 0.0f;
-			fps = fpsCount;
-			fpsCount = 0;
-			std::stringstream windowCaption;
-			windowCaption << "Escape from Celestria - FPS Counter: " << fps;
-			glfwSetWindowTitle(window, windowCaption.str().c_str());
-		}
-
-		return true;
-	}
 	buttons.clear();
-	buttons_start.clear();
 	handleMovementKeys(player_josh);
 
 	// for fps counter
@@ -968,18 +925,18 @@ void WorldSystem::restart_game()
 	{
 		showStartScreen = true;
 		renderStartMenu();
+		for (Entity entity : registry.menus.entities)
+		{
+			auto& me = registry.menus.get(entity);
+			if (me.func != MENU_FUNC::ALL)
+			{
+				buttons.push_back(entity);
+			}
+		}
+		current_button = 0;
 		Entity background = createBackgroundStart(renderer, {0, 0});
 		registry.menus.emplace(background);
 		createTitle(renderer, {window_width_px / 2, window_height_px / 2 - 100});
-
-		for (Entity entity : registry.menus.entities)
-		{
-			auto &me = registry.menus.get(entity);
-			if (me.func != MENU_FUNC::ALL)
-			{
-				buttons_start.push_back(entity);
-			}
-		}
 	}
 	// load credits for the last level
 	else if (currentLevel == maxLevel) {
@@ -1009,7 +966,6 @@ void WorldSystem::restart_game()
 		{
 			registry.remove_all_components_of(entity);
 		}
-		buttons_start.clear();
 		auto map = loadMap(map_path() + "level" + std::to_string(currentLevel) + ".txt");
 		createEntityBaseOnMap(map);
 
@@ -1354,6 +1310,7 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 						buttons.push_back(entity);
 					}
 				}
+				current_button = 0;
 			}
 			else
 			{
@@ -1575,47 +1532,43 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 	{
 		if (action == GLFW_RELEASE && key == GLFW_KEY_DOWN)
 		{
-			if (current_button_start == buttons_start.size() - 1)
+			if (current_button == buttons.size() - 1)
 			{
-				current_button_start = 0;
+				current_button = 0;
 			}
 			else
 			{
-				current_button_start++;
+				current_button++;
 			}
 		}
 		if (action == GLFW_RELEASE && key == GLFW_KEY_UP)
 		{
-			if (current_button_start == 0)
+			if (current_button == 0)
 			{
-				current_button_start = buttons_start.size() - 1;
+				current_button = buttons.size() - 1;
 			}
 			else
 			{
-				current_button_start--;
+				current_button--;
 			}
 		}
 		if (action == GLFW_RELEASE && key == GLFW_KEY_ENTER)
 		{
-			int res = handleStartButtonEvents(buttons_start[current_button_start], renderer, window, have_key, hp_count, bullets_count, currentLevel);
-			if (res == 1)
+			MenuElement me = registry.menus.get(buttons[current_button]);
+			if (me.func == MENU_FUNC::LOAD)
 			{
-				// start new game
-				currentLevel = 1;
+				currentLevel = loadLevel();
 				restart_game();
+				loadGame(renderer, have_key, hp_count, bullets_count, currentLevel);
+				paused = false;
 			}
-			else if (res == 2)
+			else
 			{
-				// load game
-				MenuElement me = registry.menus.get(buttons_start[current_button_start]);
-				if (me.func == MENU_FUNC::LOAD)
-				{
-					currentLevel = loadLevel();
+				bool pause = handleButtonEvents(buttons[current_button], renderer, window, have_key, hp_count, bullets_count, currentLevel);
+				if (!pause) {
 					restart_game();
-					loadGame(renderer, have_key, hp_count, bullets_count, currentLevel);
 				}
 			}
-			showStartScreen = false;
 			for (Entity entity : registry.players.entities)
 			{
 				player_josh = entity;

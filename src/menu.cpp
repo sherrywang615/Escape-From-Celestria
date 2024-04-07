@@ -267,6 +267,15 @@ bool handleButtonEvents(Entity entity, RenderSystem* renderer, GLFWwindow* windo
 		Entity entity = createHelpInfo(renderer, vec2(window_width_px - 515, window_height_px - 350));
 		registry.menus.emplace(entity);
 	}
+	else if (me.func == MENU_FUNC::START) {
+		// level 1 is tutorial
+		current_level = 2;
+		return false;
+	}
+	else if (me.func == MENU_FUNC::TUTORIAL) {
+		current_level = 1;
+		return false;
+	}
 	return true;
 }
 
