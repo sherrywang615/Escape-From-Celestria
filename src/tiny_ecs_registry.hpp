@@ -46,6 +46,7 @@ public:
 	ComponentContainer<SpeechPoint> speechPoint;
 	ComponentContainer<Gold> golds;
 	ComponentContainer<Fireball> fireballs;
+	ComponentContainer<Spikeball> spikeballs;
 	ComponentContainer<InvincibleTimer> invincibleTimers;
 	ComponentContainer<SmallKey> smallKeys;
 	ComponentContainer<LinearMovement> linearMovements;
@@ -90,6 +91,7 @@ public:
 		registry_list.push_back(&speechPoint);
 		registry_list.push_back(&golds);
 		registry_list.push_back(&fireballs);
+		registry_list.push_back(&spikeballs);
 		registry_list.push_back(&invincibleTimers);
 		registry_list.push_back(&smallKeys);
 		registry_list.push_back(&linearMovements);

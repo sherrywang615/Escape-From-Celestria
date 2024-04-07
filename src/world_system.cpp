@@ -758,7 +758,7 @@ bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map, bool
 	{
 		TEXTURE_ASSET_ID::BACKGROUND_TUTORIAL, TEXTURE_ASSET_ID::BACKGROUND_TUTORIAL, TEXTURE_ASSET_ID::BACKGROUND,
 		TEXTURE_ASSET_ID::BACKGROUND2, TEXTURE_ASSET_ID::BACKGROUND3, TEXTURE_ASSET_ID::BACKGROUND4,
-		TEXTURE_ASSET_ID::BACKGROUND6, TEXTURE_ASSET_ID::BgEnd
+		TEXTURE_ASSET_ID::BACKGROUND6, TEXTURE_ASSET_ID::BACKGROUND7, TEXTURE_ASSET_ID::BgEnd
 	};
 
 	// level 0 and level max doesn't have a background
@@ -793,6 +793,19 @@ bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map, bool
 				}
 				latest = newV;
 				createPlatform(renderer, {x, y});
+			}
+			else if (tok == 'V')
+			{
+				Vertex* newV = new Vertex(x, y - PLATFORM_HEIGHT / 2 - (ZOMBIE_BB_HEIGHT * 0.6) / 2);
+
+				graph.addVertex(newV);
+				if (findDistanceBetween({ newV->x, newV->y }, { latest->x, latest->y }) <= 10)
+				{
+					graph.addEdge(newV, latest, ACTION::WALK);
+					graph.addEdge(latest, newV, ACTION::WALK);
+				}
+				latest = newV;
+				createPlatformVert(renderer, { x, y });
 			}
 			else if (tok == 'Z' && !plat_only)
 			{
@@ -844,6 +857,15 @@ bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map, bool
 			else if (tok == '|' && !plat_only)
 			{
 				createFireball(renderer, {x, y});
+			}
+			else if (tok == '0' && !plat_only)
+			{
+				createSpikeball(renderer, { x, y });
+			}
+			else
+			{
+				printf("Map contains invalid character '%c' at [%d, %d].", tok, i, j);
+				// return false;
 			}
 		}
 	}
@@ -909,7 +931,7 @@ void WorldSystem::restart_game()
 	// Debugging for memory/component leaks
 	registry.list_all_components();
 
-	std::vector<Mix_Music *> musicTracks = {bg1_music, bg2_music, bg3_music, bg4_music, bgEnd_music};
+	std::vector<Mix_Music *> musicTracks = {bg1_music, bg2_music, bg3_music, bg4_music, bg4_music, bg4_music, bg4_music, bgEnd_music};
 	Mix_Music *currentMusicTrack = getMusicTrack(currentLevel, musicTracks);
 
 	if (currentMusicTrack != nullptr)
