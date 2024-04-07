@@ -69,6 +69,12 @@ WorldSystem::~WorldSystem()
 		Mix_FreeMusic(bg3_music);
 	if (bg4_music != nullptr)
 		Mix_FreeMusic(bg4_music);
+	if (bg5_music != nullptr)
+		Mix_FreeMusic(bg5_music);
+	if (bg6_music != nullptr)
+		Mix_FreeMusic(bg6_music);
+	if (bg7_music != nullptr)
+		Mix_FreeMusic(bg7_music);
 	if (bgEnd_music != nullptr)
 		Mix_FreeMusic(bgEnd_music);
 	if (doorOpen_music != nullptr)
@@ -169,34 +175,53 @@ GLFWwindow *WorldSystem::create_window()
 		fprintf(stderr, "Failed to open audio device");
 		return nullptr;
 	}
-
-	bg1_music = Mix_LoadMUS(audio_path("bg2.wav").c_str());
-
+	bg1_music = Mix_LoadMUS(audio_path("bg1.wav").c_str());
 	if (bg1_music == nullptr)
+	{
+		fprintf(stderr, "Failed to load sounds %s make sure the data directory is present",
+				audio_path("bg1.wav").c_str());
+		return nullptr;
+	}
+	bg2_music = Mix_LoadMUS(audio_path("bg2.wav").c_str());
+	if (bg2_music == nullptr)
 	{
 		fprintf(stderr, "Failed to load sounds %s make sure the data directory is present",
 				audio_path("bg2.wav").c_str());
 		return nullptr;
 	}
-	bg2_music = Mix_LoadMUS(audio_path("bg3.wav").c_str());
-	if (bg2_music == nullptr)
+	bg3_music = Mix_LoadMUS(audio_path("bg3.wav").c_str());
+	if (bg3_music == nullptr)
 	{
 		fprintf(stderr, "Failed to load sounds %s make sure the data directory is present",
 				audio_path("bg3.wav").c_str());
 		return nullptr;
 	}
-	bg3_music = Mix_LoadMUS(audio_path("bg4.wav").c_str());
-	if (bg3_music == nullptr)
+	bg4_music = Mix_LoadMUS(audio_path("bg4.wav").c_str());
+	if (bg4_music == nullptr)
 	{
 		fprintf(stderr, "Failed to load sounds %s make sure the data directory is present",
 				audio_path("bg4.wav").c_str());
 		return nullptr;
 	}
-	bg4_music = Mix_LoadMUS(audio_path("bg5.wav").c_str());
-	if (bg4_music == nullptr)
+	bg5_music = Mix_LoadMUS(audio_path("bg5.wav").c_str());
+	if (bg5_music == nullptr)
 	{
 		fprintf(stderr, "Failed to load sounds %s make sure the data directory is present",
 				audio_path("bg5.wav").c_str());
+		return nullptr;
+	}
+	bg6_music = Mix_LoadMUS(audio_path("bg6.wav").c_str());
+	if (bg6_music == nullptr)
+	{
+		fprintf(stderr, "Failed to load sounds %s make sure the data directory is present",
+				audio_path("bg6.wav").c_str());
+		return nullptr;
+	}
+	bg7_music = Mix_LoadMUS(audio_path("bg7.wav").c_str());
+	if (bg7_music == nullptr)
+	{
+		fprintf(stderr, "Failed to load sounds %s make sure the data directory is present",
+				audio_path("bg7.wav").c_str());
 		return nullptr;
 	}
 	bgEnd_music = Mix_LoadMUS(audio_path("bgEnd.wav").c_str());
@@ -931,7 +956,7 @@ void WorldSystem::restart_game()
 	// Debugging for memory/component leaks
 	registry.list_all_components();
 
-	std::vector<Mix_Music *> musicTracks = {bg1_music, bg2_music, bg3_music, bg4_music, bg4_music, bg4_music, bg4_music, bgEnd_music};
+	std::vector<Mix_Music *> musicTracks = {bg1_music, bg2_music, bg3_music, bg4_music, bg5_music, bg6_music, bg7_music, bgEnd_music};
 	Mix_Music *currentMusicTrack = getMusicTrack(currentLevel, musicTracks);
 
 	if (currentMusicTrack != nullptr)

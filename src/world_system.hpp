@@ -117,6 +117,9 @@ private:
 	Mix_Music *bg2_music;
 	Mix_Music *bg3_music;
 	Mix_Music *bg4_music;
+	Mix_Music *bg5_music;
+	Mix_Music *bg6_music;
+	Mix_Music *bg7_music;
 	Mix_Music *bgEnd_music;
 	Mix_Chunk *doorOpen_music;
 	Mix_Chunk *eat_music;
