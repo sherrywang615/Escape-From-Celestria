@@ -279,27 +279,4 @@ bool handleButtonEvents(Entity entity, RenderSystem* renderer, GLFWwindow* windo
 	return true;
 }
 
-int handleStartButtonEvents(Entity entity, RenderSystem* renderer, GLFWwindow* window, bool& has_key, int& hp_count, int& bullet_count, int& current_level) {
-	MenuElement me = registry.menus.get(entity);
-	// if (me.func == MENU_FUNC::LOAD) {
-	// 	loadGame(renderer, has_key, hp_count, bullet_count);
-	// 	clearMenu();
-	// 	return false;
-	// }
-	if (me.func == MENU_FUNC::QUIT) {
-		graph.clear();
-		glfwSetWindowShouldClose(window, true);
-	}
-	else if(me.func == MENU_FUNC::START){
-		return 1;
-	}
-	else if (me.func == MENU_FUNC::LOAD) {
-		return 2;
-	} else if(me.func == MENU_FUNC::TUTORIAL){
-		// clearMenu();
-		return 3;
-	}
-	return 0;
-}
-
 
