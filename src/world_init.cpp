@@ -486,7 +486,7 @@ Entity createBackgroundImage(TEXTURE_ASSET_ID texture)
 	auto& motion = registry.motions.emplace(entity);
 	motion.angle = 0.f;
 	motion.position = vec2({ window_height_px / 2, window_width_px / 2 });
-	motion.scale = vec2({ -window_width_px, window_height_px });
+	motion.scale = vec2({ window_width_px, window_height_px });
 
 	registry.renderRequests.insert(
 		entity,
