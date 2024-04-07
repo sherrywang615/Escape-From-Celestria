@@ -172,33 +172,33 @@ GLFWwindow *WorldSystem::create_window()
 		return nullptr;
 	}
 
-	bg1_music = Mix_LoadMUS(audio_path("bg1.wav").c_str());
+	bg1_music = Mix_LoadMUS(audio_path("bg2.wav").c_str());
 
 	if (bg1_music == nullptr)
-	{
-		fprintf(stderr, "Failed to load sounds %s make sure the data directory is present",
-				audio_path("bg1.wav").c_str());
-		return nullptr;
-	}
-	bg2_music = Mix_LoadMUS(audio_path("bg2.wav").c_str());
-	if (bg2_music == nullptr)
 	{
 		fprintf(stderr, "Failed to load sounds %s make sure the data directory is present",
 				audio_path("bg2.wav").c_str());
 		return nullptr;
 	}
-	bg3_music = Mix_LoadMUS(audio_path("bg3.wav").c_str());
-	if (bg3_music == nullptr)
+	bg2_music = Mix_LoadMUS(audio_path("bg3.wav").c_str());
+	if (bg2_music == nullptr)
 	{
 		fprintf(stderr, "Failed to load sounds %s make sure the data directory is present",
 				audio_path("bg3.wav").c_str());
 		return nullptr;
 	}
-	bg4_music = Mix_LoadMUS(audio_path("bg4.wav").c_str());
-	if (bg4_music == nullptr)
+	bg3_music = Mix_LoadMUS(audio_path("bg4.wav").c_str());
+	if (bg3_music == nullptr)
 	{
 		fprintf(stderr, "Failed to load sounds %s make sure the data directory is present",
 				audio_path("bg4.wav").c_str());
+		return nullptr;
+	}
+	bg4_music = Mix_LoadMUS(audio_path("bg5.wav").c_str());
+	if (bg4_music == nullptr)
+	{
+		fprintf(stderr, "Failed to load sounds %s make sure the data directory is present",
+				audio_path("bg5.wav").c_str());
 		return nullptr;
 	}
 	bgEnd_music = Mix_LoadMUS(audio_path("bgEnd.wav").c_str());
@@ -888,11 +888,6 @@ bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map, bool
 			{
 				createFireball(renderer, {x, y});
 			}
-			else
-			{
-				printf("Map contains invalid character '%c' at [%d, %d].", tok, i, j);
-				// return false;
-			}
 		}
 	}
 
@@ -929,6 +924,12 @@ void WorldSystem::restart_game()
 
 	// Reset the game speed
 	current_speed = 1.f;
+
+	// reset key
+	have_key = false;
+	if (currentLevel == maxLevel - 1) {
+			have_key = true;
+	}
 
 	if(currentLevel == 1){
 		can_jump = false;
@@ -980,6 +981,27 @@ void WorldSystem::restart_game()
 			}
 		}
 	}
+	// load credits for the last level
+	else if (currentLevel == maxLevel) {
+		std::vector<std::string> credits = { "Thank you for playing", "Escape From Celestria", "a game produced by", "Peter Yang", "Qianzhi Zhang", "Sherry Wang", "Yi Ran Liao", "Yixuan Li" };
+		vec2 start_loc = { 180, 0 };
+		float duration = 10;
+		float displacement = 650;
+		float spacing = 80;
+		float size = 0.9;
+		// load each line
+		for (int i = 0; i < credits.size(); i++) {
+			Entity text = createText({ start_loc.x, start_loc.y - i * spacing }, size, { 1, 1, 1 }, credits[i]);
+			registry.linearMovements.insert(text,
+				{ { start_loc.x, start_loc.y - i * spacing },
+					{ start_loc.x, start_loc.y - i * spacing + displacement},
+					duration,
+					0
+				});
+		}
+		return;
+
+	}
 	else
 	{
 		showStartScreen = false;
@@ -998,7 +1020,7 @@ void WorldSystem::restart_game()
 		dialog->initializeDialog(dialog_path("level" + std::to_string(currentLevel) + ".txt"));
 	}
 
-	have_key = false;
+
 }
 
 // Compute collisions between entities
