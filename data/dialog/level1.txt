@@ -1,18 +1,9 @@
 :1
-@J
-What happened?
-OMG!!!  Zombies!
-Where's my daughter？
-I need to find her！
-
-:2
-@1
-Hello
-@J
-What happened?
-@1
-Zombies are coming!
-They have escaped from the lab
-Go to the safe zone!
-@J
-Thanks
+@6
+Space to jump
+Press A/D to move
+Go pick up the bullet
+Shoot the zombie by pressing J
+You can also hide in the trash can by pressing H when nearby
+Grab the key and use it to unlock the next level
+You're almost there! Good luck on your journey!

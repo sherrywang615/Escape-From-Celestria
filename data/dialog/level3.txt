@@ -1,21 +1,22 @@
 :1
 @J
-Do you need help?
-@3
-I am fine！
-@J
-Have you seen Alice?
-@3
-I remember she went to the safe zone
-with a stranger
-@J 
-Thank you
+Head to the safe zone
 
 :2
-@1
-safe zone is in front!
-keep going！
-
-:3
 @J
-almost here!
+Don't hit me
+I'm not a zombie.
+Have you seen Alice, my daughter
+@2
+So it's Josh
+It's so good that you're still alive!
+I saw someone save Alice 
+and then take her away
+
+@J 
+Where?
+@2
+They might have gone to the safe zone
+just go forward
+@J
+Thanks

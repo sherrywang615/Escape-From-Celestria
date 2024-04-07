@@ -819,12 +819,7 @@ bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map, bool
 			float x = j * 10;
 			float y = i * 10;
 			char tok = map[i][j];
-
-			if (tok == ' ' || tok == 'O' || tok == 'Q' || tok == 'L' || tok == 'M'||tok =='T')
-			{
-				continue;
-			}
-			else if (tok == 'J' && !plat_only)
+			if (tok == 'J')
 			{
 				josh_x = x;
 				josh_y = y;
@@ -934,11 +929,7 @@ void WorldSystem::restart_game()
 
 	// Reset the game speed
 	current_speed = 1.f;
-	// hp_count = INITIAL_HP;
-	// bullets_count = 0;
 
-	// Reset current level
-	// currentLevel = 1;
 	if(currentLevel == 1){
 		can_jump = false;
 		can_move = false;
@@ -997,14 +988,14 @@ void WorldSystem::restart_game()
 			registry.remove_all_components_of(entity);
 		}
 		buttons_start.clear();
-		auto map = loadMap(map_path() + "level" + std::to_string(currentLevel-1) + ".txt");
+		auto map = loadMap(map_path() + "level" + std::to_string(currentLevel) + ".txt");
 		createEntityBaseOnMap(map);
 
 		for (int i = 0; i < hp_count; i++)
 		{
 			createHeart(renderer, vec2(30 + i * create_heart_distance, create_heart_height));
 		}
-		dialog->initializeDialog(dialog_path("level" + std::to_string(currentLevel-1) + ".txt"));
+		dialog->initializeDialog(dialog_path("level" + std::to_string(currentLevel) + ".txt"));
 	}
 
 	have_key = false;
