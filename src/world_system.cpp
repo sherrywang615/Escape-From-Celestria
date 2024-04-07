@@ -35,13 +35,22 @@ int josh_step_counter = 0;
 // flag to check if the game is paused
 bool paused = false;
 
+//flags to check if the current tutorial text can be escaped
+bool can_jump = false;
+bool can_move = false;
+bool can_shot = false;
+bool can_hide = false;
+bool can_out = false;
+bool can_get_key = false;
+int tutorial_index = 0;
+
 // track Menu
 std::vector<Entity> buttons = {};
 int current_button = 0;
 
 // Create the bug world
 WorldSystem::WorldSystem()
-	: hp_count(0), bullets_count(0), have_key(false), fps(0.f), fpsCount(0.f), fpsTimer(0.f)
+	: hp_count(3), bullets_count(0), have_key(false), fps(0.f), fpsCount(0.f), fpsTimer(0.f)
 {
 	// Seeding rng with random device
 	start = std::chrono::system_clock::now();
@@ -161,33 +170,33 @@ GLFWwindow *WorldSystem::create_window()
 		return nullptr;
 	}
 
-	bg1_music = Mix_LoadMUS(audio_path("bg1.wav").c_str());
+	bg1_music = Mix_LoadMUS(audio_path("bg2.wav").c_str());
 
 	if (bg1_music == nullptr)
-	{
-		fprintf(stderr, "Failed to load sounds %s make sure the data directory is present",
-				audio_path("bg1.wav").c_str());
-		return nullptr;
-	}
-	bg2_music = Mix_LoadMUS(audio_path("bg2.wav").c_str());
-	if (bg2_music == nullptr)
 	{
 		fprintf(stderr, "Failed to load sounds %s make sure the data directory is present",
 				audio_path("bg2.wav").c_str());
 		return nullptr;
 	}
-	bg3_music = Mix_LoadMUS(audio_path("bg3.wav").c_str());
-	if (bg3_music == nullptr)
+	bg2_music = Mix_LoadMUS(audio_path("bg3.wav").c_str());
+	if (bg2_music == nullptr)
 	{
 		fprintf(stderr, "Failed to load sounds %s make sure the data directory is present",
 				audio_path("bg3.wav").c_str());
 		return nullptr;
 	}
-	bg4_music = Mix_LoadMUS(audio_path("bg4.wav").c_str());
-	if (bg4_music == nullptr)
+	bg3_music = Mix_LoadMUS(audio_path("bg4.wav").c_str());
+	if (bg3_music == nullptr)
 	{
 		fprintf(stderr, "Failed to load sounds %s make sure the data directory is present",
 				audio_path("bg4.wav").c_str());
+		return nullptr;
+	}
+	bg4_music = Mix_LoadMUS(audio_path("bg5.wav").c_str());
+	if (bg4_music == nullptr)
+	{
+		fprintf(stderr, "Failed to load sounds %s make sure the data directory is present",
+				audio_path("bg5.wav").c_str());
 		return nullptr;
 	}
 	bgEnd_music = Mix_LoadMUS(audio_path("bgEnd.wav").c_str());
@@ -258,6 +267,7 @@ vec3 lerp(vec3 start, vec3 end, float t)
 	return start * (1 - t) + end * t;
 }
 
+
 // Handle movement related key events
 void handleMovementKeys(Entity entity)
 {
@@ -324,16 +334,67 @@ void handleMovementKeys(Entity entity)
 // Update our game world
 bool WorldSystem::step(float elapsed_ms_since_last_update)
 {
+	//for josh movement animation
 	auto end = std::chrono::system_clock::now();
 
 	if (is_josh_moving)
 	{
 		auto elasped = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
 		josh_step_counter = int(round(elasped) / 100000);
-		// std::cout<< josh_step_counter<<std::endl;
 	}
+  
+  	//for tutorial
+	if(currentLevel == 1 && is_speech_point_index_assigned){
+		
+		if(!can_jump && tutorial_index == 0){
+			tutorial_start = std::chrono::system_clock::now();
+			paused = true;
+			dialog->createSpeechPointTutorial(speech_point_index, 0); 
+			tutorial_index=1;
+		}
+		if(can_jump && !can_move && tutorial_index == 1){
+			auto elasped = std::chrono::duration_cast<std::chrono::microseconds>(end - tutorial_start).count();
+			if(round(elasped)/100000 > 10){
 
-	if (paused)
+				dialog->createSpeechPointTutorial(speech_point_index, 2); 
+				// Speech& speech = registry.speech.get(registry.speech.entities[0]);
+				// speech.texts.pop();
+				// speech.timer.pop();
+			
+				paused = true;
+				tutorial_index = 2;
+			}
+		}
+		if(can_move && !can_shot && tutorial_index == 2){
+			auto elasped = std::chrono::duration_cast<std::chrono::microseconds>(end - tutorial_start).count();
+			if(round(elasped)/100000>10 && bullets_count>0){
+				
+				Speech& speech = registry.speech.get(registry.speech.entities[0]);
+				speech.texts.pop();
+				speech.timer.pop();
+				dialog->createSpeechPointTutorial(speech_point_index, 4); 
+				paused = true;
+				tutorial_index = 3;
+			}
+		}
+		if(can_shot && can_hide && can_out && !can_get_key && tutorial_index == 3){
+			Speech& speech = registry.speech.get(registry.speech.entities[0]);
+			speech.texts.pop();
+			speech.timer.pop();
+			dialog->createSpeechPointTutorial(speech_point_index, 6); 
+			tutorial_index = 4;
+		}
+		if(can_shot && can_hide && can_out && !can_get_key && have_key && tutorial_index == 4){
+			Speech& speech = registry.speech.get(registry.speech.entities[0]);
+			speech.texts.pop();
+			speech.timer.pop();
+			dialog->createSpeechPointTutorial(speech_point_index, 6); 
+			tutorial_index = 5;
+		}
+
+	}
+  
+	if (paused || showStartScreen)
 	{
 		for (int i = 0; i < buttons.size(); i++)
 		{
@@ -352,11 +413,9 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 				text.color = {1, 1, 0};
 			}
 		}
-
-		return true;
+    return true;
 	}
 	buttons.clear();
-
 	handleMovementKeys(player_josh);
 
 	// for fps counter
@@ -383,7 +442,7 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 		Speech &speech = registry.speech.get(entity);
 		speech.counter_ms -= elapsed_ms_since_last_update;
 		// remove entity if timer expired
-		if (speech.counter_ms < 0)
+		if (speech.counter_ms < 0 && currentLevel!=1)
 		{
 			speech.texts.pop();
 			speech.timer.pop();
@@ -451,14 +510,14 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 	// Linear interpolation: movement
 	for (Entity entity : registry.linearMovements.entities)
 	{
-		auto& movement = registry.linearMovements.get(entity);
+		auto &movement = registry.linearMovements.get(entity);
 		movement.time_elapsed += elapsed_ms_since_last_update / 1000.0f;
 		float t = movement.time_elapsed / movement.duration;
 		if (t < 1.0f)
 		{
 			vec3 displacement3D = lerp(vec3(movement.pos_start, 0.0f), vec3(movement.pos_end, 0.0f), t);
-			Motion& motion = registry.motions.get(entity);
-			motion.position = { displacement3D.x, displacement3D.y };
+			Motion &motion = registry.motions.get(entity);
+			motion.position = {displacement3D.x, displacement3D.y};
 		}
 	}
 
@@ -484,11 +543,11 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 
 			screen.darken_screen_factor = 0;
 			restart_game();
+			hp_count = INITIAL_HP;
+			bullets_count = 0;
 			return true;
 		}
 	}
-	// reduce window brightness if any of the present chickens is dying
-	// screen.darken_screen_factor = 1 - min_counter_ms / 3000;
 
 	for (Entity entity : registry.deductHpTimers.entities)
 	{
@@ -594,25 +653,23 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 		registry.remove_all_components_of(entity);
 	}
 
-	if (currentLevel < 6)
+	// The first and last levels doesn't need heart
+	if (currentLevel != 0 && currentLevel != maxLevel)
 	{
 		for (int i = 0; i < hp_count; i++)
 		{
-			createHeart(renderer, vec2(30 + i * create_heart_distance, 20));
+			createHeart(renderer, vec2(30 + i * create_heart_distance, create_heart_height));
 		}
 	}
 
 	// recreate Bullets base on bullet_count
 	removeSmallBullets(renderer);
 
-	if (currentLevel != 5)
+	if (currentLevel != maxLevel)
 	{
 		for (int i = 0; i < bullets_count; i++)
 		{
-			// if (i % 10 == 0)
-			// {
 			createBulletSmall(renderer, vec2(30 + i * create_bullet_distance, 20 + HEART_BB_HEIGHT));
-			// }
 		}
 	}
 	vec2 p0F = {100, 150}; // start point
@@ -664,6 +721,7 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 			// Mix_PlayChannel(-1, chicken_dead_sound, 0);
 
 			Motion &motion = registry.motions.get(player_josh);
+
 			motion.velocity[0] = 0;
 			motion.velocity[1] = 0;
 
@@ -695,39 +753,17 @@ bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map, bool
 	graph.clear();
 	float josh_x = 0, josh_y = 0;
 	std::vector<std::pair<float, float>> zombiePositions;
-	// Create background entities first
-	for (int i = 0; i < map.size(); i++)
+
+	std::vector<TEXTURE_ASSET_ID> backgrounds =
 	{
-		for (int j = 0; j < map[i].size(); j++)
-		{
-			float x = j * 10;
-			float y = i * 10;
-			char tok = map[i][j];
-			if (tok == 'O')
-			{
-				createBackground(renderer, {x, y});
-			}
-			if (tok == 'Q')
-			{
-				createBackground2(renderer, {x, y});
-			}
-			if (tok == 'L')
-			{
-				createBackground3(renderer, {x, y});
-			}
-			if (tok == 'M')
-			{
-				createBackground4(renderer, {x, y});
-			}
-			if (tok == '-') 
-			{
-				createBackground5(renderer, { x, y });
-			}
-			if (tok == 'W')
-			{
-				createBgEnd(renderer, {x, y});
-			}
-		}
+		TEXTURE_ASSET_ID::BACKGROUND_TUTORIAL, TEXTURE_ASSET_ID::BACKGROUND_TUTORIAL, TEXTURE_ASSET_ID::BACKGROUND,
+		TEXTURE_ASSET_ID::BACKGROUND2, TEXTURE_ASSET_ID::BACKGROUND3, TEXTURE_ASSET_ID::BACKGROUND4,
+		TEXTURE_ASSET_ID::BACKGROUND6, TEXTURE_ASSET_ID::BgEnd
+	};
+
+	// level 0 and level max doesn't have a background
+	if (currentLevel != maxLevel || currentLevel != 0) {
+		createBackgroundImage(backgrounds[currentLevel]);
 	}
 
 	// Create all other entities except for background
@@ -740,12 +776,7 @@ bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map, bool
 			float x = j * 10;
 			float y = i * 10;
 			char tok = map[i][j];
-
-			if (tok == ' ' || tok == 'O' || tok == 'Q' || tok == 'L' || tok == 'M' || tok == '-' || tok == 'W')
-			{
-				continue;
-			}
-			else if (tok == 'J' && !plat_only)
+			if (tok == 'J')
 			{
 				josh_x = x;
 				josh_y = y;
@@ -812,6 +843,7 @@ bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map, bool
 					id = map[i][j] - '0';
 				}
 				createNPC(renderer, {x, y}, id);
+			
 			}
 			else if (tok == 'S' && !plat_only)
 			{
@@ -871,11 +903,22 @@ void WorldSystem::restart_game()
 
 	// Reset the game speed
 	current_speed = 1.f;
-	hp_count = INITIAL_HP;
-	bullets_count = 0;
 
-	// Reset current level
-	// currentLevel = 1;
+	// reset key
+	have_key = false;
+	if (currentLevel == maxLevel - 1) {
+			have_key = true;
+	}
+
+	if(currentLevel == 1){
+		can_jump = false;
+		can_move = false;
+		can_shot = false;
+		can_hide = false;
+		can_out = false;
+		can_get_key = false;
+		tutorial_index = 0;
+	}
 
 	// Remove all entities that we created
 	// All that have a motion, we could also iterate over all bug, eagles, ... but that would be more cumbersome
@@ -900,41 +943,62 @@ void WorldSystem::restart_game()
 		std::cerr << "Error: Music track for level " << currentLevel << " not found." << std::endl;
 	}
 
-
-	// load credits
-	if (currentLevel == 7) {
+	if (currentLevel == 0)
+	{
+		showStartScreen = true;
+		renderStartMenu();
+		for (Entity entity : registry.menus.entities)
+		{
+			auto& me = registry.menus.get(entity);
+			if (me.func != MENU_FUNC::ALL)
+			{
+				buttons.push_back(entity);
+			}
+		}
+		current_button = 0;
+		Entity background = createBackgroundStart(renderer, {0, 0});
+		registry.menus.emplace(background);
+		createTitle(renderer, {window_width_px / 2, window_height_px / 2 - 100});
+	}
+	// load credits for the last level
+	else if (currentLevel == maxLevel) {
 		std::vector<std::string> credits = { "Thank you for playing", "Escape From Celestria", "a game produced by", "Peter Yang", "Qianzhi Zhang", "Sherry Wang", "Yi Ran Liao", "Yixuan Li" };
 		vec2 start_loc = { 180, 0 };
 		float duration = 10;
 		float displacement = 650;
 		float spacing = 80;
 		float size = 0.9;
+		// load each line
 		for (int i = 0; i < credits.size(); i++) {
-
 			Entity text = createText({ start_loc.x, start_loc.y - i * spacing }, size, { 1, 1, 1 }, credits[i]);
-			registry.linearMovements.insert(text, 
-				{	{ start_loc.x, start_loc.y - i * spacing }, 
-					{ start_loc.x, start_loc.y - i * spacing + displacement}, 
-					duration, 
-					0 
+			registry.linearMovements.insert(text,
+				{ { start_loc.x, start_loc.y - i * spacing },
+					{ start_loc.x, start_loc.y - i * spacing + displacement},
+					duration,
+					0
 				});
 		}
 		return;
 
 	}
-
-	auto map = loadMap(map_path() + "level" + std::to_string(currentLevel) + ".txt");
-	createEntityBaseOnMap(map);
-
-	// createHelpSign(renderer, vec2(window_width_px - 70, window_height_px - 700));
-	for (int i = 0; i < hp_count; i++)
+	else
 	{
-		createHeart(renderer, vec2(30 + i * create_heart_distance, 20));
+		showStartScreen = false;
+		for (Entity entity : registry.menus.entities)
+		{
+			registry.remove_all_components_of(entity);
+		}
+		auto map = loadMap(map_path() + "level" + std::to_string(currentLevel) + ".txt");
+		createEntityBaseOnMap(map);
+
+		for (int i = 0; i < hp_count; i++)
+		{
+			createHeart(renderer, vec2(30 + i * create_heart_distance, create_heart_height));
+		}
+		dialog->initializeDialog(dialog_path("level" + std::to_string(currentLevel) + ".txt"));
 	}
 
-	dialog->initializeDialog(dialog_path("level" + std::to_string(currentLevel) + ".txt"));
-	// the player automaticly has key for level 5
-	have_key = (currentLevel == 5 ); //|| currentLevel == 6
+
 }
 
 // Compute collisions between entities
@@ -973,7 +1037,7 @@ void WorldSystem::handle_collisions()
 					}
 					for (int i = 0; i < hp_count - 1; i++)
 					{
-						createHeart(renderer, vec2(30 + i * create_heart_distance, 20));
+						createHeart(renderer, vec2(30 + i * create_heart_distance, create_heart_height));
 					}
 					// initiate death unless already dying
 					if (!registry.deathTimers.has(entity))
@@ -1014,7 +1078,7 @@ void WorldSystem::handle_collisions()
 					}
 					for (int i = 0; i < hp_count; i++)
 					{
-						createHeart(renderer, vec2(30 + i * create_heart_distance, 20));
+						createHeart(renderer, vec2(30 + i * create_heart_distance, create_heart_height));
 					}
 				}
 			}
@@ -1039,7 +1103,7 @@ void WorldSystem::handle_collisions()
 					}
 					for (int i = 0; i < hp_count; i++)
 					{
-						createHeart(renderer, vec2(30 + i * create_heart_distance, 20));
+						createHeart(renderer, vec2(30 + i * create_heart_distance, create_heart_height));
 					}
 				}
 				else if (registry.bullets.has(entity_other))
@@ -1102,7 +1166,15 @@ void WorldSystem::handle_collisions()
 						Mix_PlayChannel(-1, doorOpen_music, 0);
 						currentLevel++;
 						have_key = false;
+
+						if(currentLevel==1){
+							Speech& speech = registry.speech.get(registry.speech.entities[0]);
+							speech.texts.pop();
+							speech.timer.pop();
+						}
+
 						restart_game();
+
 					}
 				}
 			}
@@ -1111,9 +1183,19 @@ void WorldSystem::handle_collisions()
 				SpeechPoint &speechPoint = registry.speechPoint.get(entity_other);
 				if (!speechPoint.isDone)
 				{
-					printf("speechPoint: %i\n", speechPoint.index);
-					dialog->createSpeechPoint(speechPoint.index);
-					speechPoint.isDone = true;
+					if(currentLevel == 1){
+						speech_point_index = speechPoint.index;
+						is_speech_point_index_assigned = true;
+						speechPoint.isDone = true;
+					}else{
+						printf("speechPoint: %i\n", speechPoint.index);
+						std::cout<<speechPoint.index<<std::endl;
+						dialog->createSpeechPoint(speechPoint.index);
+						speechPoint.isDone = true;
+					}
+					
+				
+					
 				}
 			}
 		}
@@ -1133,6 +1215,7 @@ void WorldSystem::handle_collisions()
 				registry.deadlys.remove(entity);
 				zombie.is_dead = true;
 			}
+
 		}
 
 		else
@@ -1174,6 +1257,7 @@ void WorldSystem::showKeyOnScreen(RenderSystem *renderer, bool have_key)
 	}
 }
 
+
 // Should the game be over ?
 bool WorldSystem::is_over() const
 {
@@ -1189,29 +1273,75 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 	// key is of 'type' GLFW_KEY_
 	// action can be GLFW_PRESS GLFW_RELEASE GLFW_REPEAT
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	if (action == GLFW_PRESS && key == GLFW_KEY_ESCAPE)
-	{
-		// glfwSetWindowShouldClose(window, true);
-		paused = !paused;
-		if (paused)
-		{
-			renderPauseMenu();
-			for (Entity entity : registry.menus.entities)
-			{
-				auto &me = registry.menus.get(entity);
-				if (me.func != MENU_FUNC::ALL)
-				{
-					buttons.push_back(entity);
-				}
+
+	if(currentLevel == 1 && paused == true){
+		if(!can_jump){
+			tutorial_start = std::chrono::system_clock::now();
+			if(action == GLFW_PRESS && key == GLFW_KEY_SPACE){
+				dialog->createSpeechPointTutorial(speech_point_index, 1); 
+				Speech& speech = registry.speech.get(registry.speech.entities[0]);
+				speech.texts.pop();
+				speech.timer.pop();
+				can_jump = true;
+				paused = false;
+				//std::cout<<"1st line is displayed"<<std::endl;
+			}
+		}else if(!can_move){
+			if(action == GLFW_PRESS && (key == GLFW_KEY_A || key == GLFW_KEY_D ||key == GLFW_KEY_RIGHT || key == GLFW_KEY_LEFT)){
+				//std::cout<<"can move now"<<std::endl;
+				dialog->createSpeechPointTutorial(speech_point_index, 3); 
+				Speech& speech = registry.speech.get(registry.speech.entities[0]);
+				speech.texts.pop();
+				speech.timer.pop();
+				can_move = true;
+				paused = false;
+				
+			}
+		}else if(!can_shot){
+			if (bullets_count>0 && (action == GLFW_REPEAT || action == GLFW_PRESS) && (key == GLFW_KEY_J)){
+				dialog->createSpeechPointTutorial(speech_point_index, 5); 
+				Speech& speech = registry.speech.get(registry.speech.entities[0]);
+				speech.texts.pop();
+				speech.timer.pop();
+				can_shot = true;
+				paused = false;
+				tutorial_index = 3;
+				//std::cout<<"shot now"<<std::endl;
 			}
 		}
-		else
+
+
+		// }else if(!can_hide){
+			
+		// }
+	}
+	if (action == GLFW_PRESS && key == GLFW_KEY_ESCAPE)
+	{
+		// disable pause menu when on start screen
+		if (!showStartScreen)
 		{
-			for (Entity entity : registry.menus.entities)
+			paused = !paused;
+			if (paused)
 			{
-				registry.remove_all_components_of(entity);
+				renderPauseMenu();
+				for (Entity entity : registry.menus.entities)
+				{
+					auto &me = registry.menus.get(entity);
+					if (me.func != MENU_FUNC::ALL)
+					{
+						buttons.push_back(entity);
+					}
+				}
+				current_button = 0;
 			}
-			buttons.clear();
+			else
+			{
+				for (Entity entity : registry.menus.entities)
+				{
+					registry.remove_all_components_of(entity);
+				}
+				buttons.clear();
+			}
 		}
 	}
 
@@ -1306,6 +1436,9 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 
 	if (action == GLFW_PRESS && key == GLFW_KEY_H)
 	{
+		//todo: remove later for debug purpose only
+		can_hide=true;
+		can_out=true;
 		if (!isJoshHidden)
 		{
 			for (Entity entity : registry.cabinets.entities)
@@ -1317,6 +1450,10 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 					joshScale = registry.motions.get(player_josh).scale;
 					hideJosh(renderer);
 					isJoshHidden = true;
+					if(currentLevel==1){
+						can_hide=true;
+					}
+					
 					break;
 				}
 			}
@@ -1328,7 +1465,10 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 			registry.motions.get(player_josh).scale = joshScale;
 			registry.colors.insert(player_josh, {1, 0.8f, 0.8f});
 			isJoshHidden = false;
-
+			if(currentLevel==1){
+				can_out = true;
+			}
+			
 			uint i = 0;
 			while (i < registry.hearts.components.size())
 			{
@@ -1339,7 +1479,7 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 			}
 			for (int i = 0; i < hp_count; i++)
 			{
-				createHeart(renderer, vec2(30 + i * create_heart_distance, 20));
+				createHeart(renderer, vec2(30 + i * create_heart_distance, create_heart_height));
 			}
 		}
 	}
@@ -1351,6 +1491,8 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 		glfwGetWindowSize(window, &w, &h);
 
 		restart_game();
+		hp_count = INITIAL_HP;
+		bullets_count = 0;
 	}
 
 	if (action == GLFW_PRESS && key == GLFW_KEY_P)
@@ -1388,14 +1530,67 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 		if (action == GLFW_RELEASE && key == GLFW_KEY_ENTER)
 		{
 			MenuElement me = registry.menus.get(buttons[current_button]);
-			if (me.func == MENU_FUNC::LOAD) {
+			if (me.func == MENU_FUNC::LOAD)
+			{
 				currentLevel = loadLevel();
 				restart_game();
 				loadGame(renderer, have_key, hp_count, bullets_count, currentLevel);
 				paused = false;
-				return;
 			}
-			paused = handleButtonEvents(buttons[current_button], renderer, window, have_key, hp_count, bullets_count, currentLevel);
+			else
+			{
+				paused = handleButtonEvents(buttons[current_button], renderer, window, have_key, hp_count, bullets_count, currentLevel);
+			}
+
+			for (Entity entity : registry.players.entities)
+			{
+				player_josh = entity;
+			}
+		}
+	}
+
+	// Handle Start Menu
+	if (showStartScreen)
+	{
+		if (action == GLFW_RELEASE && key == GLFW_KEY_DOWN)
+		{
+			if (current_button == buttons.size() - 1)
+			{
+				current_button = 0;
+			}
+			else
+			{
+				current_button++;
+			}
+		}
+		if (action == GLFW_RELEASE && key == GLFW_KEY_UP)
+		{
+			if (current_button == 0)
+			{
+				current_button = buttons.size() - 1;
+			}
+			else
+			{
+				current_button--;
+			}
+		}
+		if (action == GLFW_RELEASE && key == GLFW_KEY_ENTER)
+		{
+			MenuElement me = registry.menus.get(buttons[current_button]);
+			if (me.func == MENU_FUNC::LOAD)
+			{
+				currentLevel = loadLevel();
+				restart_game();
+				loadGame(renderer, have_key, hp_count, bullets_count, currentLevel);
+				paused = false;
+			}
+			else
+			{
+				bool pause = handleButtonEvents(buttons[current_button], renderer, window, have_key, hp_count, bullets_count, currentLevel);
+				if (!pause) {
+					restart_game();
+				}
+			}
 			for (Entity entity : registry.players.entities)
 			{
 				player_josh = entity;
@@ -1427,7 +1622,7 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 	{
 		current_speed += 0.1f;
 		printf("Current speed = %f\n", current_speed);
-		if (currentLevel < 7)
+		if (currentLevel < maxLevel)
 		{
 			currentLevel++;
 			restart_game();

@@ -44,17 +44,14 @@ Entity createCabinet(RenderSystem *renderer, vec2 position);
 Entity createBulletSmall(RenderSystem *renderer, vec2 position);
 Entity createSmallKey(RenderSystem *renderer, vec2 position);
 Entity createBulletShoot(RenderSystem *renderer, vec2 position);
-Entity createBackground(RenderSystem* renderer, vec2 position);
-Entity createBackground2(RenderSystem* renderer, vec2 position);
-Entity createBackground3(RenderSystem* renderer, vec2 position);
-Entity createBackground4(RenderSystem* renderer, vec2 position);
-Entity createBackground5(RenderSystem* renderer, vec2 position);
+Entity createBackgroundStart(RenderSystem* renderer, vec2 position);
 Entity createBgEnd(RenderSystem* renderer, vec2 position);
 Entity createObject(RenderSystem *renderer, vec2 pos);
 Entity createSpeechPoint(RenderSystem *renderer, vec2 position, unsigned int index);
 Entity createNPC(RenderSystem *renderer, vec2 position, unsigned int index);
 Entity createGold(RenderSystem *renderer, vec2 position);
 Entity createFireball(RenderSystem* renderer, vec2 position);
+Entity createTitle(RenderSystem* renderer, vec2 position);
 Entity createSpikeball(RenderSystem* renderer, vec2 position);
 // the enemy
 Entity createEagle(RenderSystem *renderer, vec2 position);
@@ -75,6 +72,8 @@ Entity createMenuBackground(vec2 pos, vec2 scale);
 Entity createLine(vec2 position, vec2 size);
 // a egg
 Entity createEgg(vec2 pos, vec2 size);
+
+Entity createBackgroundImage(TEXTURE_ASSET_ID texture);
 
 std::vector<std::vector<char>> loadMap(std::string path);
 

@@ -1,13 +1,12 @@
 :1
-@5
-Dad?
+@4
+Survival! Here is safe zone
 @J
-It's me, my dear. 
-@5
-Dad, I miss you so much!
-@J
-Don't cry. Everything will be alright!
-@5
-Uncle Ben saved me and brought me here.
-@J
-Thanks god! We are finally reunited!
+Have you seen Alice, my daughter
+@4
+Don't worry, she is safe inside！
+Congratulations! 
+I think she must miss you very much!
+You guys are about to reunite!
+@J 
+Thank you!
