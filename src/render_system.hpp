@@ -54,6 +54,7 @@ class RenderSystem {
 		textures_path("background2.png"),
 		textures_path("background3.png"),
 		textures_path("background4.png"),
+		textures_path("background5.png"),
 		textures_path("bgEnd.png"),
 		textures_path("exit.png"),
 
@@ -64,6 +65,8 @@ class RenderSystem {
 		textures_path("lvl4.png"),
 		textures_path("alice.png"),
 		textures_path("Gold_21.png"),
+		textures_path("groundvert.png"),
+		textures_path("spikeball.png"),
 		};
 
 

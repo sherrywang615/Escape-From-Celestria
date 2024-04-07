@@ -230,6 +230,13 @@ struct Fireball {
 };
 
 
+struct Spikeball {
+	int currDir = -1;
+	int prevDir = -1;
+	//direction:: left:0 right:1 up:2 down:3
+};
+
+
 struct InvincibleTimer
 {
 	float counter_ms = 5000;
@@ -288,6 +295,7 @@ enum class TEXTURE_ASSET_ID
 	BACKGROUND2,
 	BACKGROUND3,
 	BACKGROUND4,
+	BACKGROUND5,
 	BgEnd,
 	BARREL,
 	MENU,
@@ -297,6 +305,8 @@ enum class TEXTURE_ASSET_ID
 	NPC4,
 	ALICE,
 	GOLD1,
+	GROUNDVERT,
+	SPIKEBALL,
 	TEXTURE_COUNT
 
 };

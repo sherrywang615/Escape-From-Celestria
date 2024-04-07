@@ -320,6 +320,34 @@ Entity createPlatform(RenderSystem *renderer, vec2 pos)
 	return entity;
 }
 
+Entity createPlatformVert(RenderSystem* renderer, vec2 pos)
+{
+	auto entity = Entity();
+
+	Mesh& mesh = renderer->getMesh(GEOMETRY_BUFFER_ID::SPRITE);
+	registry.meshPtrs.emplace(entity, &mesh);
+
+	auto& platform = registry.platforms.emplace(entity);
+	platform.position = pos;
+	platform.scale = { PLATFORM_WIDTH, PLATFORM_HEIGHT };
+
+	auto& motion = registry.motions.emplace(entity);
+	motion.angle = 0.f;
+	motion.velocity = { 0.0f, 0.0f };
+	motion.position = pos;
+	motion.scale = { PLATFORM_WIDTH, PLATFORM_HEIGHT };
+
+	// registry.platforms.emplace(entity);
+	registry.renderRequests.insert(
+		entity,
+		{ TEXTURE_ASSET_ID::GROUNDVERT,
+		 EFFECT_ASSET_ID::TEXTURED,
+		 GEOMETRY_BUFFER_ID::SPRITE });
+
+	return entity;
+}
+
+
 Entity createObject(RenderSystem *renderer, vec2 pos)
 {
 	auto entity = Entity();
@@ -541,6 +569,30 @@ Entity createBackground4(RenderSystem* renderer, vec2 position)
 	registry.renderRequests.insert(
 		entity,
 		{ TEXTURE_ASSET_ID::BACKGROUND4,
+		 EFFECT_ASSET_ID::TEXTURED,
+		 GEOMETRY_BUFFER_ID::SPRITE });
+
+	return entity;
+}
+
+Entity createBackground5(RenderSystem* renderer, vec2 position)
+{
+	// Reserve an entity
+	auto entity = Entity();
+
+	// Store a reference to the potentially re-used mesh object
+	Mesh& mesh = renderer->getMesh(GEOMETRY_BUFFER_ID::SPRITE);
+	registry.meshPtrs.emplace(entity, &mesh);
+
+	// Initialize the position, scale, and physics components
+	auto& motion = registry.motions.emplace(entity);
+	motion.angle = 0.f;
+	motion.position = vec2({ window_height_px / 2, window_width_px / 2 });
+	motion.scale = vec2({ -window_width_px, window_height_px });
+
+	registry.renderRequests.insert(
+		entity,
+		{ TEXTURE_ASSET_ID::BACKGROUND5,
 		 EFFECT_ASSET_ID::TEXTURED,
 		 GEOMETRY_BUFFER_ID::SPRITE });
 
@@ -811,6 +863,38 @@ Entity createFireball(RenderSystem* renderer, vec2 position)
 	registry.renderRequests.insert(
 		entity,
 		{ TEXTURE_ASSET_ID::GOLD1,
+		 EFFECT_ASSET_ID::TEXTURED,
+		 GEOMETRY_BUFFER_ID::SPRITE });
+
+	return entity;
+}
+
+Entity createSpikeball(RenderSystem* renderer, vec2 position)
+{
+	// Reserve en entity
+	auto entity = Entity();
+
+	// Store a reference to the potentially re-used mesh object
+	Mesh& mesh = renderer->getMesh(GEOMETRY_BUFFER_ID::SPRITE);
+	registry.meshPtrs.emplace(entity, &mesh);
+
+	// Initialize the position, scale, and physics components
+	auto& motion = registry.motions.emplace(entity);
+	motion.angle = 0.f;
+	motion.velocity = { 0, 0 };
+	motion.position = position;
+
+	// Setting initial values, scale is negative to make it face the opposite way
+	motion.scale = vec2({ 48, 48 });
+
+	// Create an (empty) Bug component to be able to refer to all bug
+	//registry.eatables.emplace(entity);
+	//registry.fireballs.emplace(entity);
+	registry.spikeballs.emplace(entity);
+	registry.deadlys.emplace(entity);
+	registry.renderRequests.insert(
+		entity,
+		{ TEXTURE_ASSET_ID::SPIKEBALL,
 		 EFFECT_ASSET_ID::TEXTURED,
 		 GEOMETRY_BUFFER_ID::SPRITE });
 

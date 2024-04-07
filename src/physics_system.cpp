@@ -322,7 +322,40 @@ bool collides(const Motion& motion1, const Motion& motion2, float step_secs, DIR
 
 
 }
-
+// Helper for changing spikeball directions
+//dir :: next collision direction (not movement direction, eg: collision bot will be moving left or right)
+//currentDir :: current collision direction
+//motion and spikeball components
+//pos :: modifier for convex vs concave turns concave uses 1, convex uses -1
+void setNewSpikeMotion(uint dir, uint currentDir, Motion& ballmotion, Spikeball& spikeBall, int pos = 1) {
+	//directions left right up down 0, 1, 2, 3
+	std::cout << "dire:: " << dir << "curr Dir::" << currentDir << std::endl;
+	if (dir == 2 || dir == 3) {
+		ballmotion.velocity.y = 0;
+		if (currentDir == 0 || currentDir == -1) {
+			ballmotion.velocity.x = pos * 60 ;
+		}
+		else if (currentDir == 1)
+		{
+			ballmotion.velocity.x = pos * -60;
+		}
+		spikeBall.currDir = (dir == 2) ? 2 : 3;
+		
+	}
+	//left or right
+	 else if (dir == 0 || dir == 1) {
+		ballmotion.velocity.x = 0;
+		if (currentDir == 2) {
+			ballmotion.velocity.y = pos * 60;
+		}
+		else if (currentDir == 3)
+		{
+			ballmotion.velocity.y = pos * -60;
+		}
+		spikeBall.currDir = (dir == 0) ? 0 : 1;
+	}
+	
+}
 
 void PhysicsSystem::step(float elapsed_ms)
 {
@@ -373,22 +406,23 @@ void PhysicsSystem::step(float elapsed_ms)
 	for (uint i = 0; i < gravity_container.size(); i++)
 	{
 		Entity entity = gravity_container.entities[i];
-		if (!registry.players.has(entity)) {
-			if (registry.motions.has(entity)) {
-				Motion& motion = registry.motions.get(entity);
-				motion.velocity[1] += gravity;
-				if(motion.velocity.y <= 9999){
+		if (!registry.spikeballs.has(entity)) {
+			if (!registry.players.has(entity)) {
+				if (registry.motions.has(entity)) {
+					Motion& motion = registry.motions.get(entity);
+					motion.velocity[1] += gravity;
+					if (motion.velocity.y <= 9999) {
+						motion.velocity[1] += gravity;
+					}
+				}
+			}
+			else {
+				if (registry.players.get(entity).standing == false) {
+					Motion& motion = registry.motions.get(entity);
 					motion.velocity[1] += gravity;
 				}
 			}
 		}
-		else {
-			if (registry.players.get(entity).standing == false) {
-				Motion& motion = registry.motions.get(entity);
-				motion.velocity[1] += gravity;
-			}
-		}
-
 	}
 
 	
@@ -473,6 +507,121 @@ void PhysicsSystem::step(float elapsed_ms)
 		}
 
 	}
+	// ------------------------------ Spike ball pathing -------------------------------------
+	auto& sball = registry.spikeballs;
+	for (uint i = 0; i < sball.size(); i++) {
+		Entity ball = sball.entities[i];
+		auto& ballmotion = registry.motions.get(ball);
+		double ballX = ballmotion.position.x;
+		double ballY = ballmotion.position.y;
+		//ballmotion.velocity.y = 100;
+		auto & plats = registry.platforms;
+		bool collided = false;
+		bool topL = false;
+		bool topR = false;
+		bool botL = false;
+		bool botR = false;
+		int previousTurn;
+		for (uint j = 0; j < plats.size(); j++) {
+			Entity plat = plats.entities[j];
+			
+			Motion pmotion = { registry.platforms.get(plat).position, 0, {0,0}, registry.platforms.get(plat).scale };
+			double platX = pmotion.position.x;
+			double platY = pmotion.position.y;
+			
+			if (abs(platX - ballX) < (ballmotion.scale.x/2 + pmotion.scale.x/2 + 4)  && abs(platY - ballY) < (ballmotion.scale.y / 2 + pmotion.scale.y / 2 + 4))
+			{
+				Motion topleft = { ballmotion.position, 0, {-106,-106}, ballmotion.scale };
+				Motion topright = { ballmotion.position, 0, {106,-106}, ballmotion.scale };
+				Motion botleft = { ballmotion.position, 0, {-106,106}, ballmotion.scale };
+				Motion botright = { ballmotion.position, 0, {106,106}, ballmotion.scale };
+				topL = (collides(topleft, pmotion, step_seconds) || topL == true) ? true: false ;
+				topR = (collides(topright, pmotion, step_seconds) || topR == true) ? true : false;
+				botL = (collides(botleft, pmotion, step_seconds) || botL == true) ? true : false;
+				botR = (collides(botright, pmotion, step_seconds) || botR == true) ? true : false;
+				
+				//directions:: left right up down 0, 1, 2, 3
+				if (collides(ballmotion, pmotion, step_seconds, DIRECTION::TOP) &&  sball.components[i].currDir != 2 && sball.components[i].currDir != 3) {
+					setNewSpikeMotion(2, sball.components[i].currDir, ballmotion, sball.components[i]);
+					ballmotion.position.y = pmotion.position.y + abs(pmotion.scale.y) / 2 + abs(ballmotion.scale.y) / 2 + 1;
+					//ballmotion.position.x = pmotion.position.x + abs(pmotion.scale.x) / 2 + abs(ballmotion.scale.y) / 2 ;
+
+				}
+				else if (collides(ballmotion, pmotion, step_seconds, DIRECTION::BOT) && sball.components[i].currDir != 3 && sball.components[i].currDir != 2) {
+					setNewSpikeMotion(3, sball.components[i].currDir, ballmotion, sball.components[i]);
+					ballmotion.position.y = pmotion.position.y - abs(pmotion.scale.y) / 2 - abs(ballmotion.scale.y) / 2 -1;
+				}
+				else if (collides(ballmotion, pmotion, step_seconds, DIRECTION::LEFT) && sball.components[i].currDir != 0 && sball.components[i].currDir != 1) {
+					setNewSpikeMotion(0, sball.components[i].currDir, ballmotion, sball.components[i]);
+					ballmotion.position.x = pmotion.position.x + abs(pmotion.scale.x) / 2 + abs(ballmotion.scale.x) / 2 + 1;
+
+				}
+				else if (collides(ballmotion, pmotion, step_seconds, DIRECTION::RIGHT) && sball.components[i].currDir != 1 && sball.components[i].currDir != 0) {
+					setNewSpikeMotion(1, sball.components[i].currDir, ballmotion, sball.components[i]);
+					ballmotion.position.x = pmotion.position.x - abs(pmotion.scale.x) / 2 - abs(ballmotion.scale.x) / 2 - 1;
+				}
+				if (sball.components[i].currDir == -1) {
+					ballmotion.velocity.y = 100;
+				}
+			
+			}
+			
+		}
+	
+		if (((topL + botL + topR + botR) == 1) && sball.components[i].currDir != -1)
+		{//directions:: left right up down 0, 1, 2, 3
+			
+			//detect block in only topleft case
+			if (topL && sball.components[i].currDir == 0) {
+				ballmotion.position.x = ballmotion.position.x - abs(ballmotion.scale.x) / 2 - 6;
+				ballmotion.position.y = ballmotion.position.y + abs(ballmotion.scale.y) / 2 + 1;
+				setNewSpikeMotion(2, sball.components[i].currDir, ballmotion, sball.components[i], -1);
+			}
+			else if (topL && sball.components[i].currDir == 2) {
+				ballmotion.position.x = ballmotion.position.x + abs(ballmotion.scale.x) / 2 + 1;
+				ballmotion.position.y = ballmotion.position.y - abs(ballmotion.scale.y) / 2 - 6;
+				setNewSpikeMotion(0, sball.components[i].currDir, ballmotion, sball.components[i], -1);
+			}
+			//top right case
+			if (topR && sball.components[i].currDir == 1 ) {
+				ballmotion.position.x = ballmotion.position.x + abs(ballmotion.scale.x) / 2 + 6;
+				ballmotion.position.y = ballmotion.position.y + abs(ballmotion.scale.y) / 2 + 1;
+				setNewSpikeMotion(2, sball.components[i].currDir, ballmotion, sball.components[i],  -1);
+			}
+			else if (topR && sball.components[i].currDir == 2) {
+				ballmotion.position.x = ballmotion.position.x - abs(ballmotion.scale.x) / 2 - 1;
+				ballmotion.position.y = ballmotion.position.y - abs(ballmotion.scale.y) / 2 - 6;
+				setNewSpikeMotion(1, sball.components[i].currDir, ballmotion, sball.components[i], -1);
+			}
+			//bot left case
+			if (botL && sball.components[i].currDir == 0) {
+				ballmotion.position.x = ballmotion.position.x - abs(ballmotion.scale.x) / 2 - 6;
+				ballmotion.position.y = ballmotion.position.y - abs(ballmotion.scale.y) / 2 - 1;
+				setNewSpikeMotion(3, sball.components[i].currDir, ballmotion, sball.components[i], -1);
+			}
+			else if (botL && sball.components[i].currDir == 3) {
+				ballmotion.position.x = ballmotion.position.x + abs(ballmotion.scale.x) / 2 + 1;
+				ballmotion.position.y = ballmotion.position.y + abs(ballmotion.scale.y) / 2 + 6;
+				setNewSpikeMotion(0, sball.components[i].currDir, ballmotion, sball.components[i], -1);
+			}
+			//bot right case
+			if (botR && sball.components[i].currDir == 1) {
+				ballmotion.position.x = ballmotion.position.x + abs(ballmotion.scale.x) / 2 + 6;
+				ballmotion.position.y = ballmotion.position.y - abs(ballmotion.scale.y) / 2 - 1;
+				setNewSpikeMotion(3, sball.components[i].currDir, ballmotion, sball.components[i], -1);
+			}
+			else if (botR && sball.components[i].currDir == 3) {
+				ballmotion.position.x = ballmotion.position.x - abs(ballmotion.scale.x) / 2 - 1;
+				ballmotion.position.y = ballmotion.position.y + abs(ballmotion.scale.y) / 2 + 6;
+				setNewSpikeMotion(1, sball.components[i].currDir, ballmotion, sball.components[i], -1);
+			}
+			
+		}
+		
+
+	}
+	
+
 
 	// ---------------------------------- Collision checking ----------------------------------
 	// Check for collisions between all moving entities and platforms
@@ -487,7 +636,7 @@ void PhysicsSystem::step(float elapsed_ms)
 			{
 				Platform& plat = plat_container.components[p];
 				Motion motion_p = { plat.position, 0, {0,0}, plat.scale };
-				if (abs(motion_p.position.x - motion.position.x) < 200 && abs(motion_p.position.y - motion.position.y) < 200 && !registry.golds.has(registry.motions.entities[i]) && !registry.fireballs.has(registry.motions.entities[i])) {
+				if (abs(motion_p.position.x - motion.position.x) < 200 && abs(motion_p.position.y - motion.position.y) < 200 && !registry.golds.has(registry.motions.entities[i]) && !registry.fireballs.has(registry.motions.entities[i]) && !registry.spikeballs.has(registry.motions.entities[i])) {
 					// make collision checking more efficient, only check close platforms
 					// mesh collision				
 					if (registry.players.has(entity)) {
@@ -514,22 +663,43 @@ void PhysicsSystem::step(float elapsed_ms)
 					} // non mesh collisions
 					else
 					{
+					
 						if (collides(motion, motion_p, step_seconds, DIRECTION::TOP)) {
+							
 							motion.velocity.y = 0;
 							motion.position.y = motion_p.position.y + abs(motion_p.scale.y) / 2 + abs(motion.scale.y) / 2;
 						}
 						if (collides(motion, motion_p, step_seconds, DIRECTION::BOT)) {
+							
 							motion.velocity.y = 0;
 							motion.position.y = motion_p.position.y - abs(motion_p.scale.y) / 2 - abs(motion.scale.y) / 2;
 						}
 						if (collides(motion, motion_p, step_seconds, DIRECTION::LEFT)) {
-
-							motion.velocity.x = 0;
-							motion.position.x = motion_p.position.x + abs(motion_p.scale.x) / 2 + abs(motion.scale.x) / 2;
+							
+							if (registry.zombies.has(entity)) {
+								motion.position.x = motion_p.position.x + abs(motion_p.scale.x) / 2 + abs(motion.scale.x) / 2;
+								motion.velocity.x *= -1;
+							
+							}
+							else 
+							{
+								motion.velocity.x = 0;
+								motion.position.x = motion_p.position.x + abs(motion_p.scale.x) / 2 + abs(motion.scale.x) / 2;
+							}
+							
 						}
 						if (collides(motion, motion_p, step_seconds, DIRECTION::RIGHT)) {
-							motion.velocity.x = 0;
-							motion.position.x = motion_p.position.x - abs(motion_p.scale.x) / 2 - abs(motion.scale.x) / 2;
+							
+							if (registry.zombies.has(entity)) {
+								motion.position.x = motion_p.position.x + abs(motion_p.scale.x) / 2 + abs(motion.scale.x) / 2;
+								motion.velocity.x *= -1;
+							
+							}
+							else
+							{
+								motion.velocity.x = 0;
+								motion.position.x = motion_p.position.x - abs(motion_p.scale.x) / 2 - abs(motion.scale.x) / 2;
+							}
 						}
 					}
 				}
@@ -564,6 +734,7 @@ void PhysicsSystem::step(float elapsed_ms)
 						if (collides(motion, motion_j, step_seconds))
 						{
 							Entity entity_j = motion_container.entities[j];
+							
 							// Create a collisions event
 							// We are abusing the ECS system a bit in that we potentially insert muliple collisions for the same entity
 							if ((!registry.collisions.has(entity) || !registry.collisions.has(entity_j))) {
@@ -595,9 +766,15 @@ void PhysicsSystem::step(float elapsed_ms)
 		}
 		Motion& motion = motion_registry.components[i];
 		if ((motion.position.x - abs(motion.scale.x) / 2) < 0) {
+			if (registry.spikeballs.has(entity)) {
+				motion.velocity.x = motion.velocity.x * -1;
+				motion.position.x = abs(motion.scale.x) / 2;
+				continue;
+			} 
+			 
 			motion.velocity.x = 0;
 			motion.position.x = abs(motion.scale.x) / 2;
-
+			
 			if (registry.shootBullets.has(entity) && !registry.eatables.has(entity)) {
 				registry.meshPtrs.remove(entity);
 				registry.hearts.remove(entity);
@@ -605,6 +782,12 @@ void PhysicsSystem::step(float elapsed_ms)
 			}
 		}
 		if ((motion.position.x + abs(motion.scale.x) / 2) > window_width_px) {
+			if (registry.spikeballs.has(entity)) {
+				motion.velocity.x = motion.velocity.x * -1;
+				motion.position.x = window_width_px - abs(motion.scale.x) / 2;
+				continue;
+			}
+
 			motion.velocity.x = 0;
 			motion.position.x = window_width_px - abs(motion.scale.x) / 2;
 
@@ -615,11 +798,16 @@ void PhysicsSystem::step(float elapsed_ms)
 			}
 		}
 		// don't really need to restrict top
-		//if ((motion.position.y - abs(motion.scale.y) / 2) < 0) {
-		//	motion.velocity.y = 0;
-		//	motion.position.y = abs(motion.scale.y) / 2;
-		//}
+		if ((motion.position.y - abs(motion.scale.y) / 2) < 0 && registry.spikeballs.has(entity)) {
+			motion.velocity.y *= -1;
+			motion.position.y = abs(motion.scale.y) / 2;
+		}
 		if ((motion.position.y + abs(motion.scale.y) / 2) > window_height_px) {
+			if (registry.spikeballs.has(entity)) {
+				motion.velocity.y = motion.velocity.y * -1;
+				motion.position.y = window_height_px - abs(motion.scale.y) / 2;
+				continue;
+			}
 			motion.velocity.y = 0;
 			motion.position.y = window_height_px - abs(motion.scale.y) / 2;
 		}

@@ -594,7 +594,7 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 		registry.remove_all_components_of(entity);
 	}
 
-	if (currentLevel < 5)
+	if (currentLevel < 6)
 	{
 		for (int i = 0; i < hp_count; i++)
 		{
@@ -719,6 +719,10 @@ bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map, bool
 			{
 				createBackground4(renderer, {x, y});
 			}
+			if (tok == '-') 
+			{
+				createBackground5(renderer, { x, y });
+			}
 			if (tok == 'W')
 			{
 				createBgEnd(renderer, {x, y});
@@ -737,7 +741,7 @@ bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map, bool
 			float y = i * 10;
 			char tok = map[i][j];
 
-			if (tok == ' ' || tok == 'O' || tok == 'Q' || tok == 'L' || tok == 'M')
+			if (tok == ' ' || tok == 'O' || tok == 'Q' || tok == 'L' || tok == 'M' || tok == '-' || tok == 'W')
 			{
 				continue;
 			}
@@ -758,6 +762,19 @@ bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map, bool
 				}
 				latest = newV;
 				createPlatform(renderer, {x, y});
+			}
+			else if (tok == 'V')
+			{
+				Vertex* newV = new Vertex(x, y - PLATFORM_HEIGHT / 2 - (ZOMBIE_BB_HEIGHT * 0.6) / 2);
+
+				graph.addVertex(newV);
+				if (findDistanceBetween({ newV->x, newV->y }, { latest->x, latest->y }) <= 10)
+				{
+					graph.addEdge(newV, latest, ACTION::WALK);
+					graph.addEdge(latest, newV, ACTION::WALK);
+				}
+				latest = newV;
+				createPlatformVert(renderer, { x, y });
 			}
 			else if (tok == 'Z' && !plat_only)
 			{
@@ -808,6 +825,10 @@ bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map, bool
 			else if (tok == '|' && !plat_only)
 			{
 				createFireball(renderer, {x, y});
+			}
+			else if (tok == '0' && !plat_only)
+			{
+				createSpikeball(renderer, { x, y });
 			}
 			else
 			{
@@ -867,7 +888,7 @@ void WorldSystem::restart_game()
 	// Debugging for memory/component leaks
 	registry.list_all_components();
 
-	std::vector<Mix_Music *> musicTracks = {bg1_music, bg2_music, bg3_music, bg4_music, bgEnd_music};
+	std::vector<Mix_Music *> musicTracks = {bg1_music, bg2_music, bg3_music, bg4_music, bg4_music, bgEnd_music};
 	Mix_Music *currentMusicTrack = getMusicTrack(currentLevel, musicTracks);
 
 	if (currentMusicTrack != nullptr)
@@ -881,7 +902,7 @@ void WorldSystem::restart_game()
 
 
 	// load credits
-	if (currentLevel == 6) {
+	if (currentLevel == 7) {
 		std::vector<std::string> credits = { "Thank you for playing", "Escape From Celestria", "a game produced by", "Peter Yang", "Qianzhi Zhang", "Sherry Wang", "Yi Ran Liao", "Yixuan Li" };
 		vec2 start_loc = { 180, 0 };
 		float duration = 10;
@@ -906,7 +927,6 @@ void WorldSystem::restart_game()
 	createEntityBaseOnMap(map);
 
 	// createHelpSign(renderer, vec2(window_width_px - 70, window_height_px - 700));
-
 	for (int i = 0; i < hp_count; i++)
 	{
 		createHeart(renderer, vec2(30 + i * create_heart_distance, 20));
@@ -914,7 +934,7 @@ void WorldSystem::restart_game()
 
 	dialog->initializeDialog(dialog_path("level" + std::to_string(currentLevel) + ".txt"));
 	// the player automaticly has key for level 5
-	have_key = currentLevel == 5;
+	have_key = (currentLevel == 5 ); //|| currentLevel == 6
 }
 
 // Compute collisions between entities
@@ -1407,7 +1427,7 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 	{
 		current_speed += 0.1f;
 		printf("Current speed = %f\n", current_speed);
-		if (currentLevel < 6)
+		if (currentLevel < 7)
 		{
 			currentLevel++;
 			restart_game();
