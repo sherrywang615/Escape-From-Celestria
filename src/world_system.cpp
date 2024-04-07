@@ -758,7 +758,7 @@ bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map, bool
 	{
 		TEXTURE_ASSET_ID::BACKGROUND_TUTORIAL, TEXTURE_ASSET_ID::BACKGROUND_TUTORIAL, TEXTURE_ASSET_ID::BACKGROUND,
 		TEXTURE_ASSET_ID::BACKGROUND2, TEXTURE_ASSET_ID::BACKGROUND3, TEXTURE_ASSET_ID::BACKGROUND4,
-		TEXTURE_ASSET_ID::BACKGROUND6, TEXTURE_ASSET_ID::BgEnd
+		TEXTURE_ASSET_ID::BACKGROUND6, TEXTURE_ASSET_ID::BACKGROUND7, TEXTURE_ASSET_ID::BgEnd
 	};
 
 	// level 0 and level max doesn't have a background
@@ -931,7 +931,7 @@ void WorldSystem::restart_game()
 	// Debugging for memory/component leaks
 	registry.list_all_components();
 
-	std::vector<Mix_Music *> musicTracks = {bg1_music, bg2_music, bg3_music, bg4_music, bg4_music, bgEnd_music};
+	std::vector<Mix_Music *> musicTracks = {bg1_music, bg2_music, bg3_music, bg4_music, bg4_music, bg4_music, bg4_music, bgEnd_music};
 	Mix_Music *currentMusicTrack = getMusicTrack(currentLevel, musicTracks);
 
 	if (currentMusicTrack != nullptr)

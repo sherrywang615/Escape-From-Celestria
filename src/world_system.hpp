@@ -27,7 +27,7 @@ public:
 	float fpsTimer;
 
 	int currentLevel = 0;
-	int maxLevel = 8;
+	int maxLevel = 9;
 	bool showStartScreen = false;
 
 

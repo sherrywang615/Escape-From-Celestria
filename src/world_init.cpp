@@ -856,7 +856,7 @@ Entity createTitle(RenderSystem* renderer, vec2 position)
 
 	return entity;
 }
-}
+
 
 Entity createSpikeball(RenderSystem* renderer, vec2 position)
 {

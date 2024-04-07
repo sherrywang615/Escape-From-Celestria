@@ -329,7 +329,7 @@ bool collides(const Motion& motion1, const Motion& motion2, float step_secs, DIR
 //pos :: modifier for convex vs concave turns concave uses 1, convex uses -1
 void setNewSpikeMotion(uint dir, uint currentDir, Motion& ballmotion, Spikeball& spikeBall, int pos = 1) {
 	//directions left right up down 0, 1, 2, 3
-	std::cout << "dire:: " << dir << "curr Dir::" << currentDir << std::endl;
+	
 	if (dir == 2 || dir == 3) {
 		ballmotion.velocity.y = 0;
 		if (currentDir == 0 || currentDir == -1) {
