@@ -594,6 +594,26 @@ Entity createBackgroundStart(RenderSystem* renderer, vec2 position)
 	return entity;
 }
 
+Entity createBackgroundImage(TEXTURE_ASSET_ID texture)
+{
+	// Reserve an entity
+	auto entity = Entity();
+
+	// Initialize the position, scale, and physics components
+	auto& motion = registry.motions.emplace(entity);
+	motion.angle = 0.f;
+	motion.position = vec2({ window_height_px / 2, window_width_px / 2 });
+	motion.scale = vec2({ -window_width_px, window_height_px });
+
+	registry.renderRequests.insert(
+		entity,
+		{ texture,
+		 EFFECT_ASSET_ID::TEXTURED,
+		 GEOMETRY_BUFFER_ID::SPRITE });
+
+	return entity;
+}
+
 Entity createBgEnd(RenderSystem* renderer, vec2 position)
 {
 	// Reserve an entity

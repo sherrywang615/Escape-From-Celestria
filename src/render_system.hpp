@@ -55,6 +55,7 @@ class RenderSystem {
 		textures_path("background2.png"),
 		textures_path("background3.png"),
 		textures_path("background4.png"),
+		textures_path("background6.png"),
 		textures_path("bgEnd.png"),
 		textures_path("exit.png"),
 

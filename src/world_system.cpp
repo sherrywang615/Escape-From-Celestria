@@ -696,7 +696,8 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 		registry.remove_all_components_of(entity);
 	}
 
-	if (currentLevel != 0 && currentLevel != 5)
+	// The first and last levels doesn't need heart
+	if (currentLevel != 0 && currentLevel != maxLevel)
 	{
 		for (int i = 0; i < hp_count; i++)
 		{
@@ -707,14 +708,11 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 	// recreate Bullets base on bullet_count
 	removeSmallBullets(renderer);
 
-	if (currentLevel != 5)
+	if (currentLevel != maxLevel)
 	{
 		for (int i = 0; i < bullets_count; i++)
 		{
-			// if (i % 10 == 0)
-			// {
 			createBulletSmall(renderer, vec2(30 + i * create_bullet_distance, 20 + HEART_BB_HEIGHT));
-			// }
 		}
 	}
 	vec2 p0F = {100, 150}; // start point
@@ -798,38 +796,17 @@ bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map, bool
 	graph.clear();
 	float josh_x = 0, josh_y = 0;
 	std::vector<std::pair<float, float>> zombiePositions;
-	// Create background entities first
-	for (int i = 0; i < map.size(); i++)
+
+	std::vector<TEXTURE_ASSET_ID> backgrounds =
 	{
-		for (int j = 0; j < map[i].size(); j++)
-		{
-			float x = j * 10;
-			float y = i * 10;
-			char tok = map[i][j];
-			if(tok == 'T'){
-				createBackgroundTutorial(renderer, {x, y});
-			}
-			if (tok == 'O')
-			{
-				createBackground(renderer, {x, y});
-			}
-			if (tok == 'Q')
-			{
-				createBackground2(renderer, {x, y});
-			}
-			if (tok == 'L')
-			{
-				createBackground3(renderer, {x, y});
-			}
-			if (tok == 'M')
-			{
-				createBackground4(renderer, {x, y});
-			}
-			if (tok == 'W')
-			{
-				createBgEnd(renderer, {x, y});
-			}
-		}
+		TEXTURE_ASSET_ID::BACKGROUND_TUTORIAL, TEXTURE_ASSET_ID::BACKGROUND_TUTORIAL, TEXTURE_ASSET_ID::BACKGROUND, TEXTURE_ASSET_ID::BACKGROUND2,
+		TEXTURE_ASSET_ID::BACKGROUND3, TEXTURE_ASSET_ID::BACKGROUND4, TEXTURE_ASSET_ID::BACKGROUND5,
+		TEXTURE_ASSET_ID::BACKGROUND6
+	};
+
+	// level 0 and level max doesn't have a background
+	if (currentLevel != maxLevel || currentLevel != 0) {
+		createBackgroundImage(backgrounds[currentLevel]);
 	}
 
 	// Create all other entities except for background
@@ -1657,7 +1634,7 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 	{
 		current_speed += 0.1f;
 		printf("Current speed = %f\n", current_speed);
-		if (currentLevel < 6)
+		if (currentLevel < maxLevel)
 		{
 			currentLevel++;
 			restart_game();
