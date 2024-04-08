@@ -190,6 +190,11 @@ struct Cabinet
 {
 };
 
+struct TextBlock
+{
+	std::string text = "";
+};
+
 struct SmallBullet
 {
 };

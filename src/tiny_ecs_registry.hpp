@@ -50,6 +50,7 @@ public:
 	ComponentContainer<InvincibleTimer> invincibleTimers;
 	ComponentContainer<SmallKey> smallKeys;
 	ComponentContainer<LinearMovement> linearMovements;
+	ComponentContainer<TextBlock> textBlocks;
 
 
 	// constructor that adds all containers for looping over them
@@ -95,6 +96,7 @@ public:
 		registry_list.push_back(&invincibleTimers);
 		registry_list.push_back(&smallKeys);
 		registry_list.push_back(&linearMovements);
+		registry_list.push_back(&textBlocks);
 	}
 
 	void clear_all_components()
