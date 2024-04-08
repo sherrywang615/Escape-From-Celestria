@@ -63,7 +63,9 @@ private:
 	bool is_speech_point_index_assigned = false;
 	std::chrono::system_clock::time_point tutorial_start;
 	Speech tutorial;
-	
+	Entity temp_text;
+	vec2 tutorial_pos=vec2(26, window_height_px/2-100);
+
 	
 	//start time
 	std::chrono::system_clock::time_point start;
