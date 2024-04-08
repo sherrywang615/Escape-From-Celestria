@@ -807,15 +807,15 @@ bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map, bool
 			else if (tok == 'P')
 			{
 				Vertex *newV = new Vertex(x, y - PLATFORM_HEIGHT / 2 - (ZOMBIE_BB_HEIGHT * 0.6) / 2);
-
+				
 				graph.addVertex(newV);
-				if (findDistanceBetween({newV->x, newV->y}, {latest->x, latest->y}) <= 10)
+				if (findDistanceBetween({ newV->x, newV->y }, { latest->x, latest->y }) <= 10)
 				{
 					graph.addEdge(newV, latest, ACTION::WALK);
 					graph.addEdge(latest, newV, ACTION::WALK);
 				}
 				latest = newV;
-				createPlatform(renderer, {x, y});
+				createPlatform(renderer, { x, y });
 			}
 			else if (tok == 'V')
 			{
@@ -1055,7 +1055,9 @@ void WorldSystem::handle_collisions()
 			{
 				Motion &motion_p = registry.motions.get(entity);
 				Motion motion_z = registry.motions.get(entity_other);
-				motion_p.position.x -= (motion_z.position.x - motion_p.position.x) / abs(motion_z.position.x - motion_p.position.x) * KNOCKBACK_DIST;
+				//TODO make knockback not a positional update that can trap you in walls
+				// commenting out for stable version
+				//motion_p.position.x -= (motion_z.position.x - motion_p.position.x) / abs(motion_z.position.x - motion_p.position.x) * KNOCKBACK_DIST;
 
 				if (hp_count == 1 || registry.fireballs.has(entity_other))
 				{

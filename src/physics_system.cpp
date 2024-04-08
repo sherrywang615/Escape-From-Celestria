@@ -316,7 +316,9 @@ bool collides(const Motion& motion1, const Motion& motion2, float step_secs, DIR
 		return	check_point_within_boundary(left, x_boundary, y_boundary) ||
 				check_point_within_boundary(top, x_boundary, y_boundary) ||
 				check_point_within_boundary(right, x_boundary, y_boundary) ||
-				check_point_within_boundary(bot, x_boundary, y_boundary);
+				check_point_within_boundary(bot, x_boundary, y_boundary) ||
+				check_point_within_boundary(x_boundary, left, right) ||
+				check_point_within_boundary(y_boundary, top, bot);
 	}
 
 
@@ -334,10 +336,12 @@ void setNewSpikeMotion(uint dir, uint currentDir, Motion& ballmotion, Spikeball&
 		ballmotion.velocity.y = 0;
 		if (currentDir == 0 || currentDir == -1) {
 			ballmotion.velocity.x = pos * 60 ;
+			//spikeBall.moveDir = (pos > 0) ? 1 : 0;
 		}
 		else if (currentDir == 1)
 		{
 			ballmotion.velocity.x = pos * -60;
+			//spikeBall.moveDir = (pos > 0) ? 0 : 1;
 		}
 		spikeBall.currDir = (dir == 2) ? 2 : 3;
 		
@@ -347,10 +351,12 @@ void setNewSpikeMotion(uint dir, uint currentDir, Motion& ballmotion, Spikeball&
 		ballmotion.velocity.x = 0;
 		if (currentDir == 2) {
 			ballmotion.velocity.y = pos * 60;
+			//spikeBall.moveDir = (pos > 0) ? 3 : 2;
 		}
 		else if (currentDir == 3)
 		{
 			ballmotion.velocity.y = pos * -60;
+			//spikeBall.moveDir = (pos > 0) ? 2 : 3;
 		}
 		spikeBall.currDir = (dir == 0) ? 0 : 1;
 	}
@@ -506,15 +512,104 @@ void PhysicsSystem::step(float elapsed_ms)
 			}
 		}
 
+		// debugging box for spikeballs
+		auto& spikes = registry.spikeballs;
+		for (int i = 0; i < spikes.size(); i++)
+		{
+			if (registry.motions.has(spikes.entities[i])) {
+				Motion& motion = registry.motions.get(spikes.entities[i]);
+				float xScale1 = abs(3*motion.scale.x/4);
+				float yScale1 = abs(3*motion.scale.y/4);
+
+				vec2 topmid1 = { motion.position.x, motion.position.y - yScale1 / 2 };
+				vec2 leftmid1 = { motion.position.x - xScale1 / 2 , motion.position.y };
+				vec2 rightmid1 = { motion.position.x + xScale1 / 2 ,motion.position.y };
+				vec2 botmid1 = { motion.position.x, motion.position.y + yScale1 / 2 };
+
+				// auto lineTop = createLine(topmid1, { xScale1, 2 });
+				 //auto lineLeft = createLine(leftmid1, { 2, yScale1 });
+				 //auto lineRight = createLine(rightmid1, { 2,yScale1 });
+				 //auto lineBottom = createLine(botmid1, { xScale1, 2 });
+
+				 Motion topleft = { {motion.position.x - 3*motion.scale.x / 8, motion.position.y - 3*motion.scale.y / 8}, 0,  motion.velocity, motion.scale };
+				 Motion topright = { {motion.position.x + 3*motion.scale.x / 8, motion.position.y - 3*motion.scale.y / 8}, 0, motion.velocity, motion.scale };
+				 Motion botleft = { {motion.position.x - 3*motion.scale.x / 8, motion.position.y + 3*motion.scale.y / 8}, 0, motion.velocity, motion.scale };
+				 Motion botright = { {motion.position.x +3* motion.scale.x / 8, motion.position.y + 3*motion.scale.y / 8}, 0, motion.velocity, motion.scale };
+
+				 vec2 topmid2 = { topleft.position.x, topleft.position.y - yScale1 / 2 };
+				 vec2 leftmid2 = { topleft.position.x - xScale1 / 2 , topleft.position.y };
+				 vec2 rightmid2 = { topleft.position.x + xScale1 / 2 ,topleft.position.y };
+				 vec2 botmid2 = { topleft.position.x, topleft.position.y + yScale1 / 2 };
+
+				 auto lineTop1 = createLine(topmid2, { xScale1, 2 });
+				 auto lineLeft1 = createLine(leftmid2, { 2,  yScale1 });
+				 auto lineRight1 = createLine(rightmid2, { 2, yScale1 });
+				 auto lineBottom12 = createLine(botmid2, {  xScale1, 2 });
+
+				 vec2 topmid3 = { topright.position.x, topright.position.y - yScale1 / 2 };
+				 vec2 leftmid3 = { topright.position.x - xScale1 / 2 , topright.position.y };
+				 vec2 rightmid3 = { topright.position.x + xScale1 / 2 ,topright.position.y };
+				 vec2 botmid3 = { topright.position.x, topright.position.y + yScale1 / 2 };
+
+				 auto lineTop3 = createLine(topmid3, { xScale1, 2 });
+				 auto lineLeft3 = createLine(leftmid3, { 2, yScale1 });
+				 auto lineRight3 = createLine(rightmid3, { 2,yScale1 });
+				 auto lineBottom3 = createLine(botmid3, { xScale1, 2 });
+
+				 vec2 topmid4 = { botleft.position.x, botleft.position.y - yScale1 / 2 };
+				 vec2 leftmid4 = { botleft.position.x - xScale1 / 2 , botleft.position.y };
+				 vec2 rightmid4 = { botleft.position.x + xScale1 / 2 ,botleft.position.y };
+				 vec2 botmid4 = { botleft.position.x, botleft.position.y + yScale1 / 2 };
+
+				 auto lineTop4 = createLine(topmid4, { xScale1, 2 });
+				 auto lineLeft4 = createLine(leftmid4, { 2, yScale1 });
+				 auto lineRight4 = createLine(rightmid4, { 2,yScale1 });
+				 auto lineBottom4 = createLine(botmid4, { xScale1, 2 });
+
+				 vec2 topmid5 = { botright.position.x, botright.position.y - yScale1 / 2 };
+				 vec2 leftmid5 = { botright.position.x - xScale1 / 2 , botright.position.y };
+				 vec2 rightmid5 = { botright.position.x + xScale1 / 2 ,botright.position.y };
+				 vec2 botmid55= { botright.position.x, botright.position.y + yScale1 / 2 };
+
+				 auto lineTop5 = createLine(topmid5, { xScale1, 2 });
+				 auto lineLeft5 = createLine(leftmid5, { 2, yScale1 });
+				 auto lineRight5 = createLine(rightmid5, { 2,yScale1 });
+				 auto lineBottom5 = createLine(botmid55, { xScale1, 2 });
+
+			}
+		}
+
+		// debugging box for platforms
+		auto& pls = registry.platforms;
+		for (int i = 0; i < pls.size(); i++)
+		{
+			if (registry.motions.has(pls.entities[i])) {
+				Motion& motion = registry.motions.get(pls.entities[i]);
+				float xScale1 = abs(motion.scale.x);
+				float yScale1 = abs(motion.scale.y);
+
+				vec2 topmid1 = { motion.position.x, motion.position.y - yScale1 / 2 };
+				vec2 leftmid1 = { motion.position.x - xScale1 / 2 , motion.position.y };
+				vec2 rightmid1 = { motion.position.x + xScale1 / 2 ,motion.position.y };
+				vec2 botmid1 = { motion.position.x, motion.position.y + yScale1 / 2 };
+
+				 auto lineTop = createLine(topmid1, { xScale1, 2 });
+				 auto lineLeft = createLine(leftmid1, { 2, yScale1 });
+				 auto lineRight = createLine(rightmid1, { 2,yScale1 });
+				 auto lineBottom = createLine(botmid1, { xScale1, 2 });
+			}
+		}
+
 	}
+	
 	// ------------------------------ Spike ball pathing -------------------------------------
 	auto& sball = registry.spikeballs;
 	for (uint i = 0; i < sball.size(); i++) {
-		Entity ball = sball.entities[i];
+		Entity& ball = sball.entities[i];
 		auto& ballmotion = registry.motions.get(ball);
 		double ballX = ballmotion.position.x;
 		double ballY = ballmotion.position.y;
-		//ballmotion.velocity.y = 100;
+		
 		auto & plats = registry.platforms;
 		bool collided = false;
 		bool topL = false;
@@ -522,100 +617,151 @@ void PhysicsSystem::step(float elapsed_ms)
 		bool botL = false;
 		bool botR = false;
 		int previousTurn;
+		bool ctop = false;
+		bool cbot = false;
+		bool cleft = false;
+		bool cright = false;
+		Motion cornermot = { {-1234,-1} };
+
+		Motion platmot = {};
 		for (uint j = 0; j < plats.size(); j++) {
-			Entity plat = plats.entities[j];
+			Entity& plat = plats.entities[j];
 			
 			Motion pmotion = { registry.platforms.get(plat).position, 0, {0,0}, registry.platforms.get(plat).scale };
 			double platX = pmotion.position.x;
 			double platY = pmotion.position.y;
 			
-			if (abs(platX - ballX) < (ballmotion.scale.x/2 + pmotion.scale.x/2 + 4)  && abs(platY - ballY) < (ballmotion.scale.y / 2 + pmotion.scale.y / 2 + 4))
+			if (abs(platX - ballX) < 200  && abs(platY - ballY) < 200)
 			{
-				Motion topleft = { ballmotion.position, 0, {-106,-106}, ballmotion.scale };
-				Motion topright = { ballmotion.position, 0, {106,-106}, ballmotion.scale };
-				Motion botleft = { ballmotion.position, 0, {-106,106}, ballmotion.scale };
-				Motion botright = { ballmotion.position, 0, {106,106}, ballmotion.scale };
-				topL = (collides(topleft, pmotion, step_seconds) || topL == true) ? true: false ;
-				topR = (collides(topright, pmotion, step_seconds) || topR == true) ? true : false;
-				botL = (collides(botleft, pmotion, step_seconds) || botL == true) ? true : false;
-				botR = (collides(botright, pmotion, step_seconds) || botR == true) ? true : false;
 				
-				//directions:: left right up down 0, 1, 2, 3
-				if (collides(ballmotion, pmotion, step_seconds, DIRECTION::TOP) &&  sball.components[i].currDir != 2 && sball.components[i].currDir != 3) {
-					setNewSpikeMotion(2, sball.components[i].currDir, ballmotion, sball.components[i]);
-					ballmotion.position.y = pmotion.position.y + abs(pmotion.scale.y) / 2 + abs(ballmotion.scale.y) / 2 + 1;
-					//ballmotion.position.x = pmotion.position.x + abs(pmotion.scale.x) / 2 + abs(ballmotion.scale.y) / 2 ;
 
-				}
-				else if (collides(ballmotion, pmotion, step_seconds, DIRECTION::BOT) && sball.components[i].currDir != 3 && sball.components[i].currDir != 2) {
-					setNewSpikeMotion(3, sball.components[i].currDir, ballmotion, sball.components[i]);
-					ballmotion.position.y = pmotion.position.y - abs(pmotion.scale.y) / 2 - abs(ballmotion.scale.y) / 2 -1;
-				}
-				else if (collides(ballmotion, pmotion, step_seconds, DIRECTION::LEFT) && sball.components[i].currDir != 0 && sball.components[i].currDir != 1) {
-					setNewSpikeMotion(0, sball.components[i].currDir, ballmotion, sball.components[i]);
-					ballmotion.position.x = pmotion.position.x + abs(pmotion.scale.x) / 2 + abs(ballmotion.scale.x) / 2 + 1;
+				vec2 ppos = pmotion.position;
+				vec2 pscale = pmotion.scale;
+				float left_b2 = ppos.x - abs(pscale.x) / 2;
+				float right_b2 = ppos.x + abs(pscale.x) / 2;
+				float top_b2 = ppos.y - abs(pscale.y) / 2;
+				float bot_b2 = ppos.y + abs(pscale.y) / 2;
+				vec2 xBnd = { left_b2, right_b2 };
+				vec2 yBnd = { top_b2, bot_b2 };
 
+				topL = ((check_point_within_boundary({ ballmotion.position.x - 1, ballmotion.position.y - ballmotion.scale.y / 2 - 2 }, xBnd, yBnd) || check_point_within_boundary({ ballmotion.position.x - ballmotion.scale.x / 2 - 2, ballmotion.position.y - 1 }, xBnd, yBnd)) || topL == true) ? true : false;
+				topR = ((check_point_within_boundary({ ballmotion.position.x + 1, ballmotion.position.y - ballmotion.scale.y / 2 - 2 }, xBnd, yBnd) || check_point_within_boundary({ ballmotion.position.x + ballmotion.scale.x / 2 + 2, ballmotion.position.y - 1 }, xBnd, yBnd)) || topR == true) ? true : false;
+				botL = ((check_point_within_boundary({ ballmotion.position.x - 1, ballmotion.position.y + ballmotion.scale.y / 2 + 2 }, xBnd, yBnd) || check_point_within_boundary({ ballmotion.position.x - ballmotion.scale.x / 2 - 2, ballmotion.position.y + 1 }, xBnd, yBnd)) || botL == true) ? true : false;
+				botR = ((check_point_within_boundary({ ballmotion.position.x + 1, ballmotion.position.y + ballmotion.scale.y / 2 + 2 }, xBnd, yBnd) || check_point_within_boundary({ ballmotion.position.x + ballmotion.scale.x / 2 + 2, ballmotion.position.y + 1 }, xBnd, yBnd)) || botR == true) ? true : false;
+
+				if (topL + topR + botL + botR > 0 && cornermot.position.x == -1234) {
+					cornermot = pmotion;
 				}
-				else if (collides(ballmotion, pmotion, step_seconds, DIRECTION::RIGHT) && sball.components[i].currDir != 1 && sball.components[i].currDir != 0) {
-					setNewSpikeMotion(1, sball.components[i].currDir, ballmotion, sball.components[i]);
-					ballmotion.position.x = pmotion.position.x - abs(pmotion.scale.x) / 2 - abs(ballmotion.scale.x) / 2 - 1;
+				
+
+				
+				
+				if (collides(ballmotion, pmotion, step_seconds, DIRECTION::TOP)) {
+					ctop = true;
+					platmot = pmotion;
 				}
-				if (sball.components[i].currDir == -1) {
-					ballmotion.velocity.y = 100;
+				if (collides(ballmotion, pmotion, step_seconds, DIRECTION::BOT)) {
+					cbot = true;
+					platmot = pmotion;
 				}
-			
+				if (collides(ballmotion, pmotion, step_seconds, DIRECTION::LEFT)) {
+					cleft = true;
+					platmot = pmotion;
+				}
+				if (collides(ballmotion, pmotion, step_seconds, DIRECTION::RIGHT)) {
+					cright = true;
+					platmot = pmotion;
+				}
 			}
 			
 		}
 	
 		if (((topL + botL + topR + botR) == 1) && sball.components[i].currDir != -1)
 		{//directions:: left right up down 0, 1, 2, 3
-			
+			//prevC top left 0, top r 1, botl 2, botr3
 			//detect block in only topleft case
-			if (topL && sball.components[i].currDir == 0) {
-				ballmotion.position.x = ballmotion.position.x - abs(ballmotion.scale.x) / 2 - 6;
-				ballmotion.position.y = ballmotion.position.y + abs(ballmotion.scale.y) / 2 + 1;
+			if (topL && sball.components[i].currDir == 0 && sball.components[i].prevC != 0) {
+				ballmotion.position.x = cornermot.position.x + abs(cornermot.scale.x / 2) - 2;
+				ballmotion.position.y = cornermot.position.y + abs(cornermot.scale.y/2) + abs(ballmotion.scale.y / 2) + 1;
+				
 				setNewSpikeMotion(2, sball.components[i].currDir, ballmotion, sball.components[i], -1);
+				sball.components[i].prevC = 0;
+				
 			}
-			else if (topL && sball.components[i].currDir == 2) {
-				ballmotion.position.x = ballmotion.position.x + abs(ballmotion.scale.x) / 2 + 1;
-				ballmotion.position.y = ballmotion.position.y - abs(ballmotion.scale.y) / 2 - 6;
+			else if (topL && sball.components[i].currDir == 2 && sball.components[i].prevC != 0) {
+				ballmotion.position.x = cornermot.position.x +  abs(cornermot.scale.x / 2) + abs(ballmotion.scale.x / 2) + 1;
+				ballmotion.position.y = cornermot.position.y + abs(cornermot.scale.y / 2) - 2;
 				setNewSpikeMotion(0, sball.components[i].currDir, ballmotion, sball.components[i], -1);
+				sball.components[i].prevC = 0;
+				
 			}
 			//top right case
-			if (topR && sball.components[i].currDir == 1 ) {
-				ballmotion.position.x = ballmotion.position.x + abs(ballmotion.scale.x) / 2 + 6;
-				ballmotion.position.y = ballmotion.position.y + abs(ballmotion.scale.y) / 2 + 1;
+			if (topR && sball.components[i].currDir == 1 && sball.components[i].prevC != 1) {
+				ballmotion.position.x = cornermot.position.x - abs(cornermot.scale.x / 2) + 2;
+				ballmotion.position.y = cornermot.position.y + abs(cornermot.scale.y / 2) + abs(ballmotion.scale.y / 2) + 1;
 				setNewSpikeMotion(2, sball.components[i].currDir, ballmotion, sball.components[i],  -1);
+				sball.components[i].prevC = 1;
 			}
-			else if (topR && sball.components[i].currDir == 2) {
-				ballmotion.position.x = ballmotion.position.x - abs(ballmotion.scale.x) / 2 - 1;
-				ballmotion.position.y = ballmotion.position.y - abs(ballmotion.scale.y) / 2 - 6;
+			else if (topR && sball.components[i].currDir == 2 && sball.components[i].prevC != 1) {
+				ballmotion.position.x = cornermot.position.x - abs(cornermot.scale.x / 2) - abs(ballmotion.scale.x / 2) - 1;
+				ballmotion.position.y = cornermot.position.y + abs(cornermot.scale.y / 2) - 2;
 				setNewSpikeMotion(1, sball.components[i].currDir, ballmotion, sball.components[i], -1);
+				sball.components[i].prevC = 1;
 			}
 			//bot left case
-			if (botL && sball.components[i].currDir == 0) {
-				ballmotion.position.x = ballmotion.position.x - abs(ballmotion.scale.x) / 2 - 6;
-				ballmotion.position.y = ballmotion.position.y - abs(ballmotion.scale.y) / 2 - 1;
+			if (botL && sball.components[i].currDir == 0 && sball.components[i].prevC != 2) {
+				ballmotion.position.x = cornermot.position.x + abs(cornermot.scale.x / 2) - 2;
+				ballmotion.position.y = cornermot.position.y - abs(cornermot.scale.y / 2) - abs(ballmotion.scale.y / 2) - 1;
+
 				setNewSpikeMotion(3, sball.components[i].currDir, ballmotion, sball.components[i], -1);
+				sball.components[i].prevC = 2;
 			}
-			else if (botL && sball.components[i].currDir == 3) {
-				ballmotion.position.x = ballmotion.position.x + abs(ballmotion.scale.x) / 2 + 1;
-				ballmotion.position.y = ballmotion.position.y + abs(ballmotion.scale.y) / 2 + 6;
+			else if (botL && sball.components[i].currDir == 3 && sball.components[i].prevC != 2) {
+				ballmotion.position.x = cornermot.position.x + abs(cornermot.scale.x / 2) + abs(ballmotion.scale.x / 2) + 1;
+				ballmotion.position.y = cornermot.position.y - abs(cornermot.scale.y / 2)  + 2;
 				setNewSpikeMotion(0, sball.components[i].currDir, ballmotion, sball.components[i], -1);
+				sball.components[i].prevC = 2;
 			}
 			//bot right case
-			if (botR && sball.components[i].currDir == 1) {
-				ballmotion.position.x = ballmotion.position.x + abs(ballmotion.scale.x) / 2 + 6;
-				ballmotion.position.y = ballmotion.position.y - abs(ballmotion.scale.y) / 2 - 1;
+			if (botR && sball.components[i].currDir == 1 && sball.components[i].prevC != 3) {
+				ballmotion.position.x = cornermot.position.x - abs(cornermot.scale.x / 2) + 2;
+				ballmotion.position.y = cornermot.position.y - abs(cornermot.scale.y / 2) - abs(ballmotion.scale.y / 2) - 1;
+
 				setNewSpikeMotion(3, sball.components[i].currDir, ballmotion, sball.components[i], -1);
+				sball.components[i].prevC = 3;
 			}
-			else if (botR && sball.components[i].currDir == 3) {
-				ballmotion.position.x = ballmotion.position.x - abs(ballmotion.scale.x) / 2 - 1;
-				ballmotion.position.y = ballmotion.position.y + abs(ballmotion.scale.y) / 2 + 6;
+			else if (botR && sball.components[i].currDir == 3 && sball.components[i].prevC != 3) {
+				ballmotion.position.x = cornermot.position.x - abs(cornermot.scale.x / 2) - abs(ballmotion.scale.x / 2) - 1;
+				ballmotion.position.y = cornermot.position.y - abs(cornermot.scale.y / 2) + 2;
 				setNewSpikeMotion(1, sball.components[i].currDir, ballmotion, sball.components[i], -1);
+				sball.components[i].prevC = 3;
 			}
-			
+		}
+		else {
+			//directions:: left right up down 0, 1, 2, 3
+			if (ctop && sball.components[i].currDir != 2 && sball.components[i].currDir != 3) {
+				setNewSpikeMotion(2, sball.components[i].currDir, ballmotion, sball.components[i]);
+				ballmotion.position.y = platmot.position.y + abs(platmot.scale.y) / 2 + abs(ballmotion.scale.y) / 2 + 1;
+				sball.components[i].prevC = -1;
+			}
+			else if (cbot && sball.components[i].currDir != 3 && sball.components[i].currDir != 2) {
+				setNewSpikeMotion(3, sball.components[i].currDir, ballmotion, sball.components[i]);
+				ballmotion.position.y = platmot.position.y - abs(platmot.scale.y) / 2 - abs(ballmotion.scale.y) / 2 - 1;
+				sball.components[i].prevC = -1;
+			}
+			else if (cleft && sball.components[i].currDir != 0 && sball.components[i].currDir != 1) {
+				setNewSpikeMotion(0, sball.components[i].currDir, ballmotion, sball.components[i]);
+				ballmotion.position.x = platmot.position.x + abs(platmot.scale.x) / 2 + abs(ballmotion.scale.x) / 2 + 1;
+				sball.components[i].prevC = -1;
+			}
+			else if (cright && sball.components[i].currDir != 1 && sball.components[i].currDir != 0) {
+				setNewSpikeMotion(1, sball.components[i].currDir, ballmotion, sball.components[i]);
+				ballmotion.position.x = platmot.position.x - abs(platmot.scale.x) / 2 - abs(ballmotion.scale.x) / 2 - 1;
+				sball.components[i].prevC = -1;
+			}
+			if (sball.components[i].currDir == -1) {
+				ballmotion.velocity.y = 100;
+			}
 		}
 		
 
@@ -769,6 +915,7 @@ void PhysicsSystem::step(float elapsed_ms)
 			if (registry.spikeballs.has(entity)) {
 				motion.velocity.x = motion.velocity.x * -1;
 				motion.position.x = abs(motion.scale.x) / 2;
+				registry.spikeballs.get(entity).prevC = -1;
 				continue;
 			} 
 			 
@@ -785,6 +932,7 @@ void PhysicsSystem::step(float elapsed_ms)
 			if (registry.spikeballs.has(entity)) {
 				motion.velocity.x = motion.velocity.x * -1;
 				motion.position.x = window_width_px - abs(motion.scale.x) / 2;
+				registry.spikeballs.get(entity).prevC = -1;
 				continue;
 			}
 
@@ -801,11 +949,14 @@ void PhysicsSystem::step(float elapsed_ms)
 		if ((motion.position.y - abs(motion.scale.y) / 2) < 0 && registry.spikeballs.has(entity)) {
 			motion.velocity.y *= -1;
 			motion.position.y = abs(motion.scale.y) / 2;
+			registry.spikeballs.get(entity).prevC = -1;
+			continue;
 		}
 		if ((motion.position.y + abs(motion.scale.y) / 2) > window_height_px) {
 			if (registry.spikeballs.has(entity)) {
 				motion.velocity.y = motion.velocity.y * -1;
 				motion.position.y = window_height_px - abs(motion.scale.y) / 2;
+				registry.spikeballs.get(entity).prevC = -1;
 				continue;
 			}
 			motion.velocity.y = 0;
