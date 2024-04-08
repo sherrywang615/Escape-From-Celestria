@@ -940,6 +940,7 @@ void WorldSystem::restart_game()
 		can_get_key = false;
 		tutorial_index = 0;
 		registry.remove_all_components_of(temp_text);
+
 	}
 
 	// Remove all entities that we created
@@ -1039,6 +1040,15 @@ void WorldSystem::handle_collisions()
 		// For now, we are only interested in collisions that involve the chicken
 		if (registry.players.has(entity))
 		{
+			// Show text when certain place is met
+			if (registry.textBlocks.has(entity_other)) {
+				printf("found collison with textBlock\n");
+				TextBlock tb = registry.textBlocks.get(entity_other);
+				std::string text = tb.text;
+				createText({ 300, 300 }, 1, { 1, 1, 1 }, text);
+				// remove used text block
+				registry.remove_all_components_of(entity_other);
+			}
 			// Player& player = registry.players.get(entity);
 			// Checking Player - Deadly collisions
 			if (registry.deadlys.has(entity_other) && !registry.deductHpTimers.has(entity) && !registry.invincibleTimers.has(entity))
@@ -1337,8 +1347,17 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 	}
 	if (action == GLFW_PRESS && key == GLFW_KEY_ESCAPE)
 	{
+		if (isJoshHidden) {
+			player_josh = createJosh(renderer, joshPosition);
+			registry.motions.get(player_josh).scale = joshScale;
+			registry.colors.insert(player_josh, { 1, 0.8f, 0.8f });
+			isJoshHidden = false;
+			if (currentLevel == 1) {
+				can_out = true;
+			}
+		} 
 		// disable pause menu when on start screen
-		if (!showStartScreen)
+		else if (!showStartScreen)
 		{
 			paused = !paused;
 			if (paused)

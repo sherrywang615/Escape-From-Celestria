@@ -765,6 +765,18 @@ Entity createMenuBackground(vec2 pos, vec2 scale) {
 	return entity;
 }
 
+Entity createTextBlock(vec2 pos, vec2 scale, std::string content)
+{
+	Entity entity = Entity();
+	auto& motion = registry.motions.emplace(entity);
+	motion.position = pos;
+	motion.scale = scale;
+
+	TextBlock& tb = registry.textBlocks.emplace(entity);
+	tb.text = content;
+	return entity;
+}
+
 Entity createGold(RenderSystem *renderer, vec2 position)
 {
 	// Reserve en entity
