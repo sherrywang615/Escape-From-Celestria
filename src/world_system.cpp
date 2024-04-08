@@ -1341,8 +1341,17 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 	}
 	if (action == GLFW_PRESS && key == GLFW_KEY_ESCAPE)
 	{
+		if (isJoshHidden) {
+			player_josh = createJosh(renderer, joshPosition);
+			registry.motions.get(player_josh).scale = joshScale;
+			registry.colors.insert(player_josh, { 1, 0.8f, 0.8f });
+			isJoshHidden = false;
+			if (currentLevel == 1) {
+				can_out = true;
+			}
+		} 
 		// disable pause menu when on start screen
-		if (!showStartScreen)
+		else if (!showStartScreen)
 		{
 			paused = !paused;
 			if (paused)
