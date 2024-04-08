@@ -913,6 +913,8 @@ Mix_Music *getMusicTrack(int level, const std::vector<Mix_Music *> &tracks)
 	if (level >= 1 && level <= tracks.size())
 	{
 		return tracks[level - 1];
+	} else if(level == 0){
+		return tracks[0];
 	}
 	else
 	{

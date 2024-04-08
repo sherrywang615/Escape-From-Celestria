@@ -498,7 +498,7 @@ Entity createBackgroundStart(RenderSystem* renderer, vec2 position)
 
 	registry.renderRequests.insert(
 		entity,
-		{ TEXTURE_ASSET_ID::BACKGROUND5,
+		{ TEXTURE_ASSET_ID::BACKGROUNDSTART,
 		 EFFECT_ASSET_ID::TEXTURED,
 		 GEOMETRY_BUFFER_ID::SPRITE });
 

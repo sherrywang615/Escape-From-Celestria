@@ -74,6 +74,7 @@ class RenderSystem {
 		textures_path("Background7.png"),
 		textures_path("groundvert.png"),
 		textures_path("spikeball.png"),
+		textures_path("BackgroundStart.png"),
 		};
 
 
