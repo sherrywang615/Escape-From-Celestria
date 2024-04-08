@@ -67,6 +67,7 @@ Entity createHelpInfo(RenderSystem* renderer, vec2 position);
 // Text
 Entity createText(vec2 pos, float scale, vec3 color, std::string content);
 Entity createMenuBackground(vec2 pos, vec2 scale);
+Entity createTextBlock(vec2 pos, vec2 scale, std::string content);
 
 // a red line for debugging purposes
 Entity createLine(vec2 position, vec2 size);

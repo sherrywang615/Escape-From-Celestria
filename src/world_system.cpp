@@ -942,6 +942,7 @@ void WorldSystem::restart_game()
 		can_out = false;
 		can_get_key = false;
 		tutorial_index = 0;
+		createTextBlock({ 320, 340 }, { 64, 64 }, "EXAMPLE TEXT IN WORLD_SYSTEM.CPP LINE 945");
 	}
 
 	// Remove all entities that we created
@@ -1039,6 +1040,15 @@ void WorldSystem::handle_collisions()
 		// For now, we are only interested in collisions that involve the chicken
 		if (registry.players.has(entity))
 		{
+			// Show text when certain place is met
+			if (registry.textBlocks.has(entity_other)) {
+				printf("found collison with textBlock\n");
+				TextBlock tb = registry.textBlocks.get(entity_other);
+				std::string text = tb.text;
+				createText({ 300, 300 }, 1, { 1, 1, 1 }, text);
+				// remove used text block
+				registry.remove_all_components_of(entity_other);
+			}
 			// Player& player = registry.players.get(entity);
 			// Checking Player - Deadly collisions
 			if (registry.deadlys.has(entity_other) && !registry.deductHpTimers.has(entity) && !registry.invincibleTimers.has(entity))
