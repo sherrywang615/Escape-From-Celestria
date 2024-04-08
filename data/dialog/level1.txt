@@ -4,6 +4,7 @@ Space to jump
 Press A/D to move
 Go pick up the bullet
 Shoot the zombie by pressing J
-You can also hide in the trash can by pressing H when nearby
+You can hide in the trash can by pressing H when nearby
+Press H again to come out of it
 Grab the key and use it to unlock the next level
 You're almost there! Good luck on your journey!
