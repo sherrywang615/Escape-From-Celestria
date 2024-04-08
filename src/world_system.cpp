@@ -418,6 +418,20 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 		}
 
 	}
+
+
+	// for fps counter
+	fpsTimer += elapsed_ms_since_last_update;
+	fpsCount++;
+	if (fpsTimer >= 1000.0f)
+	{
+		fpsTimer = 0.0f;
+		fps = fpsCount;
+		fpsCount = 0;
+		std::stringstream windowCaption;
+		windowCaption << "Escape from Celestria - FPS Counter: " << fps;
+		glfwSetWindowTitle(window, windowCaption.str().c_str());
+	}
   
 	if (paused || showStartScreen)
 	{
@@ -438,23 +452,11 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 				text.color = {1, 1, 0};
 			}
 		}
-    return true;
+		return true;
 	}
 	buttons.clear();
 	handleMovementKeys(player_josh);
 
-	// for fps counter
-	fpsTimer += elapsed_ms_since_last_update;
-	fpsCount++;
-	if (fpsTimer >= 1000.0f)
-	{
-		fpsTimer = 0.0f;
-		fps = fpsCount;
-		fpsCount = 0;
-		std::stringstream windowCaption;
-		windowCaption << "Escape from Celestria - FPS Counter: " << fps;
-		glfwSetWindowTitle(window, windowCaption.str().c_str());
-	}
 
 	// Remove debug info from the last step
 	while (registry.debugComponents.entities.size() > 0)
@@ -886,11 +888,6 @@ bool WorldSystem::createEntityBaseOnMap(std::vector<std::vector<char>> map, bool
 			else if (tok == '0' && !plat_only)
 			{
 				createSpikeball(renderer, { x, y });
-			}
-			else
-			{
-				printf("Map contains invalid character '%c' at [%d, %d].", tok, i, j);
-				// return false;
 			}
 		}
 	}
