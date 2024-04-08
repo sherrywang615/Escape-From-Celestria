@@ -370,22 +370,18 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
   
   	//for tutorial
 	if(currentLevel == 1 && is_speech_point_index_assigned){
-		
+		float scale = 0.5;
 		if(!can_jump && tutorial_index == 0){
 			tutorial_start = std::chrono::system_clock::now();
 			paused = true;
-			dialog->createSpeechPointTutorial(speech_point_index, 0); 
+			temp_text = createText(tutorial_pos,scale, { 1, 1, 1 }, dialog->getText(speech_point_index, 0));
 			tutorial_index=1;
 		}
 		if(can_jump && !can_move && tutorial_index == 1){
 			auto elasped = std::chrono::duration_cast<std::chrono::microseconds>(end - tutorial_start).count();
 			if(round(elasped)/100000 > 10){
-
-				dialog->createSpeechPointTutorial(speech_point_index, 2); 
-				// Speech& speech = registry.speech.get(registry.speech.entities[0]);
-				// speech.texts.pop();
-				// speech.timer.pop();
-			
+				registry.remove_all_components_of(temp_text);
+				temp_text = createText(tutorial_pos, scale, { 1, 1, 1 }, dialog->getText(speech_point_index, 1));
 				paused = true;
 				tutorial_index = 2;
 			}
@@ -393,27 +389,27 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 		if(can_move && !can_shot && tutorial_index == 2){
 			auto elasped = std::chrono::duration_cast<std::chrono::microseconds>(end - tutorial_start).count();
 			if(round(elasped)/100000>10 && bullets_count>0){
-				
-				Speech& speech = registry.speech.get(registry.speech.entities[0]);
-				speech.texts.pop();
-				speech.timer.pop();
-				dialog->createSpeechPointTutorial(speech_point_index, 4); 
+				registry.remove_all_components_of(temp_text);
+				temp_text = createText(tutorial_pos, scale, { 1, 1, 1 }, dialog->getText(speech_point_index, 3));
+				if(registry.motions.get(player_josh).scale.x < 0){
+					registry.motions.get(player_josh).scale.x = -registry.motions.get(player_josh).scale.x;
+
+				}
 				paused = true;
 				tutorial_index = 3;
 			}
 		}
-		if(can_shot && can_hide && can_out && !can_get_key && tutorial_index == 3){
-			Speech& speech = registry.speech.get(registry.speech.entities[0]);
-			speech.texts.pop();
-			speech.timer.pop();
-			dialog->createSpeechPointTutorial(speech_point_index, 6); 
+		if(can_shot && can_hide && !can_out && !can_get_key && tutorial_index == 3){
+			registry.remove_all_components_of(temp_text);
+			temp_text = createText(tutorial_pos, scale, { 1, 1, 1 }, dialog->getText(speech_point_index, 5));
+		}else if(can_shot && can_hide && can_out && !can_get_key && tutorial_index == 3){
+			registry.remove_all_components_of(temp_text);
+			temp_text = createText(tutorial_pos, scale, { 1, 1, 1 }, dialog->getText(speech_point_index, 6));
 			tutorial_index = 4;
 		}
 		if(can_shot && can_hide && can_out && !can_get_key && have_key && tutorial_index == 4){
-			Speech& speech = registry.speech.get(registry.speech.entities[0]);
-			speech.texts.pop();
-			speech.timer.pop();
-			dialog->createSpeechPointTutorial(speech_point_index, 6); 
+			registry.remove_all_components_of(temp_text);
+			temp_text = createText(tutorial_pos, scale, { 1, 1, 1 }, dialog->getText(speech_point_index, 7));
 			tutorial_index = 5;
 		}
 
@@ -934,6 +930,7 @@ void WorldSystem::restart_game()
 			have_key = true;
 	}
 
+	// if restart tutorial level
 	if(currentLevel == 1){
 		can_jump = false;
 		can_move = false;
@@ -942,6 +939,7 @@ void WorldSystem::restart_game()
 		can_out = false;
 		can_get_key = false;
 		tutorial_index = 0;
+		registry.remove_all_components_of(temp_text);
 	}
 
 	// Remove all entities that we created
@@ -1007,6 +1005,8 @@ void WorldSystem::restart_game()
 	}
 	else
 	{
+		
+
 		showStartScreen = false;
 		for (Entity entity : registry.menus.entities)
 		{
@@ -1299,38 +1299,34 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 	if(currentLevel == 1 && paused == true){
+		float scale = 0.5;
 		if(!can_jump){
 			tutorial_start = std::chrono::system_clock::now();
 			if(action == GLFW_PRESS && key == GLFW_KEY_SPACE){
-				dialog->createSpeechPointTutorial(speech_point_index, 1); 
-				Speech& speech = registry.speech.get(registry.speech.entities[0]);
-				speech.texts.pop();
-				speech.timer.pop();
+				//registry.remove_all_components_of(temp_text);
+				//temp_text = createText(tutorial_pos, 0.9, { 1, 1, 1 }, dialog->getText(speech_point_index, 1));
 				can_jump = true;
 				paused = false;
-				//std::cout<<"1st line is displayed"<<std::endl;
+
 			}
 		}else if(!can_move){
 			if(action == GLFW_PRESS && (key == GLFW_KEY_A || key == GLFW_KEY_D ||key == GLFW_KEY_RIGHT || key == GLFW_KEY_LEFT)){
-				//std::cout<<"can move now"<<std::endl;
-				dialog->createSpeechPointTutorial(speech_point_index, 3); 
-				Speech& speech = registry.speech.get(registry.speech.entities[0]);
-				speech.texts.pop();
-				speech.timer.pop();
+				
+				registry.remove_all_components_of(temp_text);
+				temp_text = createText(tutorial_pos, scale, { 1, 1, 1 }, dialog->getText(speech_point_index, 2));
 				can_move = true;
 				paused = false;
 				
 			}
 		}else if(!can_shot){
 			if (bullets_count>0 && (action == GLFW_REPEAT || action == GLFW_PRESS) && (key == GLFW_KEY_J)){
-				dialog->createSpeechPointTutorial(speech_point_index, 5); 
-				Speech& speech = registry.speech.get(registry.speech.entities[0]);
-				speech.texts.pop();
-				speech.timer.pop();
+				registry.remove_all_components_of(temp_text);
+				temp_text = createText(tutorial_pos, scale, { 1, 1, 1 }, dialog->getText(speech_point_index, 4));
+
 				can_shot = true;
 				paused = false;
 				tutorial_index = 3;
-				//std::cout<<"shot now"<<std::endl;
+				
 			}
 		}
 
@@ -1460,9 +1456,7 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 
 	if (action == GLFW_PRESS && key == GLFW_KEY_H)
 	{
-		//todo: remove later for debug purpose only
-		can_hide=true;
-		can_out=true;
+		
 		if (!isJoshHidden)
 		{
 			for (Entity entity : registry.cabinets.entities)

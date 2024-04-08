@@ -82,6 +82,10 @@ Speech& DialogSystem::createSpeechPointTutorial(unsigned int speech_point, int i
 	std::pair<int, std::string> sentence = dialog[index];
 	//std::cout<<sentence.second<<std::endl;
 	return createTutorialSpeech(findEntityById(sentence.first), sentence.second, 1500.0f);
+
+}
+std::string DialogSystem::getText(unsigned int speech_point, int index){
+	return dialog_data[speech_point][index].second;
 }
 
 
