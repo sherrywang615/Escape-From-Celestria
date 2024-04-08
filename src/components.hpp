@@ -232,7 +232,7 @@ struct Fireball {
 
 struct Spikeball {
 	int currDir = -1;
-	int prevDir = -1;
+	int prevC = -1;
 	//direction:: left:0 right:1 up:2 down:3
 };
 
