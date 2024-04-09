@@ -1,12 +1,21 @@
 :1
-@4
-Survival! Here is safe zone
 @J
-Have you seen Alice, my daughter
-@4
-Don't worry, she is safe inside！
-Congratulations! 
-I think she must miss you very much!
-You guys are about to reunite!
+Do you need help?
+@3
+I am fine！
+@J
+Have you seen Alice?
+@3
+I remember she went to the safe zone
+with a stranger
 @J 
-Thank you!
+Thank you
+
+:2
+@1
+safe zone is in front!
+keep going！
+
+:3
+@J
+almost here!
