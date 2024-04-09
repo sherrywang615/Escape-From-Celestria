@@ -979,8 +979,6 @@ void WorldSystem::restart_game()
 			}
 		}
 		current_button = 0;
-		//Entity background = createBackgroundStart(renderer, {0, 0});
-		//registry.menus.emplace(background);
 		createTitle(renderer, {window_width_px / 2, window_height_px / 2 - 100});
 	}
 	// load credits for the last level
