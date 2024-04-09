@@ -64,6 +64,8 @@ private:
 	std::chrono::system_clock::time_point tutorial_start;
 	Speech tutorial;
 	Entity temp_text;
+	Entity temp_text2;
+	Entity temp_text3;
 	vec2 tutorial_pos=vec2(26, window_height_px/2-100);
 
 	
