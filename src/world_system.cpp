@@ -1136,9 +1136,9 @@ void WorldSystem::handle_collisions()
 			// Checking Player - Eatable collisions
 			else if (registry.eatables.has(entity_other))
 			{
-				bool tutorial_can_eat = currentLevel==1 && can_eat;
-				bool tutorial_can_grab_key = currentLevel==1 && can_get_key;
-				bool tutorial_can_get_bullet = currentLevel==1 && can_get_bullet;
+				bool tutorial_can_eat = (currentLevel==1 && can_eat) || currentLevel!=1 ;
+				bool tutorial_can_grab_key = (currentLevel==1 && can_get_key) || currentLevel!=1;
+				bool tutorial_can_get_bullet = (currentLevel==1 && can_get_bullet) || currentLevel!=1;
 
 				if (registry.foods.has(entity_other)&& tutorial_can_eat)
 				{
@@ -1223,6 +1223,7 @@ void WorldSystem::handle_collisions()
 						have_key = false;
 
 						if(currentLevel==1){
+							hp_count = INITIAL_HP;
 							registry.remove_all_components_of(temp_text);
 							registry.remove_all_components_of(temp_text2);
 							registry.remove_all_components_of(temp_text3);
