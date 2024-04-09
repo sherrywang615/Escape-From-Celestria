@@ -307,6 +307,9 @@ void RenderSystem::draw()
 		if (registry.texts.has(entity)) {
 			continue;
 		}
+		//if (registry.menus.has(entity)) {
+		//	continue;
+		//}
 		if (!registry.motions.has(entity))
 			continue;
 		// Note, its not very efficient to access elements indirectly via the entity
@@ -318,6 +321,12 @@ void RenderSystem::draw()
 	
 
 	for (Entity entity : registry.players.entities) {
+		drawTexturedMesh(entity, projection_2D);
+	}
+	for (Entity entity : registry.menus.entities) {
+		if (registry.texts.has(entity)) {
+			continue;
+		}
 		drawTexturedMesh(entity, projection_2D);
 	}
 	//glGenVertexArrays(1, &vao);

@@ -19,4 +19,7 @@ audio/eat: https://pixabay.com/sound-effects/search/eating/
 bomb sound: https://mixkit.co/free-sound-effects/bomb/
 audio/background-end1: https://freesound.org/people/dersuperanton/sounds/433702/
 audio/background-end2:https://freesound.org/people/SergeQuadrado/sounds/646116/
+Game title text: https://www.textstudio.com/logo/gray-and-orange-3d-text-video-game-315?userPresetId=a961a646-b094-423a-b7a8-16e0ba1c3ea0
+Background: https://guilemus.itch.io/post-apocalyptic-backgrounds
+
 

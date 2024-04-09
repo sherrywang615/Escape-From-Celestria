@@ -48,13 +48,13 @@ void renderStartMenu() {
 	std::vector<Entity> elements = {Entity(), Entity(), Entity(), Entity()};
 	std::vector<std::string> texts = { "New game", "Load game", "Tutorial", "QUIT" };
 	std::vector<MENU_FUNC> funcs = { MENU_FUNC::START, MENU_FUNC::LOAD, MENU_FUNC::TUTORIAL, MENU_FUNC::QUIT };
-	// Entity background = createMenuBackground({ window_width_px / 2, window_height_px / 2 }, { 300, 600 });
-	// auto& menu1 = registry.menus.emplace(background);
+	Entity background = createBackgroundImage(TEXTURE_ASSET_ID::BACKGROUNDSTART);
+	auto& menu1 = registry.menus.emplace(background);
 	std::vector<vec2> pos = arrangeTextStart(elements.size());
 	for (int i = 0; i < elements.size(); i++) {
 		Entity entity = createText(pos[i], 0.7, {1, 1, 1}, texts[i]);
-		auto& menu3 = registry.menus.emplace(entity);
-		menu3.func = funcs[i];
+		auto& menu2 = registry.menus.emplace(entity);
+		menu2.func = funcs[i];
 	}
 }
 
@@ -265,7 +265,6 @@ bool handleButtonEvents(Entity entity, RenderSystem* renderer, GLFWwindow* windo
 			registry.remove_all_components_of(entity);
 		}
 		Entity entity = createHelpInfo(renderer, vec2(window_width_px - 515, window_height_px - 350));
-		registry.menus.emplace(entity);
 	}
 	else if (me.func == MENU_FUNC::START) {
 		// level 1 is tutorial
