@@ -3,8 +3,12 @@
 Space to jump
 Press A/D to move
 Go pick up the bullet
+If you collide with a zombie, you will lose 1 HP
 Shoot the zombie by pressing J
 You can hide in the trash can by pressing H when nearby
 Press H again to come out of it
+Eating a hotdog will grant you 1 HP
 Grab the key and use it to unlock the next level
-You're almost there! Good luck on your journey!
+Beware that spikeballs will reduce you 1 HP, 
+and colliding with bombs will cause immediate death
+Now you are ready to go. Good luck on your journey!

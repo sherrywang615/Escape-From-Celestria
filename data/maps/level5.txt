@@ -9,7 +9,7 @@ M
                                                                                                          
                                                E
                                                    
-                                N4                        D    Z                                               
+                                N4                Z        D                                                   
                               S1                                       
     
                                                                                             
@@ -18,7 +18,7 @@ M
                                                                                                      
                                                                                                   
                                                                                                      
-                                                                                               Z                   
+                                                                                              B Z                   
                                                                                                      
                                                                                                       
                                                     K
@@ -41,16 +41,16 @@ PPPPPPPPPPPPPPP
                                                                                                             
                                                                                                
        F                                                                                              
-                                                                                                B     
+                                                                                                     
                                                                                                       
                                                                                        
 
 PPPPPPPPPPPPPPP                                                                          PPPPPPPPPPPPPPPPP 
  
                                                                                                      
-                                                    G                    F                                     
-                                                                                                        
-
+                                                    G                                                         
+                                    B                                                                    
+                                    
                                                                                                      
                                                                                                      
 
@@ -62,9 +62,9 @@ PPPPPPPPPPPPPPP                                                                 
                                                                                                                              
                                                                               
                                                                                                      
-  B     J                B          B          B                                                       
-                                                                     Z               Z       F                         
-               C                                             C                  
+        J                B                                                  B                                                       
+                                                 Z                                     Z       F                         
+                                 C                                C                  
                                                                                                                               
                                                                                                      
 PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP                                                                                                                                                                                                        
