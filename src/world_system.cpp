@@ -1219,8 +1219,6 @@ void WorldSystem::handle_collisions()
 					if (isNearDoor(player_josh, entity_other))
 					{
 						Mix_PlayChannel(-1, doorOpen_music, 0);
-						currentLevel++;
-						have_key = false;
 
 						if(currentLevel==1){
 							hp_count = INITIAL_HP;
@@ -1229,6 +1227,8 @@ void WorldSystem::handle_collisions()
 							registry.remove_all_components_of(temp_text3);
 						}
 
+						currentLevel++;
+						have_key = false;
 						restart_game();
 
 					}
