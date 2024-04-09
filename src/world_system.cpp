@@ -1594,9 +1594,13 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 			if (me.func == MENU_FUNC::LOAD)
 			{
 				currentLevel = loadLevel();
-				restart_game();
-				loadGame(renderer, have_key, hp_count, bullets_count, currentLevel);
-				paused = false;
+				bool isSavingValid = checkSavingValid();
+				if (isSavingValid) {
+					restart_game();
+					loadGame(renderer, have_key, hp_count, bullets_count, currentLevel);
+				}
+				// if cannot load the game, stay paused
+				paused = !isSavingValid;
 			}
 			else
 			{
@@ -1641,9 +1645,18 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 			if (me.func == MENU_FUNC::LOAD)
 			{
 				currentLevel = loadLevel();
-				restart_game();
-				loadGame(renderer, have_key, hp_count, bullets_count, currentLevel);
-				paused = false;
+				bool isSavingValid = checkSavingValid();
+				if (isSavingValid) {
+					restart_game();
+					loadGame(renderer, have_key, hp_count, bullets_count, currentLevel);
+
+				}
+				else {
+					createMenuBackground({ window_width_px / 2, window_height_px / 2 }, { 500, 300 });
+					createText({ window_width_px / 2 - 200, window_height_px / 2 }, 0.5, { 1, 1, 1 }, "You don't have a valid saving file!");
+				}
+				// if cannot load the game, stay paused
+				showStartScreen = !isSavingValid;
 			}
 			else
 			{

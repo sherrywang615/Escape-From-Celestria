@@ -10,6 +10,6 @@ void renderPauseMenu();
 void renderStartMenu();
 void saveGame();
 int loadLevel();
-void loadGame(RenderSystem* renderer, bool& has_key, int& hp_count, int& bullet_count, int& current_level);
+bool checkSavingValid();
+bool loadGame(RenderSystem* renderer, bool& has_key, int& hp_count, int& bullet_count, int& current_level);
 bool handleButtonEvents(Entity entity, RenderSystem* renderer, GLFWwindow* window, bool& has_key, int& hp_count, int& bullet_count, int& current_level);
-int handleStartButtonEvents(Entity entity, RenderSystem* renderer, GLFWwindow* window, bool& has_key, int& hp_count, int& bullet_count, int& current_level);

@@ -154,7 +154,46 @@ int loadLevel() {
 	return 0;
 }
 
-void loadGame(RenderSystem* renderer, bool& has_key, int& hp_count, int& bullet_count, int& current_level) {
+bool checkSavingValid()
+{
+	std::fstream file;
+	file.open(SAVE_PATH);
+
+	bool hasJosh = false;
+
+	if (file.is_open())
+	{
+		std::string line;
+		while (getline(file, line))
+		{
+			std::vector<std::string> toks;
+			std::string delimiter = " ";
+			while (line.find(delimiter) != std::string::npos)
+			{
+				int delim_loc = line.find(delimiter);
+				std::string token = line.substr(0, delim_loc);
+				toks.push_back(token);
+				line = line.substr(delim_loc + 1, line.size());
+			}
+			toks.push_back(line);
+
+			// the saving is valid if it at least has josh
+			if (toks[0] == "Josh")
+			{
+				hasJosh = true;
+			}
+		}
+	}
+	else
+	{
+		printf("Cannot load because cannot open saving file\n");
+		return false;
+	}
+	file.close();
+	return hasJosh;
+}
+
+bool loadGame(RenderSystem* renderer, bool& has_key, int& hp_count, int& bullet_count, int& current_level) {
 	// clear all existing characters
 	for (Entity entity : registry.players.entities) {
 		registry.remove_all_components_of(entity);
@@ -182,8 +221,8 @@ void loadGame(RenderSystem* renderer, bool& has_key, int& hp_count, int& bullet_
 	}
 	std::fstream file;
 	file.open(SAVE_PATH);
-	// bool readingJosh = false;
-	// bool readingZombie = false;
+
+	bool hasJosh = false;
 
 	if (file.is_open())
 	{
@@ -205,6 +244,7 @@ void loadGame(RenderSystem* renderer, bool& has_key, int& hp_count, int& bullet_
 			{
 				Entity josh = createJosh(renderer, { std::stof(toks[1]), std::stof(toks[2]) });
 				registry.colors.insert(josh, { 1, 0.8f, 0.8f });
+				hasJosh = true;
 			}
 			else if (toks[0] == "Zombie")
 			{
@@ -238,6 +278,7 @@ void loadGame(RenderSystem* renderer, bool& has_key, int& hp_count, int& bullet_
 		printf("Cannot load because cannot open saving file\n");
 	}
 	file.close();
+	return hasJosh;
 }
 
 bool handleButtonEvents(Entity entity, RenderSystem* renderer, GLFWwindow* window, bool& has_key, int& hp_count, int& bullet_count, int& current_level) {
