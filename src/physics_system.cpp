@@ -314,11 +314,11 @@ bool collides(const Motion& motion1, const Motion& motion2, float step_secs, DIR
 	}
 	else {
 		return	check_point_within_boundary(left, x_boundary, y_boundary) ||
-				check_point_within_boundary(top, x_boundary, y_boundary) ||
-				check_point_within_boundary(right, x_boundary, y_boundary) ||
-				check_point_within_boundary(bot, x_boundary, y_boundary) ||
-				check_point_within_boundary(x_boundary, left, right) ||
-				check_point_within_boundary(y_boundary, top, bot);
+			check_point_within_boundary(top, x_boundary, y_boundary) ||
+			check_point_within_boundary(right, x_boundary, y_boundary) ||
+			check_point_within_boundary(bot, x_boundary, y_boundary);
+				//check_point_within_boundary(x_boundary, left, right) ||
+				//check_point_within_boundary(y_boundary, top, bot);
 	}
 
 
