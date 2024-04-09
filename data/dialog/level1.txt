@@ -10,5 +10,5 @@ Press H again to come out of it
 Eating a hotdog will grant you 1 HP
 Grab the key and use it to unlock the next level
 Beware that spikeballs will reduce you 1 HP, 
-and you will die immediately when collides with bombs 
+and colliding with bombs will cause immediate death
 Now you are ready to go. Good luck on your journey!
