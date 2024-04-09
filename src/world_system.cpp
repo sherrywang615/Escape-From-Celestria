@@ -39,8 +39,10 @@ bool paused = false;
 bool can_jump = false;
 bool can_move = false;
 bool can_shot = false;
+bool can_get_bullet = false;
 bool can_hide = false;
 bool can_out = false;
+bool can_eat = false;
 bool can_get_key = false;
 int tutorial_index = 0;
 
@@ -391,6 +393,8 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 			if(round(elasped)/100000>10 && bullets_count>0){
 				registry.remove_all_components_of(temp_text);
 				temp_text = createText(tutorial_pos, scale, { 1, 1, 1 }, dialog->getText(speech_point_index, 3));
+				temp_text2 = createText({tutorial_pos.x,tutorial_pos.y-50}, scale, { 1, 1, 1 }, dialog->getText(speech_point_index, 4));
+
 				if(registry.motions.get(player_josh).scale.x < 0){
 					registry.motions.get(player_josh).scale.x = -registry.motions.get(player_josh).scale.x;
 
@@ -401,17 +405,30 @@ bool WorldSystem::step(float elapsed_ms_since_last_update)
 		}
 		if(can_shot && can_hide && !can_out && !can_get_key && tutorial_index == 3){
 			registry.remove_all_components_of(temp_text);
-			temp_text = createText(tutorial_pos, scale, { 1, 1, 1 }, dialog->getText(speech_point_index, 5));
+			temp_text = createText(tutorial_pos, scale, { 1, 1, 1 }, dialog->getText(speech_point_index, 6));
 		}else if(can_shot && can_hide && can_out && !can_get_key && tutorial_index == 3){
 			registry.remove_all_components_of(temp_text);
-			temp_text = createText(tutorial_pos, scale, { 1, 1, 1 }, dialog->getText(speech_point_index, 6));
+			temp_text = createText(tutorial_pos, scale, { 1, 1, 1 }, dialog->getText(speech_point_index, 7));
+			can_eat = true;
 			tutorial_index = 4;
 		}
-		if(can_shot && can_hide && can_out && !can_get_key && have_key && tutorial_index == 4){
+
+		if(can_shot && can_hide && can_out && !can_get_key && hp_count == 4 && tutorial_index == 4){
 			registry.remove_all_components_of(temp_text);
-			temp_text = createText(tutorial_pos, scale, { 1, 1, 1 }, dialog->getText(speech_point_index, 7));
+			temp_text = createText(tutorial_pos, scale, { 1, 1, 1 }, dialog->getText(speech_point_index, 8));
 			tutorial_index = 5;
+			can_get_key = true;
 		}
+		if(can_shot && can_hide && can_out && have_key && tutorial_index == 5){
+			registry.remove_all_components_of(temp_text);
+			temp_text = createText(tutorial_pos, scale, { 1, 1, 1 }, dialog->getText(speech_point_index, 9));
+			temp_text2 = createText({tutorial_pos.x,tutorial_pos.y-50}, scale, { 1, 1, 1 }, dialog->getText(speech_point_index, 10));
+			temp_text3 = createText({tutorial_pos.x,tutorial_pos.y-100}, scale, { 1, 1, 1 }, dialog->getText(speech_point_index, 11));
+
+			tutorial_index = 6;
+		}
+
+
 
 	}
 
@@ -937,10 +954,10 @@ void WorldSystem::restart_game()
 		can_shot = false;
 		can_hide = false;
 		can_out = false;
+		can_eat = false;
 		can_get_key = false;
+		can_get_bullet = false;
 		tutorial_index = 0;
-		registry.remove_all_components_of(temp_text);
-
 	}
 
 	// Remove all entities that we created
@@ -1119,7 +1136,11 @@ void WorldSystem::handle_collisions()
 			// Checking Player - Eatable collisions
 			else if (registry.eatables.has(entity_other))
 			{
-				if (registry.foods.has(entity_other))
+				bool tutorial_can_eat = currentLevel==1 && can_eat;
+				bool tutorial_can_grab_key = currentLevel==1 && can_get_key;
+				bool tutorial_can_get_bullet = currentLevel==1 && can_get_bullet;
+
+				if (registry.foods.has(entity_other)&& tutorial_can_eat)
 				{
 					// chew, add hp if hp is not full
 					Mix_PlayChannel(-1, eat_music, 0);
@@ -1140,7 +1161,7 @@ void WorldSystem::handle_collisions()
 						createHeart(renderer, vec2(30 + i * create_heart_distance, create_heart_height));
 					}
 				}
-				else if (registry.bullets.has(entity_other))
+				else if (registry.bullets.has(entity_other)&&tutorial_can_get_bullet)
 				{
 					registry.remove_all_components_of(entity_other);
 					bullets_count = bullets_count + 1;
@@ -1155,7 +1176,7 @@ void WorldSystem::handle_collisions()
 						// }
 					}
 				}
-				else if (registry.keys.has(entity_other))
+				else if (registry.keys.has(entity_other) && tutorial_can_grab_key)
 				{
 					registry.remove_all_components_of(entity_other);
 					have_key = true;
@@ -1202,9 +1223,9 @@ void WorldSystem::handle_collisions()
 						have_key = false;
 
 						if(currentLevel==1){
-							Speech& speech = registry.speech.get(registry.speech.entities[0]);
-							speech.texts.pop();
-							speech.timer.pop();
+							registry.remove_all_components_of(temp_text);
+							registry.remove_all_components_of(temp_text2);
+							registry.remove_all_components_of(temp_text3);
 						}
 
 						restart_game();
@@ -1324,6 +1345,7 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 				
 				registry.remove_all_components_of(temp_text);
 				temp_text = createText(tutorial_pos, scale, { 1, 1, 1 }, dialog->getText(speech_point_index, 2));
+				can_get_bullet = true;
 				can_move = true;
 				paused = false;
 				
@@ -1331,7 +1353,8 @@ void WorldSystem::on_key(int key, int, int action, int mod)
 		}else if(!can_shot){
 			if (bullets_count>0 && (action == GLFW_REPEAT || action == GLFW_PRESS) && (key == GLFW_KEY_J)){
 				registry.remove_all_components_of(temp_text);
-				temp_text = createText(tutorial_pos, scale, { 1, 1, 1 }, dialog->getText(speech_point_index, 4));
+				registry.remove_all_components_of(temp_text2);
+				temp_text = createText(tutorial_pos, scale, { 1, 1, 1 }, dialog->getText(speech_point_index, 5));
 
 				can_shot = true;
 				paused = false;
