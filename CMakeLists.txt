@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.1)
-project(game)
+project(chicken)
 
 # Set c++11
 # https://stackoverflow.com/questions/10851247/how-to-activate-c-11-in-cmake
@@ -67,7 +67,6 @@ set_target_properties(${PROJECT_NAME} PROPERTIES ENABLE_EXPORTS 0)
 # External header-only libraries in the ext/
 target_include_directories(${PROJECT_NAME} PUBLIC ext/stb_image/)
 target_include_directories(${PROJECT_NAME} PUBLIC ext/gl3w)
-# target_include_directories(${PROJECT_NAME} PUBLIC ext/freetype/include)
 
 # Find OpenGL
 find_package(OpenGL REQUIRED)
@@ -87,15 +86,15 @@ if (IS_OS_LINUX OR IS_OS_MAC)
     find_package(PkgConfig REQUIRED)
 
     pkg_search_module(GLFW REQUIRED glfw3)
-    # pkg_search_module(FREETYPE REQUIRED freetype2)
+
     pkg_search_module(SDL2 REQUIRED sdl2)
     pkg_search_module(SDL2MIXER REQUIRED SDL2_mixer)
+
 
     # Link Frameworks on OSX
     if (IS_OS_MAC)
        find_library(COCOA_LIBRARY Cocoa)
        find_library(CF_LIBRARY CoreFoundation)
-      #  find_library(FREETYPE_LIBRARY freetype2)
        target_link_libraries(${PROJECT_NAME} PUBLIC ${COCOA_LIBRARY} ${CF_LIBRARY})
     endif()
 
@@ -160,8 +159,8 @@ elseif (IS_OS_WINDOWS)
 endif()
 
 # Add FreeType - Windows-specific; not tested on Linux or macOS
-set (FREETYPE_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/ext/freetype/include")
-set (FREETYPE_LIBRARY "${CMAKE_CURRENT_SOURCE_DIR}/ext/freetype/release static/vs2015-2022/win64/freetype.lib")
+# set (FREETYPE_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/ext/freetype/include")
+# set (FREETYPE_LIBRARY "${CMAKE_CURRENT_SOURCE_DIR}/ext/freetype/release static/vs2015-2022/win64/freetype.lib")
 # set (SDL2_LIBRARIES "${CMAKE_CURRENT_SOURCE_DIR}/ext/sdl/lib/SDL2-x86.lib")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/ext/freetype/include")
 
@@ -179,6 +178,8 @@ if(TARGET Freetype AND NOT TARGET Freetype::Freetype)
      # or create the target correctly (see cmakes newer FindFreetype.cmake)
      message(FATAL_ERROR "Can't find FreeType (fonts)." )
  endif()
+ # target_link_libraries(mylib PRIVATE Freetype::Freetype)
+
 
 # Can't find the include and lib. Quit.
 if (NOT GLFW_FOUND OR NOT SDL2_FOUND)
@@ -188,7 +189,6 @@ if (NOT GLFW_FOUND OR NOT SDL2_FOUND)
       message(FATAL_ERROR "Can't find SDL." )
    endif()
 endif()
-
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${GLFW_INCLUDE_DIRS})
 target_include_directories(${PROJECT_NAME} PUBLIC ${SDL2_INCLUDE_DIRS})

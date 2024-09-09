@@ -1,0 +1,86 @@
+[
+{
+  "directory": "/Users/hanna/Desktop/Team7/build",
+  "command": "/usr/bin/clang++ -I/opt/homebrew/include -I/Users/hanna/Desktop/Team7/src -I/Users/hanna/Desktop/Team7/ext/stb_image -I/Users/hanna/Desktop/Team7/ext/gl3w -F/Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk/System/Library/Frameworks -I/Users/hanna/Desktop/Team7/ext/freetype/include -I/opt/homebrew/Cellar/glfw/3.4/include -I/opt/homebrew/include/SDL2 -isystem /Users/hanna/Desktop/Team7/ext/glm -g -std=gnu++14 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk -Wall -o CMakeFiles/chicken.dir/src/ai_system.cpp.o -c /Users/hanna/Desktop/Team7/src/ai_system.cpp",
+  "file": "/Users/hanna/Desktop/Team7/src/ai_system.cpp",
+  "output": "CMakeFiles/chicken.dir/src/ai_system.cpp.o"
+},
+{
+  "directory": "/Users/hanna/Desktop/Team7/build",
+  "command": "/usr/bin/clang++ -I/opt/homebrew/include -I/Users/hanna/Desktop/Team7/src -I/Users/hanna/Desktop/Team7/ext/stb_image -I/Users/hanna/Desktop/Team7/ext/gl3w -F/Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk/System/Library/Frameworks -I/Users/hanna/Desktop/Team7/ext/freetype/include -I/opt/homebrew/Cellar/glfw/3.4/include -I/opt/homebrew/include/SDL2 -isystem /Users/hanna/Desktop/Team7/ext/glm -g -std=gnu++14 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk -Wall -o CMakeFiles/chicken.dir/src/common.cpp.o -c /Users/hanna/Desktop/Team7/src/common.cpp",
+  "file": "/Users/hanna/Desktop/Team7/src/common.cpp",
+  "output": "CMakeFiles/chicken.dir/src/common.cpp.o"
+},
+{
+  "directory": "/Users/hanna/Desktop/Team7/build",
+  "command": "/usr/bin/clang++ -I/opt/homebrew/include -I/Users/hanna/Desktop/Team7/src -I/Users/hanna/Desktop/Team7/ext/stb_image -I/Users/hanna/Desktop/Team7/ext/gl3w -F/Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk/System/Library/Frameworks -I/Users/hanna/Desktop/Team7/ext/freetype/include -I/opt/homebrew/Cellar/glfw/3.4/include -I/opt/homebrew/include/SDL2 -isystem /Users/hanna/Desktop/Team7/ext/glm -g -std=gnu++14 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk -Wall -o CMakeFiles/chicken.dir/src/components.cpp.o -c /Users/hanna/Desktop/Team7/src/components.cpp",
+  "file": "/Users/hanna/Desktop/Team7/src/components.cpp",
+  "output": "CMakeFiles/chicken.dir/src/components.cpp.o"
+},
+{
+  "directory": "/Users/hanna/Desktop/Team7/build",
+  "command": "/usr/bin/clang++ -I/opt/homebrew/include -I/Users/hanna/Desktop/Team7/src -I/Users/hanna/Desktop/Team7/ext/stb_image -I/Users/hanna/Desktop/Team7/ext/gl3w -F/Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk/System/Library/Frameworks -I/Users/hanna/Desktop/Team7/ext/freetype/include -I/opt/homebrew/Cellar/glfw/3.4/include -I/opt/homebrew/include/SDL2 -isystem /Users/hanna/Desktop/Team7/ext/glm -g -std=gnu++14 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk -Wall -o CMakeFiles/chicken.dir/src/dialog_system.cpp.o -c /Users/hanna/Desktop/Team7/src/dialog_system.cpp",
+  "file": "/Users/hanna/Desktop/Team7/src/dialog_system.cpp",
+  "output": "CMakeFiles/chicken.dir/src/dialog_system.cpp.o"
+},
+{
+  "directory": "/Users/hanna/Desktop/Team7/build",
+  "command": "/usr/bin/clang++ -I/opt/homebrew/include -I/Users/hanna/Desktop/Team7/src -I/Users/hanna/Desktop/Team7/ext/stb_image -I/Users/hanna/Desktop/Team7/ext/gl3w -F/Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk/System/Library/Frameworks -I/Users/hanna/Desktop/Team7/ext/freetype/include -I/opt/homebrew/Cellar/glfw/3.4/include -I/opt/homebrew/include/SDL2 -isystem /Users/hanna/Desktop/Team7/ext/glm -g -std=gnu++14 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk -Wall -o CMakeFiles/chicken.dir/src/main.cpp.o -c /Users/hanna/Desktop/Team7/src/main.cpp",
+  "file": "/Users/hanna/Desktop/Team7/src/main.cpp",
+  "output": "CMakeFiles/chicken.dir/src/main.cpp.o"
+},
+{
+  "directory": "/Users/hanna/Desktop/Team7/build",
+  "command": "/usr/bin/clang++ -I/opt/homebrew/include -I/Users/hanna/Desktop/Team7/src -I/Users/hanna/Desktop/Team7/ext/stb_image -I/Users/hanna/Desktop/Team7/ext/gl3w -F/Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk/System/Library/Frameworks -I/Users/hanna/Desktop/Team7/ext/freetype/include -I/opt/homebrew/Cellar/glfw/3.4/include -I/opt/homebrew/include/SDL2 -isystem /Users/hanna/Desktop/Team7/ext/glm -g -std=gnu++14 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk -Wall -o CMakeFiles/chicken.dir/src/menu.cpp.o -c /Users/hanna/Desktop/Team7/src/menu.cpp",
+  "file": "/Users/hanna/Desktop/Team7/src/menu.cpp",
+  "output": "CMakeFiles/chicken.dir/src/menu.cpp.o"
+},
+{
+  "directory": "/Users/hanna/Desktop/Team7/build",
+  "command": "/usr/bin/clang++ -I/opt/homebrew/include -I/Users/hanna/Desktop/Team7/src -I/Users/hanna/Desktop/Team7/ext/stb_image -I/Users/hanna/Desktop/Team7/ext/gl3w -F/Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk/System/Library/Frameworks -I/Users/hanna/Desktop/Team7/ext/freetype/include -I/opt/homebrew/Cellar/glfw/3.4/include -I/opt/homebrew/include/SDL2 -isystem /Users/hanna/Desktop/Team7/ext/glm -g -std=gnu++14 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk -Wall -o CMakeFiles/chicken.dir/src/physics_system.cpp.o -c /Users/hanna/Desktop/Team7/src/physics_system.cpp",
+  "file": "/Users/hanna/Desktop/Team7/src/physics_system.cpp",
+  "output": "CMakeFiles/chicken.dir/src/physics_system.cpp.o"
+},
+{
+  "directory": "/Users/hanna/Desktop/Team7/build",
+  "command": "/usr/bin/clang++ -I/opt/homebrew/include -I/Users/hanna/Desktop/Team7/src -I/Users/hanna/Desktop/Team7/ext/stb_image -I/Users/hanna/Desktop/Team7/ext/gl3w -F/Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk/System/Library/Frameworks -I/Users/hanna/Desktop/Team7/ext/freetype/include -I/opt/homebrew/Cellar/glfw/3.4/include -I/opt/homebrew/include/SDL2 -isystem /Users/hanna/Desktop/Team7/ext/glm -g -std=gnu++14 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk -Wall -o CMakeFiles/chicken.dir/src/render_system.cpp.o -c /Users/hanna/Desktop/Team7/src/render_system.cpp",
+  "file": "/Users/hanna/Desktop/Team7/src/render_system.cpp",
+  "output": "CMakeFiles/chicken.dir/src/render_system.cpp.o"
+},
+{
+  "directory": "/Users/hanna/Desktop/Team7/build",
+  "command": "/usr/bin/clang++ -I/opt/homebrew/include -I/Users/hanna/Desktop/Team7/src -I/Users/hanna/Desktop/Team7/ext/stb_image -I/Users/hanna/Desktop/Team7/ext/gl3w -F/Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk/System/Library/Frameworks -I/Users/hanna/Desktop/Team7/ext/freetype/include -I/opt/homebrew/Cellar/glfw/3.4/include -I/opt/homebrew/include/SDL2 -isystem /Users/hanna/Desktop/Team7/ext/glm -g -std=gnu++14 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk -Wall -o CMakeFiles/chicken.dir/src/render_system_init.cpp.o -c /Users/hanna/Desktop/Team7/src/render_system_init.cpp",
+  "file": "/Users/hanna/Desktop/Team7/src/render_system_init.cpp",
+  "output": "CMakeFiles/chicken.dir/src/render_system_init.cpp.o"
+},
+{
+  "directory": "/Users/hanna/Desktop/Team7/build",
+  "command": "/usr/bin/clang++ -I/opt/homebrew/include -I/Users/hanna/Desktop/Team7/src -I/Users/hanna/Desktop/Team7/ext/stb_image -I/Users/hanna/Desktop/Team7/ext/gl3w -F/Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk/System/Library/Frameworks -I/Users/hanna/Desktop/Team7/ext/freetype/include -I/opt/homebrew/Cellar/glfw/3.4/include -I/opt/homebrew/include/SDL2 -isystem /Users/hanna/Desktop/Team7/ext/glm -g -std=gnu++14 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk -Wall -o CMakeFiles/chicken.dir/src/tiny_ecs.cpp.o -c /Users/hanna/Desktop/Team7/src/tiny_ecs.cpp",
+  "file": "/Users/hanna/Desktop/Team7/src/tiny_ecs.cpp",
+  "output": "CMakeFiles/chicken.dir/src/tiny_ecs.cpp.o"
+},
+{
+  "directory": "/Users/hanna/Desktop/Team7/build",
+  "command": "/usr/bin/clang++ -I/opt/homebrew/include -I/Users/hanna/Desktop/Team7/src -I/Users/hanna/Desktop/Team7/ext/stb_image -I/Users/hanna/Desktop/Team7/ext/gl3w -F/Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk/System/Library/Frameworks -I/Users/hanna/Desktop/Team7/ext/freetype/include -I/opt/homebrew/Cellar/glfw/3.4/include -I/opt/homebrew/include/SDL2 -isystem /Users/hanna/Desktop/Team7/ext/glm -g -std=gnu++14 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk -Wall -o CMakeFiles/chicken.dir/src/tiny_ecs_registry.cpp.o -c /Users/hanna/Desktop/Team7/src/tiny_ecs_registry.cpp",
+  "file": "/Users/hanna/Desktop/Team7/src/tiny_ecs_registry.cpp",
+  "output": "CMakeFiles/chicken.dir/src/tiny_ecs_registry.cpp.o"
+},
+{
+  "directory": "/Users/hanna/Desktop/Team7/build",
+  "command": "/usr/bin/clang++ -I/opt/homebrew/include -I/Users/hanna/Desktop/Team7/src -I/Users/hanna/Desktop/Team7/ext/stb_image -I/Users/hanna/Desktop/Team7/ext/gl3w -F/Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk/System/Library/Frameworks -I/Users/hanna/Desktop/Team7/ext/freetype/include -I/opt/homebrew/Cellar/glfw/3.4/include -I/opt/homebrew/include/SDL2 -isystem /Users/hanna/Desktop/Team7/ext/glm -g -std=gnu++14 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk -Wall -o CMakeFiles/chicken.dir/src/world_helper.cpp.o -c /Users/hanna/Desktop/Team7/src/world_helper.cpp",
+  "file": "/Users/hanna/Desktop/Team7/src/world_helper.cpp",
+  "output": "CMakeFiles/chicken.dir/src/world_helper.cpp.o"
+},
+{
+  "directory": "/Users/hanna/Desktop/Team7/build",
+  "command": "/usr/bin/clang++ -I/opt/homebrew/include -I/Users/hanna/Desktop/Team7/src -I/Users/hanna/Desktop/Team7/ext/stb_image -I/Users/hanna/Desktop/Team7/ext/gl3w -F/Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk/System/Library/Frameworks -I/Users/hanna/Desktop/Team7/ext/freetype/include -I/opt/homebrew/Cellar/glfw/3.4/include -I/opt/homebrew/include/SDL2 -isystem /Users/hanna/Desktop/Team7/ext/glm -g -std=gnu++14 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk -Wall -o CMakeFiles/chicken.dir/src/world_init.cpp.o -c /Users/hanna/Desktop/Team7/src/world_init.cpp",
+  "file": "/Users/hanna/Desktop/Team7/src/world_init.cpp",
+  "output": "CMakeFiles/chicken.dir/src/world_init.cpp.o"
+},
+{
+  "directory": "/Users/hanna/Desktop/Team7/build",
+  "command": "/usr/bin/clang++ -I/opt/homebrew/include -I/Users/hanna/Desktop/Team7/src -I/Users/hanna/Desktop/Team7/ext/stb_image -I/Users/hanna/Desktop/Team7/ext/gl3w -F/Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk/System/Library/Frameworks -I/Users/hanna/Desktop/Team7/ext/freetype/include -I/opt/homebrew/Cellar/glfw/3.4/include -I/opt/homebrew/include/SDL2 -isystem /Users/hanna/Desktop/Team7/ext/glm -g -std=gnu++14 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk -Wall -o CMakeFiles/chicken.dir/src/world_system.cpp.o -c /Users/hanna/Desktop/Team7/src/world_system.cpp",
+  "file": "/Users/hanna/Desktop/Team7/src/world_system.cpp",
+  "output": "CMakeFiles/chicken.dir/src/world_system.cpp.o"
+}
+]

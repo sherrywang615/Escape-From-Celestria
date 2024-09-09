@@ -1,0 +1,16 @@
+# ninja log v5
+22	1952	1712786804605724918	CMakeFiles/chicken.dir/src/dialog_system.cpp.o	46cc4978203965da
+22	1254	1712786803910225808	CMakeFiles/chicken.dir/src/components.cpp.o	e42fec55ede811dd
+22	2258	1712786804910712778	CMakeFiles/chicken.dir/src/main.cpp.o	119f6d73a01e0ed2
+24	2068	1712786804720300513	CMakeFiles/chicken.dir/src/render_system_init.cpp.o	1e2deae09254f006
+25	376	1712786803036101015	CMakeFiles/chicken.dir/src/tiny_ecs.cpp.o	a98d24413345b643
+2927	3050	1712786805712426618	chicken	d3496c3770559c39
+22	1993	1712786804647319126	CMakeFiles/chicken.dir/src/ai_system.cpp.o	f7920c8a347dd20
+24	2004	1712786804657208087	CMakeFiles/chicken.dir/src/render_system.cpp.o	4db79e0404aef51a
+23	2039	1712786804693701989	CMakeFiles/chicken.dir/src/menu.cpp.o	388a1136e70e5628
+22	1027	1712786803685057936	CMakeFiles/chicken.dir/src/common.cpp.o	33ce0e68cf1a905
+1027	2101	1712786804757664165	CMakeFiles/chicken.dir/src/world_helper.cpp.o	3f7b830e8d0d20ac
+23	1667	1712786804322321397	CMakeFiles/chicken.dir/src/physics_system.cpp.o	ae47d3e893d5b66d
+376	2269	1712786804922009882	CMakeFiles/chicken.dir/src/tiny_ecs_registry.cpp.o	b12fff50889125d3
+1668	2927	1712786805583232489	CMakeFiles/chicken.dir/src/world_system.cpp.o	941a91e1bd121e23
+1254	2748	1712786805402965506	CMakeFiles/chicken.dir/src/world_init.cpp.o	eef4ad1c51fa630e
