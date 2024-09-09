@@ -1,4 +1,4 @@
-# Team 7
+# Escape From Celestria
 Key: https://www.flaticon.com/free-icons/key
 Heart: https://www.flaticon.com/free-icons/heart
 Hotdog: https://www.flaticon.com/free-icons/hot-dog
